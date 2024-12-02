@@ -10,9 +10,9 @@ export const HallDetails = () => {
     <div className={styles["hall-details__wrapper"]}>
       <div className={styles["hall-details__container"]}>
         <div className={styles["hall-details__preview"]}>
-          <Carousel className="rounded-xl">
+          {/* <Carousel className="rounded-xl">
             <img src={image} alt="Hall Preview"/>
-          </Carousel>
+          </Carousel> */}
           <h1>Alexandria bibliotheca Great Hall</h1>
           <button>Book Now!</button>
         </div>
