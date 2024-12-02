@@ -6,7 +6,8 @@ import {
   Route,
 } from "react-router-dom";
 import { HallDetails } from './HallDetails/HallDetails';
-
+import { SignUp } from './Sign/SignUpPage/SignUp';
+import { Login } from './Sign/LoginPage/Login';
 function App() {
   return (
     <Router>
@@ -14,8 +15,8 @@ function App() {
         {/* <Route path='/' element={<HomePage/>}/> */}
         {/* <Route path='/workspace' element={<WorkSpace/>}/> */}
         {<Route path='/hall' element={<HallDetails/>}/>}
-        {/* <Route path='/login' element={<LoginPage/>}/> */}
-
+        {<Route path='/login' element={<Login/>}/>}
+        {<Route path='/signup' element={<SignUp/>}/>}
       </Routes>
     </Router>
   );
