@@ -5,6 +5,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import {WorkSpace} from "./WorkSpace/WorkSpace";
 import { HallDetails } from './HallDetails/HallDetails';
 
 function App() {
@@ -12,10 +13,9 @@ function App() {
     <Router>
       <Routes>
         {/* <Route path='/' element={<HomePage/>}/> */}
-        {/* <Route path='/workspace' element={<WorkSpace/>}/> */}
+        <Route path='/workspace' element={<WorkSpace/>}>
         <Route path='/hall/:id' element={<HallDetails/>}/>
         {/* <Route path='/login' element={<LoginPage/>}/> */}
-
       </Routes>
     </Router>
   );
