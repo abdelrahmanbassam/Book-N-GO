@@ -17,10 +17,10 @@ public class Workday {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private int workspaceId;
-    @OneToMany
+    @ManyToOne
     @JoinColumn(name = "workspaceId", referencedColumnName = "id", insertable = false, updatable = false)
     private Workspace workspace;
     private Time startTime;
     private Time endTime;
-    private Day day;
+    private Day weakDay;
 }
