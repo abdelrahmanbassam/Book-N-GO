@@ -39,13 +39,14 @@
   
   .formContainer {
     background-color: rgba(1, 15, 24, 0.95);
-    padding: 2rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    /* height: 4000px; */
+    border: 3px solid #FF9944;
     border-radius: 4px;
-    width: 100%;
-    max-width: 400px;
+    width: 16%;
+    /* max-width: 300px; */
     position: relative;
-    z-index: 2;
+    /* z-index: 2; */
   }
   
   .title {
