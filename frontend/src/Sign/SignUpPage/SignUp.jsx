@@ -17,13 +17,37 @@ export const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Simulating an API call
-      const response = await mockSignUpAPI(formData);
-      if (!response.success) {
-        setError('Username already exists');
+      // const body = JSON.stringify({
+      //   username: formData.username,
+      //   email: formData.email,
+      //   phoneNumber: formData.phoneNumber,
+      //   password: formData.password,
+      //   accountType: formData.accountType,
+      // });
+      // console.log('Form data:', body);
+
+      const response = await fetch('http://localhost:8080/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          phoneNumber: formData.phoneNumber,
+          name: formData.name,
+          role: formData.accountType,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || 'Username already exists');
         return;
       }
-      console.log('SignUp successful:', response.data);
+
+      console.log('SignUp successful:', data);
       setError('');
     } catch (err) {
       setError('An error occurred. Please try again.');
@@ -103,21 +127,21 @@ export const SignUp = () => {
               <input
                 type="radio"
                 name="accountType"
-                value="customer"
-                checked={formData.accountType === 'customer'}
+                value="CLIENT"
+                checked={formData.accountType === 'CLIENT'}
                 onChange={handleChange}
               />
-              Customer
+              CLIENT
             </label>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
                 name="accountType"
-                value="workspace"
-                checked={formData.accountType === 'workspace'}
+                value="PROVIDER"
+                checked={formData.accountType === 'PROVIDER'}
                 onChange={handleChange}
               />
-              Work Space
+              PROVIDER
             </label>
           </div>
 
