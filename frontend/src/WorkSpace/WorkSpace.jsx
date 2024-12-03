@@ -110,7 +110,7 @@ export const WorkSpace = () => {
                         ))}
                         <div className={"flex flex-col min-h-[300px] border-secondary2"}>
                             <div
-                                className={"text-white border-white border-2 border-dashed flex justify-center items-center h-full"}
+                                className={"text-white border-secondary2 border-2 border-dashed flex justify-center items-center h-full"}
                             >
                                 <div
                                     className={"w-[50%] aspect-square border-2 border-dashed rounded-full flex justify-center items-center hover:border-solid border-secondary2 "}
