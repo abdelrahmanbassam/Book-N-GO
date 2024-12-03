@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
-import { colors } from '../components/styles';
 import { Header } from '../components/Header';
-import { Rate } from "../components/Rate";
 import { HallCard } from "./components/HallCard";
+import Rating from "@mui/material/Rating";
 
 export const WorkSpace = () => {
     const [userName, setUserName] = useState('John Doe');
-    const [userRating, setUserRating] = useState('4.6');
+    const [userRating, setUserRating] = useState(4.2);
     const [userDescription, setUserDescription] = useState('I am a professional web developer with 5 years of experience.');
     const [profilePic, setProfilePic] = useState('');
     const [hallCards, setHallCards] = useState([ {
@@ -51,19 +50,14 @@ export const WorkSpace = () => {
             }
         };
 
-        fetchUserDetails();
-        fetchHallCards();
+        fetchUserDetails().then(r => console.log(r));
+        fetchHallCards().then(r => console.log(r));
     }, []);
 
     return (
         <>
             <div
-                style={{
-                    backgroundColor: colors.primary,
-                    minHeight: '100vh',
-                }}
-                className={"bg-black"}
-            >
+                className={"min-h-[100vh] bg-primary"}            >
                 <Header searchBar={true} />
                 <div className={"py-10 md:px-10 px-4"}>
                     <div className={"flex justify-between md:flex-row flex-col"}>
@@ -79,7 +73,7 @@ export const WorkSpace = () => {
                         <div className={"flex flex-col lg:basis-4/6 text-white my-4 gap-2"}>
                             <div className={"md:text-6xl text-4xl font-bold"}>{userName}</div>
                             <div className={"text-lg flex gap-10"}>Rating:
-                                <Rate stars={Math.round(userRating)} rate={userRating}/>
+                                <Rating name="read-only" value={Math.round(userRating)} readOnly />
                             </div>
                             <div>
                                 <h1 className={"text-lg"}>Description:</h1>
@@ -91,12 +85,9 @@ export const WorkSpace = () => {
                         {/* edit button */}
                         <div className={"flex justify-end"}>
                             <div
-                                className={"flex my-4 justify-center items-center md:w-12 w-full h-12 cursor-pointer md:rounded-full"}
+                                className={"flex my-4 justify-center items-center md:w-12 w-full h-12 cursor-pointer md:rounded-full bg-secondary1"}
                                 onClick={() => {
                                     // navigate to settings page
-                                }}
-                                style={{
-                                    backgroundColor: colors.secondary1,
                                 }}
                             >
                                 <img
@@ -117,20 +108,12 @@ export const WorkSpace = () => {
                         {hallCards.map((hall) => (
                             <HallCard key={hall.id} image={hall.image} Name={hall.name} stars={hall.stars}/>
                         ))}
-                        <div className="flex flex-col">
+                        <div className={"flex flex-col min-h-[300px] border-secondary2"}>
                             <div
-                                style={{
-                                    borderColor: colors.secondary2,
-                                    minHeight: "300px",
-                                }}
                                 className={"text-white border-white border-2 border-dashed flex justify-center items-center h-full"}
                             >
                                 <div
-                                    className={"aspect-square border-2 border-dashed rounded-full flex justify-center items-center hover:border-solid "}
-                                    style={{
-                                        borderColor: colors.secondary2,
-                                        width: "50%",
-                                    }}
+                                    className={"w-[50%] aspect-square border-2 border-dashed rounded-full flex justify-center items-center hover:border-solid border-secondary2 "}
                                 >
                                     <img
                                         className={"p-10 cursor-pointer hover:scale-110"}

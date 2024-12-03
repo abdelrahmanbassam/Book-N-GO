@@ -1,31 +1,21 @@
-import {Rate} from "../../components/Rate";
 import PropTypes from "prop-types";
+import Rating from '@mui/material/Rating';
 
 export const HallCard = (props) => {
     return (
         <>
-            <div
-                style={{
-                    minHeight: "200px",
-                }}
-            >
+            <div>
                 <div
                     className={""}>
                     <img
                         src={props.image}
-                        alt="hall1"
-                        className="w-full object-fill aspect-video"
-                        style={{
-                            minHeight: "220px",
-                        }}
+                        alt="hall"
+                        className="w-full object-fill aspect-video min-h-[220px]"
                     />
                 </div>
-                <div className={"bg-white p-4"}
-                        style={{
-                            minHeight: "80px",
-                        }}>
+                <div className={"bg-white p-4 min-h-[80px]"}>
                     <h1 className="text-lg font-semibold">{props.Name}</h1>
-                    <Rate stars={props.stars}/>
+                    <Rating name="read-only" value={props.stars} readOnly />
                 </div>
             </div>
         </>

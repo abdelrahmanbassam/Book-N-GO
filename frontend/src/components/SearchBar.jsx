@@ -1,8 +1,7 @@
-import { colors } from "./styles";
 import { Button } from "./Button";
 import {useEffect, useState} from "react";
 
-export const SearchBar = (props) => {
+export const SearchBar = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchCategory, setSearchCategory] = useState('all');
     const [categories, setCategories] = useState([]);
@@ -18,7 +17,7 @@ export const SearchBar = (props) => {
             }
         };
 
-        fetchCategories();
+        fetchCategories().then(r => console.log(r));
     }, []);
     const handleSearch = async () => {
         try {
@@ -35,15 +34,9 @@ export const SearchBar = (props) => {
         <>
             <div className={"flex w-full"}>
                 <select
-                    style={{
-                        backgroundColor: colors.secondary2,
-                        color: colors.primary,
-                        width: "150px",
-                        height: "40px",
-                    }}
                     value={searchCategory}
                     onChange={(e) => setSearchCategory(e.target.value)}
-                    className={"px-4 py-2 rounded-l-sm"}
+                    className={"px-4 py-2 rounded-l-sm text-primary bg-secondary2 w-[150px] h-[40px]"}
                 >
                     <option value="all">All</option>
                     {categories.map((category) => (

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { colors } from './styles';
 import { SearchBar } from './SearchBar';
 import PropTypes from 'prop-types';
 
@@ -20,7 +19,7 @@ export const Header = (props) => {
             }
         };
 
-        fetchProfilePic();
+        fetchProfilePic().then(r => console.log(r));
     }, []);
 
     const handleSearch = () => {
@@ -34,11 +33,7 @@ export const Header = (props) => {
     return (
         <>
             <header
-                style={{
-                    backgroundColor: colors.primary,
-                    height: '10vh',
-                }}
-                className={"bg-black py-6 md:px-10 px-4 flex justify-between items-center gap-4 md:gap-0"}
+                className={"bg-primary h-[10vh] py-6 md:px-10 px-4 flex justify-between items-center gap-4 md:gap-0"}
             >
                 {/*logo*/}
                 <div className={"h-full w-fit md:basis-1/6 "}>
@@ -54,10 +49,7 @@ export const Header = (props) => {
                     <label className="md:inline-flex hidden relative  items-center cursor-pointer">
                         <input type="checkbox" checked={isSwitchOn} onChange={toggleSwitch} className="sr-only peer" />
                         <div
-                            style={{
-                                borderColor: colors.secondary1,
-                            }}
-                            className="w-11 h-6 border-2 rounded-full peer-checked:after:translate-x-full
+                            className="w-11 h-6 border-2 border-secondary1 rounded-full peer-checked:after:translate-x-full
                                 after:absolute after:top-0.5 after:left-[2px] after:bg-[#FF9944] after:border-[#FF9944]
                                 after:border after:rounded-full after:h-5 after:w-5 after:transition-all"
                         ></div>
