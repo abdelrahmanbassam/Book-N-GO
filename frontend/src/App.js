@@ -6,24 +6,16 @@ import {
   Route,
 } from "react-router-dom";
 import {WorkSpace} from "./WorkSpace/WorkSpace";
+import { HallDetails } from './HallDetails/HallDetails';
 
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path='/'>
-          {/* <HomePage/> TODO */}
-        </Route>
+        {/* <Route path='/' element={<HomePage/>}/> */}
         <Route path='/workspace' element={<WorkSpace/>}>
-          {/* <WorkSpace/> TODO */}
-        </Route>
-        <Route path='/hall'>
-          {/* <Hall/> TODO */}
-        </Route>
-        <Route path='/login'>
-          {/* <Login/> TODO */}
-        </Route>
-
+        <Route path='/hall/:id' element={<HallDetails/>}/>
+        {/* <Route path='/login' element={<LoginPage/>}/> */}
       </Routes>
     </Router>
   );

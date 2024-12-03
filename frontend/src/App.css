@@ -2,6 +2,13 @@
 *{
   transition: 0.3s;
 }
+html, body, #app, #app>div {
+  height: 100%
+}
+#root {
+  height: 100%;
+}
+
 .App {
   text-align: center;
 }
