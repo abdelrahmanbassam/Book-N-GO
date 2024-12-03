@@ -18,6 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.persistence.criteria.CriteriaBuilder.In;
+
 @WebMvcTest(LocationController.class)
 public class LocationControllerTest {
 
@@ -86,6 +88,15 @@ public class LocationControllerTest {
                 .content(new ObjectMapper().writeValueAsString(location)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.city").value("New York"));
+    }
+
+    @Test
+    public void testCreateInvalidLocation() throws Exception {
+        String invalidJson = "{\"departmentNumber\": \"Invalid\", \"streetNumber\": 101, \"city\": \"New York\"}";
+        mockMvc.perform(post("/locations")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

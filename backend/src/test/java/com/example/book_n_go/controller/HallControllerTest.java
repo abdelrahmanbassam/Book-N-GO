@@ -95,6 +95,16 @@ public class HallControllerTest {
     }
 
     @Test
+    public void testCreateInvalidHall() throws Exception {
+        String invalidJson = "{ \"workspaceId\": 1, \"capacity\": \"invalid\", \"description\": \"Large hall\", \"pricePerHour\": 20.0 }";
+
+        mockMvc.perform(post("/halls")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void testCreateHallInternalServerError() throws Exception {
         doThrow(new RuntimeException("Database error")).when(hallRepo).save(any(Hall.class));
 
