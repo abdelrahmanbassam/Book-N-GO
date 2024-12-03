@@ -106,3 +106,17 @@
   background-color: #FF9944;
   color: white;
 }
+.errorContainer {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff4444;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 1rem;
+}
+
+.errorText {
+  color: #ff4444;
+  font-size: 0.875rem;
+  margin: 0;
+  text-align: center;
+}

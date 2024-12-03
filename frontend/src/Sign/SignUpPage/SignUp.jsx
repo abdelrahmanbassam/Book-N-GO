@@ -12,17 +12,43 @@ export const SignUp = () => {
     password: '',
     accountType: 'customer'
   });
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('SignUp form submitted:', formData);
+    try {
+      // Simulating an API call
+      const response = await mockSignUpAPI(formData);
+      if (!response.success) {
+        setError('Username already exists');
+        return;
+      }
+      console.log('SignUp successful:', response.data);
+      setError('');
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+    }
   };
 
   const handleChange = (e) => {
+    setError(''); // Clear error when user starts typing
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  // Mock API function - replace with actual API call
+  const mockSignUpAPI = async (data) => {
+    // Simulating API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Simulate failed signup for demo
+    if (data.username === 'existing') {
+      return { success: false };
+    }
+    
+    return { success: true, data: { username: data.username } };
   };
 
   return (
@@ -34,6 +60,11 @@ export const SignUp = () => {
       <div className={styles.formContainer}>
         <h1 className={styles.title}>SIGN UP!</h1>
         <form onSubmit={handleSubmit}>
+          {error && (
+            <div className={styles.errorContainer}>
+              <p className={styles.errorText}>{error}</p>
+            </div>
+          )}
           <FormInput
             type="text"
             name="username"
