@@ -2,28 +2,21 @@ import logo from './logo.svg';
 import './App.css';
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
 } from "react-router-dom";
+import { HallDetails } from './HallDetails/HallDetails';
 
 function App() {
   return (
     <Router>
-      <Switch>
-        <Route path='/'>
-          {/* <HomePage/> TODO */}
-        </Route>
-        <Route path='/workspace'>
-          {/* <WorkSpace/> TODO */}
-        </Route>
-        <Route path='/hall'>
-          {/* <Hall/> TODO */}
-        </Route>
-        <Route path='/login'>
-          {/* <Login/> TODO */}
-        </Route>
+      <Routes>
+        {/* <Route path='/' element={<HomePage/>}/> */}
+        {/* <Route path='/workspace' element={<WorkSpace/>}/> */}
+        <Route path='/hall/:id' element={<HallDetails/>}/>
+        {/* <Route path='/login' element={<LoginPage/>}/> */}
 
-      </Switch>
+      </Routes>
     </Router>
   );
 }
