@@ -2,18 +2,19 @@ import logo from './logo.svg';
 import './App.css';
 import {
   BrowserRouter as Router,
-  Switch,
+  Routes,
   Route,
 } from "react-router-dom";
+import {WorkSpace} from "./WorkSpace/WorkSpace";
 
 function App() {
   return (
     <Router>
-      <Switch>
+      <Routes>
         <Route path='/'>
           {/* <HomePage/> TODO */}
         </Route>
-        <Route path='/workspace'>
+        <Route path='/workspace' element={<WorkSpace/>}>
           {/* <WorkSpace/> TODO */}
         </Route>
         <Route path='/hall'>
@@ -23,7 +24,7 @@ function App() {
           {/* <Login/> TODO */}
         </Route>
 
-      </Switch>
+      </Routes>
     </Router>
   );
 }
