@@ -1,7 +1,7 @@
 package com.example.book_n_go.model;
 
+import jakarta.persistence.*;
 import lombok.*;
-import javax.persistence.*;
 
 @Entity
 @Table(name = "Workspaces")

@@ -1,9 +1,12 @@
 package com.example.book_n_go.controller;
 
 import com.example.book_n_go.repository.HallRepo;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import com.example.book_n_go.model.Hall;
+import java.util.*;
 
 @RestController
 public class HallController {

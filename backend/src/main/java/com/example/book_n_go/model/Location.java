@@ -1,7 +1,7 @@
 package com.example.book_n_go.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Table(name = "Locations")

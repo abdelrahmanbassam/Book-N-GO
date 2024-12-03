@@ -1,24 +1,26 @@
 package com.example.book_n_go.model;
 
+import java.sql.Time;
+
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "Halls")
+@Table(name = "Workdays")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
-public class Hall {
+public class Workday {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private int workspaceId;
-    @ManyToOne
+    @OneToMany
     @JoinColumn(name = "workspaceId", referencedColumnName = "id", insertable = false, updatable = false)
     private Workspace workspace;
-    private int capacity;
-    private String description;
-    private double pricePerHour;
+    private Time startTime;
+    private Time endTime;
+    private Day day;
 }

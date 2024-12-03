@@ -1,6 +1,6 @@
 package com.example.book_n_go.repository;
 
-import com.example.book_n_go.models.Hall;
+import com.example.book_n_go.model.Hall;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
