@@ -5,15 +5,21 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
-import {WorkSpace} from "./WorkSpace/WorkSpace";
 import { HallDetails } from './HallDetails/HallDetails';
+import { SignUp } from './Sign/SignUpPage/SignUp';
+import { Login } from './Sign/LoginPage/Login';
+import {WorkSpace} from "./WorkSpace/WorkSpace";
+
 
 function App() {
   return (
     <Router>
       <Routes>
         {/* <Route path='/' element={<HomePage/>}/> */}
-        <Route path='/workspace' element={<WorkSpace/>}>
+        { <Route path='/workspace' element={<WorkSpace/>}/> }
+        {/* {<Route path='/hall' element={<HallDetails/>}/>} */}
+        {<Route path='/login' element={<Login/>}/>}
+        {<Route path='/signup' element={<SignUp/>}/>}
         <Route path='/hall/:id' element={<HallDetails/>}/>
         {/* <Route path='/login' element={<LoginPage/>}/> */}
       </Routes>
