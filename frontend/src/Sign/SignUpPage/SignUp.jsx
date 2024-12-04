@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Logo } from '../components/Logo';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { HeaderButtons } from '../components/HeaderButtons';
 import { FormInput } from '../components/FormInput';
 import styles from './SignUp.module.css';
@@ -8,24 +9,46 @@ export const SignUp = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    phoneNumber: '',
+    phone: '',
     password: '',
     accountType: 'customer'
   });
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Simulating an API call
-      const response = await mockSignUpAPI(formData);
-      if (!response.success) {
+      const body = {
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        name: formData.username,
+        role: formData.accountType,
+      };
+      console.log('Request Body:', JSON.stringify(body, null, 2)); // Print the JSON stringified body with indentation
+  
+      const response = await fetch('http://localhost:8080/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
+  
+      console.log('Response status:', response.status); // Log the response status
+  
+      
+      if (!response.ok) {
         setError('Username already exists');
         return;
       }
-      console.log('SignUp successful:', response.data);
+  
+      console.log('SignUp successful:');
       setError('');
+      navigate('/login');
     } catch (err) {
+      console.error('Error during signup:', err);
       setError('An error occurred. Please try again.');
     }
   };
@@ -83,9 +106,9 @@ export const SignUp = () => {
           />
           <FormInput
             type="tel"
-            name="phoneNumber"
+            name="phone"
             placeholder="Phone Number"
-            value={formData.phoneNumber}
+            value={formData.phone}
             onChange={handleChange}
             required
           />
@@ -103,21 +126,21 @@ export const SignUp = () => {
               <input
                 type="radio"
                 name="accountType"
-                value="customer"
-                checked={formData.accountType === 'customer'}
+                value="CLIENT"
+                checked={formData.accountType === 'CLIENT'}
                 onChange={handleChange}
               />
-              Customer
+              CLIENT
             </label>
             <label className={styles.radioLabel}>
               <input
                 type="radio"
                 name="accountType"
-                value="workspace"
-                checked={formData.accountType === 'workspace'}
+                value="PROVIDER"
+                checked={formData.accountType === 'PROVIDER'}
                 onChange={handleChange}
               />
-              Work Space
+              PROVIDER
             </label>
           </div>
 
