@@ -28,5 +28,5 @@ public class Workday {
     @Column(nullable = false)
     private Time endTime;
     @Column(nullable = false)
-    private Day weakDay;
+    private Day weekDay;
 }
