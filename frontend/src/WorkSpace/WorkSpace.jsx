@@ -2,9 +2,12 @@ import { useState, useEffect } from 'react';
 import { Header } from '../components/Header';
 import { HallCard } from "./components/HallCard";
 import Rating from "@mui/material/Rating";
+import { useLocation } from 'react-router-dom';
+
 
 export const WorkSpace = () => {
-    const [userName, setUserName] = useState('John Doe');
+    const location = useLocation();
+    const [userName, setUserName] = useState(location.state?.email || 'John Doe');
     const [userRating, setUserRating] = useState(4.2);
     const [userDescription, setUserDescription] = useState('I am a professional web developer with 5 years of experience.');
     const [profilePic, setProfilePic] = useState('');
