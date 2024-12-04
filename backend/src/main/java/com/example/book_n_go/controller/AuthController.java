@@ -20,13 +20,13 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
-        authService.signup(request.getEmail(), request.getPassword(), request.getPhone(), request.getName(), request.getRole());
-        return new ResponseEntity <> (HttpStatus.CREATED);
+    public ResponseEntity<AuthResponse> signup(@RequestBody SignupRequest request) {
+        String token = authService.signup(request.getEmail(), request.getPassword(), request.getPhone(), request.getName(), request.getRole());
+        return new ResponseEntity <> (new AuthResponse(token), HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         String token = authService.login(request.getEmail(), request.getPassword());
         return new ResponseEntity <> (new AuthResponse(token), HttpStatus.OK);
     }

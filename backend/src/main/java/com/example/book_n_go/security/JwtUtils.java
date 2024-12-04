@@ -4,7 +4,7 @@ package com.example.book_n_go.security;
 import io.jsonwebtoken.*;
 import org.springframework.stereotype.Component;
 
-import com.example.book_n_go.model.Role;
+import com.example.book_n_go.enums.Role;
 
 import org.springframework.beans.factory.annotation.Value;
 
@@ -31,7 +31,7 @@ public class JwtUtils {
     }
 
 
-    public Claims extractClaims(String token) {
-        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-    }
+//    public Claims extractClaims(String token) {
+//        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+//    }
 }
