@@ -1,5 +1,6 @@
 package com.example.book_n_go.model;
 
+import com.example.book_n_go.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,11 +19,11 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(unique = true, nullable = false)
-    private String phone;
-
     @Column(nullable = false)
     private String name;
+
+    @Column(unique = true, nullable = false)
+    private String phone;
 
     @Column(nullable = false)
     private String password;
