@@ -2,26 +2,41 @@ import React, { useState } from 'react';
 import { Logo } from '../components/Logo';
 import { HeaderButtons } from '../components/HeaderButtons';
 import { FormInput } from '../components/FormInput';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Login.module.css';
 
 export const Login = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Simulating an API call
-      const response = await mockLoginAPI(formData);
-      if (!response.success) {
-        setError('Username or password is incorrect');
+      const response = await fetch('http://localhost:8080/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || 'Email or password is incorrect');
         return;
-      }
-      console.log('Login successful:', response.data);
+      }  
+
+      console.log('Login successful:', data);
       setError('');
+      navigate('/WorkSpace', { state: { email: formData.email } }); // Navigate with state
     } catch (err) {
       setError('An error occurred. Please try again.');
     }
@@ -41,11 +56,11 @@ export const Login = () => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Simulate failed login for demo
-    if (data.username !== 'demo' || data.password !== 'password') {
+    if (data.email !== 'demo@example.com' || data.password !== 'password') {
       return { success: false };
     }
     
-    return { success: true, data: { username: data.username } };
+    return { success: true, data: { email: data.email } };
   };
 
   return (
@@ -63,10 +78,10 @@ export const Login = () => {
             </div>
           )}
           <FormInput
-            type="text"
-            name="username"
-            placeholder="User Name"
-            value={formData.username}
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
             onChange={handleChange}
             required
           />
