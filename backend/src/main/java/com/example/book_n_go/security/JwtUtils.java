@@ -9,7 +9,6 @@ import com.example.book_n_go.model.Role;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
-import java.util.List;
 
 
 @Component
@@ -32,7 +31,7 @@ public class JwtUtils {
     }
 
 
-//     public Claims extractClaims(String token) {
-//         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
-//     }
+    public Claims extractClaims(String token) {
+        return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
+    }
 }

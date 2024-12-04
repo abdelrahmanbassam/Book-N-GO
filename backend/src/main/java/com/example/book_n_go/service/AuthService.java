@@ -21,7 +21,7 @@ public class AuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
-    public String signup(String email, String password, String name, Role role) {
+    public void signup(String email, String password, String phone, String name, Role role) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -29,12 +29,11 @@ public class AuthService {
         User user = new User();
         user.setEmail(email);
         user.setName(name);
+        user.setPhone(phone);
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(role);
 
         userRepository.save(user);
-
-        return jwtUtils.generateJwtToken(email, role);
     }
 
 

@@ -5,6 +5,7 @@ import com.example.book_n_go.dto.LoginRequest;
 import com.example.book_n_go.dto.SignupRequest;
 import com.example.book_n_go.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,14 +21,14 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
-        String token = authService.signup(request.getEmail(), request.getPassword(), request.getName(), request.getRole());
-        return ResponseEntity.ok( new AuthResponse(token));
+        authService.signup(request.getEmail(), request.getPassword(), request.getPhone(), request.getName(), request.getRole());
+        return new ResponseEntity <> (HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         String token = authService.login(request.getEmail(), request.getPassword());
-        return ResponseEntity.ok( new AuthResponse(token));
+        return new ResponseEntity <> (new AuthResponse(token), HttpStatus.OK);
     }
 
 }
