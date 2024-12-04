@@ -32,7 +32,7 @@ export const Login = () => {
       if (!response.ok) {
         setError(data.message || 'Email or password is incorrect');
         return;
-      }
+      }  
 
       console.log('Login successful:', data);
       setError('');
