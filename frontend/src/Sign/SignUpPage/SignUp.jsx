@@ -11,7 +11,7 @@ export const SignUp = () => {
     email: '',
     phone: '',
     password: '',
-    accountType: 'customer'
+    accountType: 'CLIENT',
   });
   const [error, setError] = useState('');
   const navigate = useNavigate();
