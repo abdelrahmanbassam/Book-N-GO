@@ -1,0 +1,103 @@
+.container {
+    min-height: 100vh;
+    background-color: #010F18;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+.decorativeShape {
+  position: absolute;
+  width: 80%;
+  height: 140%;
+  background-color: #B8C6CC;
+  border-radius: 50%;
+  opacity: 0.1;
+  filter: blur(100px);
+  z-index: 1;
+  left: -40%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.formContainer {
+  background-color: rgba(1, 15, 24, 0.95);
+  /* /padding: 2rem; */
+  padding: 4vh;
+  border: 1px solid #FFFFFF;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 23vw;
+  position: relative;
+  z-index: 2;
+}
+
+.title {
+  color: white;
+  /* font-size: 2rem; */
+  font-size: 2.1vw;
+  font-weight: bold;
+  text-align: center;
+  /* margin-bottom: 2rem; */
+  margin-bottom: 4vh;
+}
+
+.forgotPassword {
+  color: white;
+  text-decoration: none;
+  font-size: 0.875rem;
+  display: block;
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.button {
+  width: 50%;
+  padding: 0.75rem;
+  margin-left: 25%;
+  background-color: #C8E1E8;
+  color: #010F18;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.button:hover {
+  background-color: #a5b2b8;
+}
+
+.headerButtons {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.headerButton {
+  padding: 0.5rem 1.5rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.loginBtn {
+  background-color: #C8E1E8;
+  color: #010F18;
+}
+.errorContainer {
+  background-color: rgba(255, 0, 0, 0.1);
+  border: 1px solid #ff4444;
+  border-radius: 4px;
+  padding: 8px;
+  margin-bottom: 1rem;
+}
+
+.errorText {
+  color: #ff4444;
+  font-size: 0.875rem;
+  margin: 0;
+  text-align: center;
+}
