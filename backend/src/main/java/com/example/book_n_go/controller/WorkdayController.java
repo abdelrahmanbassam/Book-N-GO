@@ -56,7 +56,7 @@ public class WorkdayController {
             _workday.setWorkspaceId(workday.getWorkspaceId());
             _workday.setStartTime(workday.getStartTime());
             _workday.setEndTime(workday.getEndTime());
-            _workday.setWeakDay(workday.getWeakDay());
+            _workday.setWeekDay(workday.getWeekDay());
             return new ResponseEntity<>(workdayRepo.save(_workday), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

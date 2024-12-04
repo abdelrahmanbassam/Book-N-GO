@@ -14,7 +14,9 @@ public class Workspace {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+    @Column(nullable = false)
     private int providerId;
+    @Column(nullable = false)
     private int locationId;
     @ManyToOne
     @JoinColumn(name = "locationId", referencedColumnName = "id", insertable = false, updatable = false)
