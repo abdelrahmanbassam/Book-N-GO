@@ -1,3 +1,7 @@
+.idea/*
+.vscode/*
+data/*
+
 HELP.md
 .gradle
 build/
