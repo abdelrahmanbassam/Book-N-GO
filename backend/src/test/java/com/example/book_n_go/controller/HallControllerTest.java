@@ -5,14 +5,25 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
+import com.example.book_n_go.config.SecurityConfig;
 import com.example.book_n_go.model.Hall;
+import com.example.book_n_go.model.User;
 import com.example.book_n_go.repository.HallRepo;
+import com.example.book_n_go.repository.UserRepository;
+import com.example.book_n_go.service.AuthService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,6 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 @WebMvcTest(HallController.class)
+@AutoConfigureMockMvc(addFilters = false)
 public class HallControllerTest {
 
     @Autowired
@@ -28,18 +40,29 @@ public class HallControllerTest {
     @MockBean
     private HallRepo hallRepo;
 
+    @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private AuthService authService;
+
+
     private Hall hall;
+    private String token;
 
     @BeforeEach
     public void setUp() {
         hall = new Hall(1L, 101, null, 100, "Large Hall", 200.00);
+        SecurityContextHolder.clearContext();
+
+        
     }
 
     @Test
     public void testGetAllHalls() throws Exception {
         when(hallRepo.findAll()).thenReturn(List.of(hall));
 
-        mockMvc.perform(get("/halls"))
+        mockMvc.perform(get("/halls").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].capacity").value(100))
                 .andExpect(jsonPath("$[0].description").value("Large Hall"))
@@ -50,7 +73,7 @@ public class HallControllerTest {
     public void testGetAllHallsEmpty() throws Exception {
         when(hallRepo.findAll()).thenReturn(List.of());
 
-        mockMvc.perform(get("/halls"))
+        mockMvc.perform(get("/halls").header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
     }
 
