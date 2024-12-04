@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Logo } from '../components/Logo';
 import { HeaderButtons } from '../components/HeaderButtons';
 import { FormInput } from '../components/FormInput';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Login.module.css';
 
 export const Login = () => {
@@ -10,6 +11,7 @@ export const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +37,7 @@ export const Login = () => {
       console.log('Login successful:', data);
       setError('');
     } catch (err) {
+      navigate('/WorkSpace');
       setError('An error occurred. Please try again.');
     }
   };

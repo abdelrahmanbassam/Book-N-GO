@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Logo } from '../components/Logo';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { HeaderButtons } from '../components/HeaderButtons';
 import { FormInput } from '../components/FormInput';
 import styles from './SignUp.module.css';
@@ -13,18 +14,12 @@ export const SignUp = () => {
     accountType: 'customer'
   });
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // const body = JSON.stringify({
-      //   username: formData.username,
-      //   email: formData.email,
-      //   phoneNumber: formData.phoneNumber,
-      //   password: formData.password,
-      //   accountType: formData.accountType,
-      // });
-      // console.log('Form data:', body);
+     
 
       const response = await fetch('http://localhost:8080/auth/signup', {
         method: 'POST',
@@ -47,8 +42,9 @@ export const SignUp = () => {
         return;
       }
 
-      console.log('SignUp successful:', data);
+      // console.log('SignUp successful:', data);
       setError('');
+      navigate('/login');
     } catch (err) {
       setError('An error occurred. Please try again.');
     }
