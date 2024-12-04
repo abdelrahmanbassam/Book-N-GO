@@ -9,7 +9,7 @@ export const SignUp = () => {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    phoneNumber: '',
+    phone: '',
     password: '',
     accountType: 'customer'
   });
@@ -29,7 +29,7 @@ export const SignUp = () => {
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
-          phoneNumber: formData.phoneNumber,
+          phone: formData.phone,
           name: formData.name,
           role: formData.accountType,
         }),
@@ -103,9 +103,9 @@ export const SignUp = () => {
           />
           <FormInput
             type="tel"
-            name="phoneNumber"
+            name="phone"
             placeholder="Phone Number"
-            value={formData.phoneNumber}
+            value={formData.phone}
             onChange={handleChange}
             required
           />
