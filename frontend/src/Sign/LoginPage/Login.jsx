@@ -36,8 +36,8 @@ export const Login = () => {
 
       console.log('Login successful:', data);
       setError('');
-    } catch (err) {
       navigate('/WorkSpace', { state: { email: formData.email } }); // Navigate with state
+    } catch (err) {
       setError('An error occurred. Please try again.');
     }
   };

@@ -19,33 +19,36 @@ export const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-     
-
+      const body = {
+        email: formData.email,
+        password: formData.password,
+        phone: formData.phone,
+        name: formData.username,
+        role: formData.accountType,
+      };
+      console.log('Request Body:', JSON.stringify(body, null, 2)); // Print the JSON stringified body with indentation
+  
       const response = await fetch('http://localhost:8080/auth/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-          phone: formData.phone,
-          name: formData.name,
-          role: formData.accountType,
-        }),
+        body: JSON.stringify(body),
       });
-
-      const data = await response.json();
-
+  
+      console.log('Response status:', response.status); // Log the response status
+  
+      
       if (!response.ok) {
-        setError(data.message || 'Username already exists');
+        setError('Username already exists');
         return;
       }
-
-      // console.log('SignUp successful:', data);
+  
+      console.log('SignUp successful:');
       setError('');
       navigate('/login');
     } catch (err) {
+      console.error('Error during signup:', err);
       setError('An error occurred. Please try again.');
     }
   };

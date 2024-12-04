@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.example.book_n_go.security.JwtAuthenticationFilter;
+// import com.example.book_n_go.security.JwtAuthenticationFilter; // Ensure this class exists in the specified package or update the package name accordingly
 
 @Configuration
 @EnableWebSecurity
