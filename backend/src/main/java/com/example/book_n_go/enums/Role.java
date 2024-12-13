@@ -15,14 +15,18 @@ public enum Role {
     CLIENT(
         Set.of(
             Permission.CLIENT_READ,
-            Permission.CLIENT_WRITE
+            Permission.CLIENT_WRITE,
+            Permission.CLIENT_UPDATE,
+            Permission.CLIENT_DELETE
         )
     ),
 
     PROVIDER(
         Set.of(
             Permission.PROVIDER_READ,
-            Permission.PROVIDER_WRITE
+            Permission.PROVIDER_WRITE,
+            Permission.PROVIDER_UPDATE,
+            Permission.PROVIDER_DELETE
         )
     ),
 
@@ -30,10 +34,18 @@ public enum Role {
         Set.of(
             Permission.ADMIN_READ,
             Permission.ADMIN_WRITE,
+            Permission.ADMIN_UPDATE,
+            Permission.ADMIN_DELETE,
+
             Permission.CLIENT_READ,
             Permission.CLIENT_WRITE,
+            Permission.CLIENT_UPDATE,
+            Permission.CLIENT_DELETE,
+            
             Permission.PROVIDER_READ,
-            Permission.PROVIDER_WRITE
+            Permission.PROVIDER_WRITE,
+            Permission.PROVIDER_UPDATE,
+            Permission.PROVIDER_DELETE
         )
     );
 
