@@ -1,4 +1,4 @@
-package com.example.book_n_go.service;
+package com.example.book_n_go.config;
 
 import java.util.NoSuchElementException;
 
@@ -7,7 +7,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.book_n_go.config.JwtService;
 import com.example.book_n_go.dto.AuthResponse;
 import com.example.book_n_go.dto.LoginRequest;
 import com.example.book_n_go.dto.SignupRequest;
