@@ -23,7 +23,10 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/signup", "/auth/login").permitAll()
+                .requestMatchers("/auth/signup", "/auth/login","/Bookings/create", 
+                        "/Bookings/all", "/Bookings/user/{id}", "/Bookings/hall/{id}", "/Bookings/workspace/{id}",
+                        "/Bookings/updateStatus", "/Bookings/updateDuration", "/Bookings/delete/{id}"
+                        ).permitAll()
                 .anyRequest().authenticated()
             );
         return http.build();
