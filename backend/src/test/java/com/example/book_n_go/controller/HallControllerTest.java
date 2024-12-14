@@ -14,10 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.book_n_go.config.TestConfig;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.UserRepo;
@@ -25,6 +27,7 @@ import com.example.book_n_go.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(HallController.class)
+@Import(TestConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class HallControllerTest {
 

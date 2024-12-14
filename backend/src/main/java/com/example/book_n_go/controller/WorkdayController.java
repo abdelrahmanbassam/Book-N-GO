@@ -19,13 +19,11 @@ import com.example.book_n_go.model.Workday;
 import com.example.book_n_go.repository.WorkdayRepo;
 
 @RestController
-// @PreAuthorize("hasAnyRole('Role.ADMIN.name()', 'Role.CLIENT.name()', 'Role.PROVIDER.name()')")
 public class WorkdayController {
     @Autowired
     private WorkdayRepo workdayRepo;
 
     @GetMapping("/workdays")
-    // @PreAuthorize("hasAnyAuthority('client:read', 'provider:read', 'admin:read')")
     public ResponseEntity<List<Workday>> getWorkdays() {
         try {
             List<Workday> workdays = new ArrayList<Workday>();
@@ -40,7 +38,6 @@ public class WorkdayController {
     }
 
     @GetMapping("/workdays/{id}")
-    // @PreAuthorize("hasAnyAuthority('client:read', 'provider:read', 'admin:read')")
     public ResponseEntity<Workday> getWorkdayById(@PathVariable("id") long id) {
         Optional<Workday> workdayData = workdayRepo.findById(id);
         if (workdayData.isPresent()) {
@@ -51,7 +48,6 @@ public class WorkdayController {
     }
 
     @PostMapping("/workdays")
-    // @PreAuthorize("hasAnyAuthority('provider:write', 'admin:write')")
     public ResponseEntity<Workday> createWorkday(@RequestBody Workday workday) {
         try {
             Workday _workday = workdayRepo.save(workday);
@@ -62,7 +58,6 @@ public class WorkdayController {
     }
 
     @PutMapping("/workdays/{id}")
-    // @PreAuthorize("hasAnyAuthority('provider:update', 'admin:update')")
     public ResponseEntity<Workday> updateWorkday(@PathVariable("id") long id, @RequestBody Workday workday) {
         Optional<Workday> workdayData = workdayRepo.findById(id);
         if (workdayData.isPresent()) {
@@ -78,7 +73,6 @@ public class WorkdayController {
     }
 
     @DeleteMapping("/workdays/{id}")
-    // @PreAuthorize("hasAnyAuthority('provider:delete', 'admin:delete')")
     public ResponseEntity<HttpStatus> deleteWorkday(@PathVariable("id") long id) {
         try {
             workdayRepo.deleteById(id);
