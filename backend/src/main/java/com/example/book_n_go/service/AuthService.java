@@ -3,7 +3,7 @@ package com.example.book_n_go.service;
 import com.example.book_n_go.model.User;
 import com.example.book_n_go.security.JwtUtils;
 import com.example.book_n_go.enums.Role;
-import com.example.book_n_go.repository.UserRepository;
+import com.example.book_n_go.repository.UserRepo;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserRepo userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

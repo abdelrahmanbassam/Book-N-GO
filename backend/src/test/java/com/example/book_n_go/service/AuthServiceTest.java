@@ -2,7 +2,7 @@ package com.example.book_n_go.service;
 
 import com.example.book_n_go.model.User;
 import com.example.book_n_go.enums.Role;
-import com.example.book_n_go.repository.UserRepository;
+import com.example.book_n_go.repository.UserRepo;
 import com.example.book_n_go.security.JwtUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 public class AuthServiceTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserRepo userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
