@@ -18,10 +18,10 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.example.book_n_go.config.AuthService;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.repository.HallRepo;
-import com.example.book_n_go.repository.UserRepository;
+import com.example.book_n_go.repository.UserRepo;
+import com.example.book_n_go.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(HallController.class)
@@ -35,7 +35,7 @@ public class HallControllerTest {
     private HallRepo hallRepo;
 
     @MockBean
-    private UserRepository userRepository;
+    private UserRepo userRepository;
 
     @MockBean
     private AuthService authService;

@@ -6,8 +6,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Permission {
 
-        // Example Permissions
-
         CLIENT_READ("client:read"),
         CLIENT_WRITE("client:write"),
         CLIENT_DELETE("client:delete"),

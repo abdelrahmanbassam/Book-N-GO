@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.book_n_go.config.AuthService;
 import com.example.book_n_go.dto.AuthResponse;
 import com.example.book_n_go.dto.LoginRequest;
 import com.example.book_n_go.dto.SignupRequest;
+import com.example.book_n_go.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
 

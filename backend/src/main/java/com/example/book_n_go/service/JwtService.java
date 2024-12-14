@@ -1,10 +1,11 @@
-package com.example.book_n_go.config;
+package com.example.book_n_go.service;
 
 import java.security.Key;
 import java.util.Date;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +18,11 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
 
-    private static final String SECRET_KEY = "5050c0560c39af2eb257538e4b3634879b9447075d9f02d15545a0207f21451b";
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 10;
+    @Value("${Jwt.secret}")
+    private String secret;
+
+    @Value("${Jwt.expiration}")
+    private long expirationTime;
 
     public String extractEmail(String jwt) {
         return extractClaim(jwt, Claims::getSubject);
@@ -38,7 +42,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -67,7 +71,7 @@ public class JwtService {
     }
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 

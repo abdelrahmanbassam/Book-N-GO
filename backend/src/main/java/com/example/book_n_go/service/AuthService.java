@@ -1,4 +1,4 @@
-package com.example.book_n_go.config;
+package com.example.book_n_go.service;
 
 import java.util.NoSuchElementException;
 
@@ -11,7 +11,7 @@ import com.example.book_n_go.dto.AuthResponse;
 import com.example.book_n_go.dto.LoginRequest;
 import com.example.book_n_go.dto.SignupRequest;
 import com.example.book_n_go.model.User;
-import com.example.book_n_go.repository.UserRepository;
+import com.example.book_n_go.repository.UserRepo;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthService {
 
-    private final UserRepository repository;
+    private final UserRepo repository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;

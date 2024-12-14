@@ -1,19 +1,32 @@
 package com.example.book_n_go.controller;
 
-import com.example.book_n_go.repository.HallRepo;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.book_n_go.model.Hall;
-import java.util.*;
+import com.example.book_n_go.repository.HallRepo;
 
 @RestController
+@PreAuthorize("hasAnyRole('Role.ADMIN.name()', 'Role.CLIENT.name()', 'Role.PROVIDER.name()')")
 public class HallController {
     @Autowired
     private HallRepo hallRepo;
 
     @GetMapping("/halls")
+    @PreAuthorize("hasAnyAuthority('client:read', 'provider:read', 'admin:read')")
     public ResponseEntity<List<Hall>> getHalls() {
         try {
             List<Hall> halls = new ArrayList<Hall>();
@@ -28,6 +41,7 @@ public class HallController {
     }
 
     @GetMapping("/halls/{id}")
+    @PreAuthorize("hasAnyAuthority('client:read', 'provider:read', 'admin:read')")
     public ResponseEntity<Hall> getHallById(@PathVariable("id") long id) {
         Optional<Hall> hallData = hallRepo.findById(id);
         if (hallData.isPresent()) {
@@ -38,6 +52,7 @@ public class HallController {
     }
 
     @PostMapping("/halls")
+    @PreAuthorize("hasAnyAuthority('provider:write', 'admin:write')")
     public ResponseEntity<Hall> createHall(@RequestBody Hall hall) {
         try {
             Hall _hall = hallRepo.save(hall);
@@ -48,6 +63,7 @@ public class HallController {
     }
 
     @PutMapping("/halls/{id}")
+    @PreAuthorize("hasAnyAuthority('provider:update', 'admin:update')")
     public ResponseEntity<Hall> updateHall(@PathVariable("id") long id, @RequestBody Hall hall) {
         Optional<Hall> hallData = hallRepo.findById(id);
         if (hallData.isPresent()) {
@@ -63,6 +79,7 @@ public class HallController {
     }
 
     @DeleteMapping("/halls/{id}")
+    @PreAuthorize("hasAnyAuthority('provider:delete', 'admin:delete')")
     public ResponseEntity<HttpStatus> deleteHall(@PathVariable("id") long id) {
         try {
             hallRepo.deleteById(id);

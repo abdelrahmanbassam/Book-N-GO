@@ -1,21 +1,32 @@
 package com.example.book_n_go.controller;
 
-import com.example.book_n_go.repository.LocationRepo;
-import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.book_n_go.model.Location;
-import java.util.*;
+import com.example.book_n_go.repository.LocationRepo;
 
 @RestController
+@PreAuthorize("hasAnyRole('Role.ADMIN.name()', 'Role.CLIENT.name()', 'Role.PROVIDER.name()')")
 public class LocationController {
     @Autowired
     private LocationRepo locationRepo;
 
     @GetMapping("/locations")
+    @PreAuthorize("hasAnyAuthority('client:read', 'provider:read', 'admin:read')")
     public ResponseEntity<List<Location>> getAllLocations() {
         try {
             List<Location> locations = new ArrayList<Location>();
@@ -30,6 +41,7 @@ public class LocationController {
     }
 
     @GetMapping("/locations/{id}")
+    @PreAuthorize("hasAnyAuthority('client:read', 'provider:read', 'admin:read')")
     public ResponseEntity<Location> getLocationById(@PathVariable("id") long id) {
         Optional<Location> locationData = locationRepo.findById(id);
         if (locationData.isPresent()) {
@@ -40,6 +52,7 @@ public class LocationController {
     }
 
     @PostMapping("/locations")
+    @PreAuthorize("hasAnyAuthority('provider:write', 'admin:write')")
     public ResponseEntity<Location> createLocation(@RequestBody Location location) {
         try {
             Location _location = locationRepo.save(location);
@@ -50,6 +63,7 @@ public class LocationController {
     }
 
     @PutMapping("/locations/{id}")
+    @PreAuthorize("hasAnyAuthority('provider:update', 'admin:update')")
     public ResponseEntity<Location> updateLocation(@PathVariable("id") long id, @RequestBody Location location) {
         Optional<Location> locationData = locationRepo.findById(id);
         if (locationData.isPresent()) {
@@ -64,6 +78,7 @@ public class LocationController {
     }
 
     @DeleteMapping("/locations/{id}")
+    @PreAuthorize("hasAnyAuthority('provider:delete', 'admin:delete')")
     public ResponseEntity<HttpStatus> deleteLocation(@PathVariable("id") long id) {
         try {
             locationRepo.deleteById(id);
