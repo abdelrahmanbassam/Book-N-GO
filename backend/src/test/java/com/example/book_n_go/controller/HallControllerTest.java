@@ -5,11 +5,9 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-import com.example.book_n_go.config.SecurityConfig;
 import com.example.book_n_go.model.Hall;
-import com.example.book_n_go.model.User;
 import com.example.book_n_go.repository.HallRepo;
-import com.example.book_n_go.repository.UserRepository;
+import com.example.book_n_go.repository.UserRepo;
 import com.example.book_n_go.service.AuthService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -18,12 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,7 +35,7 @@ public class HallControllerTest {
     private HallRepo hallRepo;
 
     @MockBean
-    private UserRepository userRepository;
+    private UserRepo userRepository;
 
     @MockBean
     private AuthService authService;
