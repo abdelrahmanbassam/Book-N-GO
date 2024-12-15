@@ -46,16 +46,14 @@ public class HallControllerTest {
     @MockBean
     private AuthService authService;
 
-
     private Hall hall;
     private String token;
 
     @BeforeEach
     public void setUp() {
-        hall = new Hall(1L, 101, null, 100, "Large Hall", 200.00);
+        hall = new Hall(1L, "ss", 101, null, 100, "Large Hall", 200.00, 3.0);
         SecurityContextHolder.clearContext();
 
-        
     }
 
     @Test
@@ -102,6 +100,33 @@ public class HallControllerTest {
 
         mockMvc.perform(get("/halls/{id}", 1))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testGetHallsByWorkspaceId() throws Exception {
+        when(hallRepo.findByWorkspaceId(101)).thenReturn(List.of(hall));
+
+        mockMvc.perform(get("/workspaces/{workspaceId}/halls", 101))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].capacity").value(100))
+                .andExpect(jsonPath("$[0].description").value("Large Hall"))
+                .andExpect(jsonPath("$[0].pricePerHour").value(200.00));
+    }
+
+    @Test
+    public void testGetHallsByWorkspaceIdEmpty() throws Exception {
+        when(hallRepo.findByWorkspaceId(101)).thenReturn(List.of());
+
+        mockMvc.perform(get("/workspaces/{workspaceId}/halls", 101))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testGetHallsByWorkspaceIdInternalServerError() throws Exception {
+        doThrow(new RuntimeException("Database error")).when(hallRepo).findByWorkspaceId(101);
+
+        mockMvc.perform(get("/workspaces/{workspaceId}/halls", 101))
+                .andExpect(status().isInternalServerError());
     }
 
     @Test

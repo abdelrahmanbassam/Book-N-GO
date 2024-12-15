@@ -1,6 +1,7 @@
 package com.example.book_n_go.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -84,6 +85,32 @@ public class WorkdayControllerTest {
     }
 
     @Test
+    public void testGetWorkdaysByWorkspaceId() throws Exception {
+        when(workdayRepo.findByWorkspaceId(101)).thenReturn(List.of(workday));
+
+        mockMvc.perform(get("/workspaces/{workspaceId}/workdays", 101))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].startTime").value("09:00:00"))
+                .andExpect(jsonPath("$[0].endTime").value("17:00:00"));
+    }
+
+    @Test
+    public void testGetWorkdaysByWorkspaceIdEmpty() throws Exception {
+        when(workdayRepo.findByWorkspaceId(101)).thenReturn(List.of());
+
+        mockMvc.perform(get("/workspaces/{workspaceId}/workdays", 101))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void testGetWorkdaysByWorkspaceIdInternalServerError() throws Exception {
+        doThrow(new RuntimeException("Database error")).when(workdayRepo).findByWorkspaceId(101);
+
+        mockMvc.perform(get("/workspaces/{workspaceId}/workdays", 101))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
     public void testCreateWorkday() throws Exception {
         when(workdayRepo.save(any(Workday.class))).thenReturn(workday);
 
@@ -129,6 +156,98 @@ public class WorkdayControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(workday)))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void testUpdateWorkdayInternalServerError() throws Exception {
+        when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
+        doThrow(new RuntimeException("Database error")).when(workdayRepo).save(any(Workday.class));
+    }
+
+    @Test
+    public void testUpdateWorkdaysByWorkspaceId() throws Exception {
+        when(workdayRepo.findByWorkspaceId(101)).thenReturn(List.of(workday));
+        when(workdayRepo.saveAll(any())).thenReturn(List.of(workday));
+
+        mockMvc.perform(put("/workspaces/{workspaceId}/workdays", 101)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(List.of(workday))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].startTime").value("09:00:00"))
+                .andExpect(jsonPath("$[0].endTime").value("17:00:00"));
+    }
+
+    @Test
+    public void testUpdateWorkdaysByWorkspaceIdUpdateAndDelete() throws Exception {
+        Workday existingWorkday = new Workday(1L, 101, null, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"),
+                Day.MONDAY);
+        Workday updatedWorkday = new Workday(1L, 101, null, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"),
+                Day.MONDAY);
+
+        when(workdayRepo.findByWorkspaceId(101L)).thenReturn(List.of(existingWorkday));
+
+        mockMvc.perform(put("/workspaces/{workspaceId}/workdays", 101L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(List.of(updatedWorkday))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].startTime").value("10:00:00"))
+                .andExpect(jsonPath("$[0].endTime").value("18:00:00"));
+        verify(workdayRepo).findByWorkspaceId(101L);
+        verify(workdayRepo).save(argThat(workday -> (workday.getId() == updatedWorkday.getId()) &&
+                workday.getWorkspaceId() == 101 &&
+                workday.getStartTime().equals(Time.valueOf("10:00:00")) &&
+                workday.getEndTime().equals(Time.valueOf("18:00:00")) &&
+                workday.getWeekDay() == Day.MONDAY));
+        verify(workdayRepo, never()).delete(existingWorkday);
+    }
+
+    @Test
+    public void testUpdateWorkdaysByWorkspaceIdAddNewWorkday() throws Exception {
+        Workday newWorkday = new Workday(2L, 101, null, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"),
+                Day.TUESDAY);
+
+        when(workdayRepo.findByWorkspaceId(101L)).thenReturn(List.of());
+
+        mockMvc.perform(put("/workspaces/{workspaceId}/workdays", 101L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(List.of(newWorkday))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].weekDay").value("TUESDAY"));
+        verify(workdayRepo).findByWorkspaceId(101L);
+        verify(workdayRepo).save(argThat(workday -> (workday.getId() == newWorkday.getId()) &&
+                workday.getWorkspaceId() == 101 &&
+                workday.getStartTime().equals(Time.valueOf("09:00:00")) &&
+                workday.getEndTime().equals(Time.valueOf("17:00:00")) &&
+                workday.getWeekDay() == Day.TUESDAY));
+    }
+
+    @Test
+    public void testUpdateWorkdaysByWorkspaceIdDeleteWorkday() throws Exception {
+        Workday existingWorkday = new Workday(1L, 101, null, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"),
+                Day.MONDAY);
+
+        when(workdayRepo.findByWorkspaceId(101L)).thenReturn(List.of(existingWorkday));
+
+        mockMvc.perform(put("/workspaces/{workspaceId}/workdays", 101L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(List.of())))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[]"));
+
+        verify(workdayRepo).delete(existingWorkday);
+    }
+
+    @Test
+    public void testUpdateWorkdaysByWorkspaceIdInternalServerError() throws Exception {
+        when(workdayRepo.findByWorkspaceId(101L)).thenThrow(new RuntimeException("Database error"));
+
+        mockMvc.perform(put("/workspaces/{workspaceId}/workdays", 101L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(List.of())))
+                .andExpect(status().isInternalServerError());
+
+        verify(workdayRepo, never()).save(any());
+        verify(workdayRepo, never()).delete(any());
     }
 
     @Test

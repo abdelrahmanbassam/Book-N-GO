@@ -8,7 +8,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import java.util.List;
 import java.util.Optional;
 
+import com.example.book_n_go.model.Location;
 import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.LocationRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,10 +31,13 @@ public class WorkspaceControllerTest {
     @MockBean
     private WorkspaceRepo workspaceRepo;
 
+    @MockBean
+    private LocationRepo locationRepo;
+
     private Workspace workspace;
 
     public void setUp() {
-        workspace = new Workspace(1, 101, 201, null);
+        workspace = new Workspace(1, "ss", 101, 201, null, 3.0, "ss");
     }
 
     @Test
@@ -111,6 +116,22 @@ public class WorkspaceControllerTest {
                 .content(new ObjectMapper().writeValueAsString(workspace)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.providerId").value(101));
+    }
+
+    @Test
+    public void testUpdateWorkspaceWithUpdateLocation() throws Exception {
+        setUp();
+        when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+        when(workspaceRepo.save(any(Workspace.class))).thenReturn(workspace);
+        Location existingLocation = new Location(201L, 123, "Street", "City");
+        when(locationRepo.findById(201L)).thenReturn(Optional.of(existingLocation));
+        workspace.setLocation(new Location(201L, 12, "Street", "City"));
+        mockMvc.perform(put("/workspaces/{id}", 1)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(new ObjectMapper().writeValueAsString(workspace)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.providerId").value(101));
+        verify(locationRepo, times(1)).save(any(Location.class));
     }
 
     @Test
