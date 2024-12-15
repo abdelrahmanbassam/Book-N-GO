@@ -22,7 +22,7 @@ import com.example.book_n_go.service.BookingService;
 
 
 @RestController
-@RequestMapping("/Bookings")
+@RequestMapping("/bookings")
 public class BookingController {
     
     @Autowired
@@ -31,36 +31,24 @@ public class BookingController {
     @GetMapping("/all")
     public ResponseEntity<List<Booking>> getAllBookings() {
         List<Booking> bookings = bookingService.getAllBookings();
-        if (bookings.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
     @GetMapping("/user/{id}")
     public ResponseEntity<List<Booking>> getBookingsByUserId(@PathVariable("id") Long userId) {
         List<Booking> bookings = bookingService.getBookingsByUserId(userId);
-        if (bookings.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
     @GetMapping("/hall/{id}")
     public ResponseEntity<List<Booking>> getBookingsByHallId(@PathVariable("id") Long hallId) {
         List<Booking> bookings = bookingService.getBookingsByHallId(hallId);
-        if (bookings.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
     @GetMapping("/workspace/{id}")
     public ResponseEntity<List<Booking>> getBookingsByWorkspaceId(@PathVariable("id") Long workspaceId) {
         List<Booking> bookings = bookingService.getBookingsByWorkspaceId(workspaceId);
-        if (bookings.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
