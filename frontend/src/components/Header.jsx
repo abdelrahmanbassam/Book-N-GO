@@ -37,7 +37,7 @@ export const Header = (props) => {
             >
                 {/*logo*/}
                 <div className={"h-full w-fit md:basis-1/6 "}>
-                    <img src={"assets/logo.png"} alt={"logo"} className={"h-full"} />
+                    <img src={"/assets/logo.png"} alt={"logo"} className={"h-full"} />
                 </div>
                 {/*search bar*/}
                 <div className={"flex md:basis-1/2 basis-5/12 items-center"}>
@@ -56,7 +56,7 @@ export const Header = (props) => {
                     </label>
                     {/*profile picture*/}
                     <img
-                        src={profilePic || "assets/profilePic.png"}
+                        src={profilePic || "/assets/profilePic.png"}
                         alt={"user"}
                         className={"w-10 aspect-square rounded-full md:ml-4 cursor-pointer"}
                         onClick={() => {
