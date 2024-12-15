@@ -21,15 +21,15 @@ public class Booking {
     private Long id;
 
     @ManyToOne
-    // @JoinColumn(name = "hallId", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(nullable = false)
     private Hall hall;
 
     @ManyToOne
-    // @JoinColumn(name = "userId", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(nullable = false)
     private User user;
 
     @ManyToOne
-    // @JoinColumn(name = "workspaceId", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(nullable = false)
     private Workspace workspace;
 
     private LocalDateTime startTime;
