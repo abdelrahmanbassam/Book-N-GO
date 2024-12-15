@@ -15,10 +15,16 @@ public class Workspace {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
     private int providerId;
     @Column(nullable = false)
-    private int locationId;
+    private long locationId;
     @ManyToOne
     @JoinColumn(name = "locationId", referencedColumnName = "id", insertable = false, updatable = false)
     private Location location;
+    @Column(nullable = false)
+    private double rating = 3;
+    @Column(nullable = false)
+    private String description;
 }

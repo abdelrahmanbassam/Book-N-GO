@@ -1,19 +1,27 @@
 package com.example.book_n_go.controller;
 
+import com.example.book_n_go.repository.LocationRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.model.Location;
 import com.example.book_n_go.model.Workspace;
-import org.springframework.web.bind.annotation.RestController;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContext;
+
+import java.security.Security;
 import java.util.*;
 
 import org.springframework.stereotype.Controller;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class WorkspaceController {
     @Autowired
     private WorkspaceRepo workspaceRepo;
+    @Autowired
+    private LocationRepo locationRepo;
 
     @GetMapping("/workspaces")
     public ResponseEntity<List<Workspace>> getWorkspaces() {
@@ -53,9 +61,26 @@ public class WorkspaceController {
     public ResponseEntity<Workspace> updateWorkspace(@PathVariable("id") long id, @RequestBody Workspace workspace) {
         Optional<Workspace> workspaceData = workspaceRepo.findById(id);
         if (workspaceData.isPresent()) {
+            System.out.println(workspace.getLocationId());
             Workspace _workspace = workspaceData.get();
             _workspace.setProviderId(workspace.getProviderId());
             _workspace.setLocationId(workspace.getLocationId());
+            _workspace.setName(workspace.getName());
+            _workspace.setDescription(workspace.getDescription());
+            Optional<Location> locationData = locationRepo.findById(workspace.getLocationId());
+            if (locationData.isPresent()) {
+                Location location = locationData.get();
+                if (location.getCity() != workspace.getLocation().getCity()
+                        || location.getStreet() != workspace.getLocation().getStreet()
+                        || location.getDepartmentNumber() != workspace.getLocation().getDepartmentNumber()) {
+                    location.setCity(workspace.getLocation().getCity());
+                    location.setStreet(workspace.getLocation().getStreet());
+                    location.setDepartmentNumber(workspace.getLocation().getDepartmentNumber());
+                    locationRepo.save(location);
+                }
+            } else {
+                locationRepo.save(workspace.getLocation());
+            }
             return new ResponseEntity<>(workspaceRepo.save(_workspace), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

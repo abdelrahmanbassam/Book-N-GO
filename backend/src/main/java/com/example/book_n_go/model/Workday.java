@@ -19,7 +19,7 @@ public class Workday {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column(nullable = false)
-    private int workspaceId;
+    private long workspaceId;
     @ManyToOne
     @JoinColumn(name = "workspaceId", referencedColumnName = "id", insertable = false, updatable = false)
     private Workspace workspace;

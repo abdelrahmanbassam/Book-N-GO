@@ -15,7 +15,9 @@ public class Hall {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column(nullable = false)
-    private int workspaceId;
+    private String name;
+    @Column(nullable = false)
+    private long workspaceId;
     @ManyToOne
     @JoinColumn(name = "workspaceId", referencedColumnName = "id", insertable = false, updatable = false)
     private Workspace workspace;
@@ -25,4 +27,6 @@ public class Hall {
     private String description;
     @Column(nullable = false)
     private double pricePerHour;
+    @Column(nullable = false)
+    private double rating = 3;
 }

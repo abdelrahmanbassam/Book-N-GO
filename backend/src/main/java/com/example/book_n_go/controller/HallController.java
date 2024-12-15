@@ -9,6 +9,7 @@ import com.example.book_n_go.model.Hall;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class HallController {
     @Autowired
     private HallRepo hallRepo;
@@ -34,6 +35,19 @@ public class HallController {
             return new ResponseEntity<>(hallData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/workspaces/{workspaceId}/halls")
+    public ResponseEntity<List<Hall>> getHallsByWorkspaceId(@PathVariable("workspaceId") long workspaceId) {
+        try {
+            List<Hall> halls = hallRepo.findByWorkspaceId(workspaceId);
+            if (halls.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(halls, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
