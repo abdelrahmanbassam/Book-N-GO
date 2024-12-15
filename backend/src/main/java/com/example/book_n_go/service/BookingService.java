@@ -1,24 +1,19 @@
 package com.example.book_n_go.service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.example.book_n_go.dto.BookingCreateRequest;
 import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.enums.Status;
 import com.example.book_n_go.model.Booking;
 import com.example.book_n_go.model.Workday;
-import com.example.book_n_go.repository.BookingRepo;
-import com.example.book_n_go.repository.HallRepo;
-import com.example.book_n_go.repository.UserRepo;
-import com.example.book_n_go.repository.WorkdayRepo;
-import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 
 @Service
@@ -56,6 +51,15 @@ public class BookingService {
     }
     
     public void deleteBooking(Long bookingId) {
+
+        if (!isBookingExists(bookingId)) {
+            throw new IllegalArgumentException("Booking with id " + bookingId + " does not exist");
+        }
+
+        if (isPastCutOffTime(bookingRepo.findById(bookingId).get().getStartTime())) {
+            throw new IllegalArgumentException("Cannot delete booking within 48 hours of the start time");
+        }
+
         bookingRepo.deleteById(bookingId);
     }
 
@@ -66,6 +70,14 @@ public class BookingService {
         long workspaceId = bookingCreateRequest.getWorkspaceId();
         LocalDateTime startTime = bookingCreateRequest.getStartTime();
         LocalDateTime endTime = bookingCreateRequest.getEndTime();
+
+        if (!isWorkspaceExists(workspaceId)) {
+            throw new IllegalArgumentException("Workspace with id " + workspaceId + " does not exist");
+        }
+
+        if (!isUserExists(userId)) {
+            throw new IllegalArgumentException("User with id " + userId + " does not exist");
+        }
 
         if (!isHallExists(bookingCreateRequest.getHallId())) {
             throw new IllegalArgumentException("Hall with id " + bookingCreateRequest.getHallId() + " does not exist");
@@ -103,7 +115,7 @@ public class BookingService {
         if (!isBookingExists(bookingId)) {
             throw new IllegalArgumentException("Booking with id " + bookingId + " does not exist");
         }
-        
+
         if (isPastCutOffTime(bookingRepo.findById(bookingId).get().getStartTime())) {
             throw new IllegalArgumentException("Cannot update booking duration after 48 hours of the start time");
         }
@@ -179,6 +191,14 @@ public class BookingService {
 
     private boolean isPastCutOffTime(LocalDateTime startTime) {
         return LocalDateTime.now().isAfter(startTime.minusHours(48));
+    }
+
+    private boolean isWorkspaceExists(Long workspaceId) {
+        return workspaceRepo.existsById(workspaceId);
+    }
+
+    private boolean isUserExists(Long userId) {
+        return userRepo.existsById(userId);
     }
 
     private boolean isBookingExists(Long bookingId) {
