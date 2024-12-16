@@ -23,10 +23,16 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/signup", "/auth/login").permitAll()
+                .requestMatchers("/auth/signup", "/auth/login",
+                        "/reservations/client/{id}","/reservations/client/{id}/{status}",
+                        "/reservations/provider/{id}","/reservations/provider/{id}/{status}",
+                        "/reservations/accept","/reservations/reject","/reservations/cancel"
+                ).permitAll()
                 .anyRequest().authenticated()
             );
         return http.build();
     }
 
 }
+
+

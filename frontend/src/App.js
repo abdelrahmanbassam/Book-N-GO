@@ -9,6 +9,7 @@ import { HallDetails } from './HallDetails/HallDetails';
 import { SignUp } from './Sign/SignUpPage/SignUp';
 import { Login } from './Sign/LoginPage/Login';
 import {WorkSpace} from "./WorkSpace/WorkSpace";
+import {Reservations} from "./Reservations/Reservations";
 
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
       <Routes>
         {/* <Route path='/' element={<HomePage/>}/> */}
         { <Route path='/workspace' element={<WorkSpace/>}/> }
+          {<Route path='/reservations' element={<Reservations/>}/>}
         {/* {<Route path='/hall' element={<HallDetails/>}/>} */}
         {<Route path='/login' element={<Login/>}/>}
         {<Route path='/signup' element={<SignUp/>}/>}
