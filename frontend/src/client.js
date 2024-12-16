@@ -7,9 +7,9 @@ const client = axios.create({
 
 client.interceptors.request.use(
   config => {
-  const token = window.localStorage.getItem('token');
-  config.headers.Authorization = token ? `Bearer ${token}` : '';
-  return config;
+    const token = window.localStorage.getItem('token');
+    config.headers.Authorization = token ? `Bearer ${token}` : '';
+    return config;
   },
   error => {
     if (error.response.status === 401) {
