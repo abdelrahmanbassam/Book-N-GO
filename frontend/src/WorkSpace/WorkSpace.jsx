@@ -3,6 +3,8 @@ import { Header } from '../components/Header';
 import { HallCard } from "./components/HallCard";
 import Rating from "@mui/material/Rating";
 import { useLocation } from 'react-router-dom';
+import HallImage from '../assets/Alexandria-Library.png';
+import HallDialog from './components/HallDialog';
 
 
 export const WorkSpace = () => {
@@ -11,48 +13,49 @@ export const WorkSpace = () => {
     const [userRating, setUserRating] = useState(4.2);
     const [userDescription, setUserDescription] = useState('I am a professional web developer with 5 years of experience.');
     const [profilePic, setProfilePic] = useState('');
-    const [hallCards, setHallCards] = useState([ {
+    const [openNewDialog, setOpenNewDialog] = useState(false);
+    const [hallCards, setHallCards] = useState([ 
+      {
         id: 1,
-        image: 'assets/profilePic.png',
+        image: HallImage,
         name: 'Hall 1',
         stars: 4,
         rate: 4.5
-    },
-        {
-            id: 2,
-            image: 'assets/profilePic.png',
-            name: 'Hall 2',
-            stars: 5,
-            rate: 4.8
-        },
+      },
+      {
+        id: 2,
+        image: HallImage,
+        name: 'Hall 2',
+        stars: 5,
+        rate: 4.8
+      },
 
     ]);
 
+    const fetchUserDetails = async () => {
+        try {
+            const response = await fetch('https://backend-api.com/user-details');
+            const data = await response.json();
+            setUserName(data.name);
+            setUserRating(data.rating);
+            setUserDescription(data.description);
+            setProfilePic(data.profilePic);
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+        }
+    };
+
+    const fetchHallCards = async () => {
+        try {
+            const response = await fetch('https://backend-api.com/hall-cards');
+            const data = await response.json();
+            setHallCards(data);
+        } catch (error) {
+            console.error('Error fetching hall cards:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchUserDetails = async () => {
-            try {
-                const response = await fetch('https://backend-api.com/user-details');
-                const data = await response.json();
-                setUserName(data.name);
-                setUserRating(data.rating);
-                setUserDescription(data.description);
-                setProfilePic(data.profilePic);
-            } catch (error) {
-                console.error('Error fetching user details:', error);
-            }
-        };
-
-        const fetchHallCards = async () => {
-            try {
-                const response = await fetch('https://backend-api.com/hall-cards');
-                const data = await response.json();
-                setHallCards(data);
-            } catch (error) {
-                console.error('Error fetching hall cards:', error);
-            }
-        };
-
         fetchUserDetails().then(r => console.log(r));
         fetchHallCards().then(r => console.log(r));
     }, []);
@@ -122,9 +125,7 @@ export const WorkSpace = () => {
                                         className={"p-10 cursor-pointer hover:scale-110"}
                                         src={"assets/plus.png"}
                                         alt={"plus_icon"}
-                                        onClick={() => {
-                                            // navigate to add hall page
-                                        }}
+                                        onClick={() => {setOpenNewDialog(true);}}
                                     />
                                 </div>
                             </div>
@@ -132,6 +133,7 @@ export const WorkSpace = () => {
                     </div>
                 </div>
             </div>
+            <HallDialog open={openNewDialog} setOpen={setOpenNewDialog}/>
         </>
     );
 };

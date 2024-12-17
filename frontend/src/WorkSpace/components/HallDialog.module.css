@@ -1,0 +1,22 @@
+.hall-dialog__content {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  width: 100%;
+  color: white;
+}
+.hall-dialog__content input,
+textarea {
+  color: black;
+  padding: 10px;
+}
+
+.hall-dialog__content__buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.hall-dialog__content__buttons button {
+  width: 100%;
+}
