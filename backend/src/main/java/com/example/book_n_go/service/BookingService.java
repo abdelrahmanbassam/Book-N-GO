@@ -3,10 +3,13 @@ package com.example.book_n_go.service;
 import com.example.book_n_go.dto.BookingCreateRequest;
 import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
+import com.example.book_n_go.enums.Day;
 import com.example.book_n_go.enums.Status;
 import com.example.book_n_go.model.Booking;
 import com.example.book_n_go.model.Workday;
 import com.example.book_n_go.repository.*;
+
+import org.hibernate.boot.registry.classloading.spi.ClassLoaderService.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -172,7 +175,7 @@ public class BookingService {
             return false;
         }
 
-        Workday workday = workdayRepo.findByWorkspaceId(workspaceId);
+        Workday workday = workdayRepo.findByWorkspaceIdAndWeekDay(workspaceId, Day.valueOf(startTime.getDayOfWeek().name()));
 
         if (workday == null) {
             return false;
