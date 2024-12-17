@@ -1,19 +1,33 @@
 package com.example.book_n_go.controller;
 
-import com.example.book_n_go.repository.WorkspaceRepo;
-import com.example.book_n_go.model.Workspace;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.http.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
+import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.LocationRepo;
+import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.service.AuthService;
 
 @RestController
 public class WorkspaceController {
     @Autowired
     private WorkspaceRepo workspaceRepo;
+    @Autowired
+    private LocationRepo locationRepo;
 
     @GetMapping("/workspaces")
     public ResponseEntity<List<Workspace>> getWorkspaces() {
@@ -41,12 +55,12 @@ public class WorkspaceController {
 
     @PostMapping("/workspaces")
     public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace workspace) {
-        try {
-            Workspace _workspace = workspaceRepo.save(workspace);
-            return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        User provider = AuthService.getRequestUser();
+        workspace.setProvider(provider);
+        Location location = locationRepo.save(workspace.getLocation());
+        workspace.setLocation(location);
+        Workspace _workspace = workspaceRepo.save(workspace);
+        return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
     }
 
     @PutMapping("/workspaces/{id}")
@@ -54,8 +68,8 @@ public class WorkspaceController {
         Optional<Workspace> workspaceData = workspaceRepo.findById(id);
         if (workspaceData.isPresent()) {
             Workspace _workspace = workspaceData.get();
-            _workspace.setProviderId(workspace.getProviderId());
-            _workspace.setLocationId(workspace.getLocationId());
+            _workspace.setProvider(workspace.getProvider());
+            _workspace.setLocation(workspace.getLocation());
             return new ResponseEntity<>(workspaceRepo.save(_workspace), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
