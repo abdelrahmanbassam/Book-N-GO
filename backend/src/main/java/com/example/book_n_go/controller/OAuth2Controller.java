@@ -24,28 +24,32 @@ public class OAuth2Controller {
     private final JwtService jwtService;
     private final UserRepo userRepo;
 
+
+
     @GetMapping("/oauth2-success")
-    public AuthResponse oauth2Success(Authentication authentication) {
+    public AuthResponse oauth2Success(
+        Authentication authentication
+    ) {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
-        // String password = oAuth2User.getAttribute("sub");
-        
+
         User user;
         try {
             user = userRepo.findByEmail(email).get();
         } catch (Exception e) {
             user = User.builder()
                     .email(email)
-                    .password("password")
+                    .password("password") // Placeholder password for OAuth2 users
                     .name(name)
                     .phone("")
                     .role(Role.CLIENT)
                     .build();
         }
-
+    
         userRepo.save(user);
         var jwt = jwtService.generateToken(user);
         return AuthResponse.builder().token(jwt).build();
     }
+    
 }

@@ -1,14 +1,13 @@
-import logo from './logo.svg';
-import './App.css';
 import {
+  Route,
   BrowserRouter as Router,
   Routes,
-  Route,
 } from "react-router-dom";
+import './App.css';
 import { HallDetails } from './HallDetails/HallDetails';
-import { SignUp } from './Sign/SignUpPage/SignUp';
 import { Login } from './Sign/LoginPage/Login';
-import {WorkSpace} from "./WorkSpace/WorkSpace";
+import { SignUp } from './Sign/SignUpPage/SignUp';
+import { WorkSpace } from "./WorkSpace/WorkSpace";
 
 
 function App() {
