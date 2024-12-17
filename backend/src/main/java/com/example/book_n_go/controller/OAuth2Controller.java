@@ -27,16 +27,17 @@ public class OAuth2Controller {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
-
+        String password = oAuth2User.getAttribute("sub");
+        
         User user;
         try {
             user = userRepo.findByEmail(email).get();
         } catch (Exception e) {
             user = User.builder()
                     .email(email)
-                    .password(" ")
+                    .password(password)
                     .name(name)
-                    .phone(" ")
+                    .phone("")
                     .role(Role.CLIENT)
                     .build();
         }
