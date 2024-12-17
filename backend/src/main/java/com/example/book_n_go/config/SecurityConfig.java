@@ -23,9 +23,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/signup", "/auth/login","/Bookings/create", 
-                        "/Bookings/all", "/Bookings/user/{id}", "/Bookings/hall/{id}", "/Bookings/workspace/{id}",
-                        "/Bookings/updateStatus", "/Bookings/updateDuration", "/Bookings/delete/{id}"
+                .requestMatchers("/auth/signup", "/auth/login", "/bookings/create",
+                        "/bookings/all", "/bookings/user/{id}", "/bookings/hall/{id}", "/bookings/workspace/{id}",
+                        "/bookings/updateStatus", "/bookings/updateDuration", "/bookings/delete/{id}"
                         ).permitAll()
                 .anyRequest().authenticated()
             );
