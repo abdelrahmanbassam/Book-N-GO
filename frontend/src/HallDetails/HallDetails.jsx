@@ -4,6 +4,7 @@ import styles from "./HallDetails.module.css";
 import Rating from '@mui/material/Rating';
 import StarIcon from '@mui/icons-material/Star';
 import { useParams } from "react-router-dom";
+import { Header } from "../components/Header";
 
 export const HallDetails = () => {
   const {id} = useParams();
@@ -19,51 +20,56 @@ export const HallDetails = () => {
     ]
   });
 
-  useEffect(() => {
-    fetch(`http://localhost:8000/hall/${id}`)
+  const getHallData = async (id) => {
+    return fetch(`http://localhost:8000/hall/${id}`)
       .then(response => response.json())
       .then(data => setData(data))
       .catch(error => console.error(error));
-    }
-  , [id]);
+  }
+
+  useEffect(() => {
+    getHallData(id);
+  }, [id]);
 
 
 
   return (
-    <div className={styles["hall-details__wrapper"]}>
-      <div className={styles["hall-details__container"]}>
-        <div className={styles["hall-details__preview"]}>
-          <img src={image} alt="Hall Preview"/>
-          <h1>{data['name']}</h1>
-          <button>Book Now!</button>
+    <>
+    <Header/>
+    <div className={styles["hall-details__container"]}>
+      <div className={styles["hall-details__preview"]}>
+        <img src={image} alt="Hall Preview"/>
+        <h1>{data['name']}</h1>
+        <button>Book Now!</button>
+      </div>
+      <div className={styles["hall-details__info"]}>
+        <div className={styles["hall-details__info__rating"]}>
+          <h2>Ratings:</h2>
+          <Rating 
+            name="hall-rating" 
+            value={data['rating']} 
+            opacity={1} 
+            icon={<StarIcon fontSize="inherit" />}
+            emptyIcon={<StarIcon fontSize="inherit" sx={{color: "white"}} />}
+          />
         </div>
-        <div className={styles["hall-details__info"]}>
-          <div className={styles["hall-details__info__rating"]}>
-            <h2>Ratings:</h2>
-            <Rating 
-              name="hall-rating" 
-              value={data['rating']} 
-              opacity={1} 
-              icon={<StarIcon fontSize="inherit" />}
-              emptyIcon={<StarIcon fontSize="inherit" sx={{color: "white"}} />}
-            />
-          </div>
-          <div className={styles["hall-details__info__description"]}>
-            <h2>Description:</h2>
-            <p>{data['description']}</p>
-          </div>
-          <div className={styles["hall-details__info__comments"]}>
-            <h2>Comments:</h2>
-            <div className={styles["hall-details__info__comments__container"]}>
-              {data['comments'].map((comment, index) => (
-                <div key={index} className={styles["hall-details__info__comments__comment"]}>
-                  <p>{comment}</p>
-                </div>
-              ))}
-            </div>
+        <div className={styles["hall-details__info__description"]}>
+          <h2>Description:</h2>
+          <p>{data['description']}</p>
+        </div>
+        <div className={styles["hall-details__info__comments"]}>
+          <h2>Comments:</h2>
+          <div className={styles["hall-details__info__comments__container"]}>
+            {data['comments'].map((comment, index) => (
+              <div key={index} className={styles["hall-details__info__comments__comment"]}>
+                <p>{comment}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
     </div>
+    </>
+    
   );
 };

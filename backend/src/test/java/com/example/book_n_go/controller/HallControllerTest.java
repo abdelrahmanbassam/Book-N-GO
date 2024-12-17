@@ -20,7 +20,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.book_n_go.config.TestConfig;
+import com.example.book_n_go.enums.Role;
 import com.example.book_n_go.model.Hall;
+import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
+import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.UserRepo;
 import com.example.book_n_go.service.AuthService;
@@ -45,14 +49,19 @@ public class HallControllerTest {
 
 
     private Hall hall;
+    private Workspace workspace;
+    private User user;
+    private Location location;
+
     private String token;
 
     @BeforeEach
     public void setUp() {
-        hall = new Hall(1L, 101, null, 100, "Large Hall", 200.00);
+        location = new Location(1L, 1, 1, "Alexandria");
+        user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
+        workspace = new Workspace(1L, location, user);
+        hall = new Hall(1L, 100, "Large Hall", 200.00, workspace, null);
         SecurityContextHolder.clearContext();
-
-        
     }
 
     @Test
