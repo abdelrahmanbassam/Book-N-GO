@@ -55,11 +55,11 @@ public class BookingController {
         
     }
 
-    @GetMapping("/workspace/{id}")
-    public ResponseEntity<List<Booking>> getBookingsByWorkspaceId(@PathVariable("id") Long workspaceId) {
-        List<Booking> bookings = bookingService.getBookingsByWorkspaceId(workspaceId);
-        return new ResponseEntity<>(bookings, HttpStatus.OK);
-    }
+//    @GetMapping("/workspace/{id}")
+//    public ResponseEntity<List<Booking>> getBookingsByWorkspaceId(@PathVariable("id") Long workspaceId) {
+//        List<Booking> bookings = bookingService.getBookingsByWorkspaceId(workspaceId);
+//        return new ResponseEntity<>(bookings, HttpStatus.OK);
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<Booking> createBooking (@RequestBody BookingCreateRequest bookingCreateRequest) {

@@ -28,13 +28,8 @@ public class Booking {
     @JoinColumn(nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
-    private Workspace workspace;
-
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private LocalDate date;
 
     @Enumerated(EnumType.STRING)
     private Status status;

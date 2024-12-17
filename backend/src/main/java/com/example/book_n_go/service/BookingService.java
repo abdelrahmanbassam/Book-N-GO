@@ -6,7 +6,6 @@ import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.enums.Day;
 import com.example.book_n_go.enums.Status;
 import com.example.book_n_go.model.Booking;
-import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.model.HallSchedule;
 import com.example.book_n_go.model.Period;
 import com.example.book_n_go.model.Workday;
@@ -24,6 +23,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class BookingService {
+
+    @Autowired
+    private AuthService authService;
     
     @Autowired
     private BookingRepo bookingRepo;
@@ -48,15 +50,11 @@ public class BookingService {
         return bookingRepo.findByHallId(hallId);
     }
     
-    public List<Booking> getBookingsByWorkspaceId(Long workspaceId) {
-        return bookingRepo.findByWorkspaceId(workspaceId);
-    }
-    
     public List<Booking> getAllBookings() {
         return bookingRepo.findAll();
     }
     
-    public HallSchedule getHallSchedules(Long hallId, LocalDateTime startTime) {
+    public HallSchedule getHallSchedules(Long hallId, LocalDateTime endtTime) {
         
         if(isHallExists(hallId)) {
             throw new IllegalArgumentException("Hall with id " + hallId + " does not exist");
@@ -65,7 +63,7 @@ public class BookingService {
         Long workSpaceId = hallRepo.findById(hallId).get().getWorkspace().getId();
         List<Workday> workdays = workdayRepo.findByWorkspaceId(workSpaceId);
 
-        List<Booking> bookings = bookingRepo.findByDateBefore(startTime.plus(Duration.ofDays(7)));
+        List<Booking> bookings = bookingRepo.findByEndTimeBefore(endtTime.plus(Duration.ofDays(7)));
 
         List<Period> bookingPeriods = bookings.stream()
                 .map(booking -> new Period(booking.getStartTime(), booking.getEndTime()))
@@ -93,8 +91,8 @@ public class BookingService {
     public Booking createBooking (BookingCreateRequest bookingCreateRequest) {
 
         long hallId = bookingCreateRequest.getHallId();
-        long userId = bookingCreateRequest.getUserId();
-        long workspaceId = bookingCreateRequest.getWorkspaceId();
+        long userId = authService.getRequestUser().getId();
+        long workspaceId = hallRepo.findById(hallId).get().getWorkspace().getId();
         LocalDateTime startTime = bookingCreateRequest.getStartTime();
         LocalDateTime endTime = bookingCreateRequest.getEndTime();
 
@@ -121,7 +119,6 @@ public class BookingService {
         Booking booking = new Booking();
         booking.setHall(hallRepo.findById(hallId).get());
         booking.setUser(userRepo.findById(userId).get());
-        booking.setWorkspace(workspaceRepo.findById(workspaceId).get());
         booking.setStartTime(startTime);
         booking.setEndTime(endTime);
         double totalCost = booking.getHall().getPricePerHour() * Duration.between(booking.getStartTime(), booking.getEndTime()).toHours();
@@ -135,9 +132,10 @@ public class BookingService {
     public Booking updateBookingDuration (BookingUpdateDurationRequest bookingUpdateRequest) {
         
         Long bookingId = bookingUpdateRequest.getBookingId();
+        Long hallId = bookingRepo.findById(bookingId).get().getHall().getId();
         LocalDateTime startTime = bookingUpdateRequest.getStartTime();
         LocalDateTime endTime = bookingUpdateRequest.getEndTime();
-        Long workspaceId = bookingRepo.findById(bookingId).get().getWorkspace().getId();
+        Long workspaceId = hallRepo.findById(hallId).get().getWorkspace().getId();
 
         if (!isBookingExists(bookingId)) {
             throw new IllegalArgumentException("Booking with id " + bookingId + " does not exist");

@@ -12,10 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookingCreateRequest {
-    private Long workspaceId;
     private Long hallId;
-    private Long userId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private LocalDate date;
 }
