@@ -8,6 +8,10 @@ export const login = async (email, password) => {
 }
 
 // Hall
+export const createHall = async (workspaceId, hall) => {
+  const response = await client.post(`workspace/${workspaceId}/halls`, hall);
+  return response.data;
+}
 
 
 // Workspace
