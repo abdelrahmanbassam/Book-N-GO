@@ -1,29 +1,36 @@
 package com.example.book_n_go.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import com.example.book_n_go.enums.Day;
-import com.example.book_n_go.model.Workday;
-import com.example.book_n_go.repository.WorkdayRepo;
+import java.sql.Time;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import com.example.book_n_go.config.TestConfig;
+import com.example.book_n_go.enums.Day;
+import com.example.book_n_go.enums.Role;
+import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
+import com.example.book_n_go.model.Workday;
+import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.WorkdayRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.sql.Time;
-import java.util.List;
-import java.util.Optional;
-
 @WebMvcTest(WorkdayController.class)
+@Import(TestConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class WorkdayControllerTest {
 
@@ -32,12 +39,18 @@ public class WorkdayControllerTest {
 
     @MockBean
     private WorkdayRepo workdayRepo;
+    private Workspace workspace;
+    private User user;
+    private Location location;
 
     private Workday workday;
 
     @BeforeEach
     public void setUp() {
-        workday = new Workday(1L, 101, null, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY);
+        location = new Location(1L, 1, 1, "Alexandria");
+        user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
+        workspace = new Workspace(1L, location, user);
+        workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.SUNDAY, workspace);
     }
 
     @Test

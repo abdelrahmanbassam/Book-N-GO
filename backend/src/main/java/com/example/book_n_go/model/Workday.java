@@ -29,4 +29,8 @@ public class Workday {
     private Time endTime;
     @Column(nullable = false)
     private Day weekDay;
+    
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Workspace workspace;
 }

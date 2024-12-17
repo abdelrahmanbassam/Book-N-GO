@@ -1,5 +1,7 @@
 package com.example.book_n_go.model;
 
+import com.example.book_n_go.enums.Aminity;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,4 +31,14 @@ public class Hall {
     private double pricePerHour;
     @Column(nullable = false)
     private double rating = 3;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Workspace workspace;
+
+    @ElementCollection(targetClass = Aminity.class)
+    @CollectionTable(name = "hall_aminities", joinColumns = @JoinColumn(name = "hall_id"))
+    @Column(name = "aminity", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Aminity[] aminities;
 }

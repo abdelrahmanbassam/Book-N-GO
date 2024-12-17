@@ -13,7 +13,12 @@ import org.springframework.security.core.context.SecurityContext;
 import java.security.Security;
 import java.util.*;
 
-import org.springframework.stereotype.Controller;
+import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
+import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.LocationRepo;
+import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.service.AuthService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -49,12 +54,12 @@ public class WorkspaceController {
 
     @PostMapping("/workspaces")
     public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace workspace) {
-        try {
-            Workspace _workspace = workspaceRepo.save(workspace);
-            return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        User provider = AuthService.getRequestUser();
+        workspace.setProvider(provider);
+        Location location = locationRepo.save(workspace.getLocation());
+        workspace.setLocation(location);
+        Workspace _workspace = workspaceRepo.save(workspace);
+        return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
     }
 
     @PutMapping("/workspaces/{id}")

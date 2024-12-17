@@ -213,6 +213,25 @@ export const WorkSpace = () => {
                                     src="/assets/plus.png"
                                     alt="plus_icon"
                                 />
+                    {/* cards container */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+                        {hallCards.map((hall) => (
+                            <HallCard key={hall.id} image={hall.image} Name={hall.name} stars={hall.stars}/>
+                        ))}
+                        <div className={"flex flex-col min-h-[300px] border-secondary2"}>
+                            <div
+                                className={"text-white border-secondary2 border-2 border-dashed flex justify-center items-center h-full"}
+                            >
+                                <div
+                                    className={"w-[50%] aspect-square border-2 border-dashed rounded-full flex justify-center items-center hover:border-solid border-secondary2 "}
+                                >
+                                    <img
+                                        className={"p-10 cursor-pointer hover:scale-110"}
+                                        src={"assets/plus.png"}
+                                        alt={"plus_icon"}
+                                        onClick={() => {setOpenNewDialog(true);}}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

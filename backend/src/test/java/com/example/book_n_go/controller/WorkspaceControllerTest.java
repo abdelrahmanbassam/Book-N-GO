@@ -1,9 +1,9 @@
 package com.example.book_n_go.controller;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,16 +12,26 @@ import com.example.book_n_go.model.Location;
 import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.LocationRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
+import com.example.book_n_go.config.TestConfig;
+import com.example.book_n_go.enums.Role;
+import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
+import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.WorkspaceRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(WorkspaceController.class)
+@Import(TestConfig.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class WorkspaceControllerTest {
 
@@ -35,9 +45,13 @@ public class WorkspaceControllerTest {
     private LocationRepo locationRepo;
 
     private Workspace workspace;
+    private User user;
+    private Location location;
 
     public void setUp() {
-        workspace = new Workspace(1, "ss", 101, 201, null, 3.0, "ss");
+        location = new Location(1L, 1, 1, "Alexandria");
+        user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
+        workspace = new Workspace(1L, location, user);
     }
 
     @Test

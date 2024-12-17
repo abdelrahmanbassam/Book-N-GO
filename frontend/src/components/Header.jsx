@@ -1,26 +1,13 @@
 import { useState, useEffect } from 'react';
 import { SearchBar } from './SearchBar';
 import PropTypes from 'prop-types';
+import Logo from '../assets/Logo.png';
+import ProfilePic from '../assets/profilePic.png';
 
 export const Header = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchCategory, setSearchCategory] = useState('all');
     const [isSwitchOn, setIsSwitchOn] = useState(false);
-    const [profilePic, setProfilePic] = useState('');
-
-    useEffect(() => {
-        const fetchProfilePic = async () => {
-            try {
-                const response = await fetch('https://backend-api.com/profile-pic');
-                const data = await response.json();
-                setProfilePic(data.url);
-            } catch (error) {
-                console.error('Error fetching profile picture:', error);
-            }
-        };
-
-        fetchProfilePic().then(r => console.log(r));
-    }, []);
 
     const handleSearch = () => {
         console.log(`Searching for ${searchTerm} in category ${searchCategory}`);
@@ -37,7 +24,7 @@ export const Header = (props) => {
             >
                 {/*logo*/}
                 <div className={"h-full w-fit md:basis-1/6 "}>
-                    <img src={"/assets/logo.png"} alt={"logo"} className={"h-full"} />
+                    <img src={Logo} alt={"logo"} className={"h-full"} />
                 </div>
                 {/*search bar*/}
                 <div className={"flex md:basis-1/2 basis-5/12 items-center"}>
@@ -56,7 +43,7 @@ export const Header = (props) => {
                     </label>
                     {/*profile picture*/}
                     <img
-                        src={profilePic || "/assets/profilePic.png"}
+                        src={ProfilePic}
                         alt={"user"}
                         className={"w-10 aspect-square rounded-full md:ml-4 cursor-pointer"}
                         onClick={() => {
@@ -70,5 +57,9 @@ export const Header = (props) => {
 };
 
 Header.propTypes = {
-    searchBar: PropTypes.bool,
+  searchBar: PropTypes.bool,
+};
+
+Header.defaultProps = {
+  searchBar: true,
 };
