@@ -100,7 +100,7 @@ export const Reservations = () => {
                             key={index}
                             reservation={reservation}
                             reservationId={reservation.id}
-                            isProvider={true}
+                            isProvider={false}
                             onAccept={() =>  setReservationStatus(reservation.id, 'ACCEPTED')}
                             onReject={() => setReservationStatus(reservation.id, 'REJECTED')}
                             onCancel={() => setReservationStatus(reservation.id, 'CANCELED')}

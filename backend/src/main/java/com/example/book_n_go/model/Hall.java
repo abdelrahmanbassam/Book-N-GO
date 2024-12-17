@@ -25,4 +25,6 @@ public class Hall {
     private String description;
     @Column(nullable = false)
     private double pricePerHour;
+    @Column(nullable = false)
+    private String name;
 }
