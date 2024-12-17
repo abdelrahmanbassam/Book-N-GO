@@ -18,6 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.book_n_go.config.TestConfig;
+import com.example.book_n_go.enums.Role;
+import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
 import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,9 +37,13 @@ public class WorkspaceControllerTest {
     private WorkspaceRepo workspaceRepo;
 
     private Workspace workspace;
+    private User user;
+    private Location location;
 
     public void setUp() {
-        workspace = new Workspace(1, 101, 201, null);
+        location = new Location(1L, 1, 1, "Alexandria");
+        user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
+        workspace = new Workspace(1L, location, user);
     }
 
     @Test
