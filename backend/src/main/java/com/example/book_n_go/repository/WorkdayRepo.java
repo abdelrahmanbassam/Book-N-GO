@@ -14,7 +14,6 @@ import java.util.List;
 
 @Repository
 public interface WorkdayRepo extends JpaRepository<Workday, Long> {
-    
+    List<Workday> findByWorkspaceId(Long workspaceId);
     Workday findByWorkspaceIdAndWeekDay(Long workspaceId, Day weekDay);
-
 }

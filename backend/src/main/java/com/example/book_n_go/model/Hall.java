@@ -14,10 +14,10 @@ public class Hall {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    @Column(nullable = false)
-    private int workspaceId;
+//    @Column(nullable = false)
+//    private int workspaceId;
     @ManyToOne
-    @JoinColumn(name = "workspaceId", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(nullable = false)
     private Workspace workspace;
     @Column(nullable = false)
     private int capacity;

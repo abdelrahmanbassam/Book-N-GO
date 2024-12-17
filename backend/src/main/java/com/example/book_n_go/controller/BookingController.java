@@ -1,5 +1,6 @@
 package com.example.book_n_go.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.example.book_n_go.dto.BookingCreateRequest;
 import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.model.Booking;
+import com.example.book_n_go.model.HallSchedule;
 import com.example.book_n_go.service.BookingService;
 
 
@@ -44,6 +46,13 @@ public class BookingController {
     public ResponseEntity<List<Booking>> getBookingsByHallId(@PathVariable("id") Long hallId) {
         List<Booking> bookings = bookingService.getBookingsByHallId(hallId);
         return new ResponseEntity<>(bookings, HttpStatus.OK);
+    }
+
+    @GetMapping("/hall/schedule/{id}")
+    public ResponseEntity<HallSchedule> getHallSchedules(@PathVariable("id") Long hallId, LocalDateTime startTime) {
+        HallSchedule hallSchedule = bookingService.getHallSchedules(hallId, startTime);
+        return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
+        
     }
 
     @GetMapping("/workspace/{id}")

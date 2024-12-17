@@ -52,7 +52,7 @@ public class HallController {
         Optional<Hall> hallData = hallRepo.findById(id);
         if (hallData.isPresent()) {
             Hall _hall = hallData.get();
-            _hall.setWorkspaceId(hall.getWorkspaceId());
+//            _hall.setWorkspaceId(hall.getWorkspaceId());
             _hall.setCapacity(hall.getCapacity());
             _hall.setDescription(hall.getDescription());
             _hall.setPricePerHour(hall.getPricePerHour());

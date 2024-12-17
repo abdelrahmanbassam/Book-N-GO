@@ -25,4 +25,7 @@ public interface BookingRepo extends JpaRepository<Booking, Long> {
     List<Booking> findByHallId(Long hallId);
 
     List<Booking> findByWorkspaceId(Long workspaceId);
+
+    //find bookings until a certain date
+    List<Booking> findByDateBefore(LocalDateTime date);
 }

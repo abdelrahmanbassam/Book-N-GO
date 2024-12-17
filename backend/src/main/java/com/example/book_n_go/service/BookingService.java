@@ -6,10 +6,12 @@ import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.enums.Day;
 import com.example.book_n_go.enums.Status;
 import com.example.book_n_go.model.Booking;
+import com.example.book_n_go.model.Hall;
+import com.example.book_n_go.model.HallSchedule;
+import com.example.book_n_go.model.Period;
 import com.example.book_n_go.model.Workday;
 import com.example.book_n_go.repository.*;
 
-import org.hibernate.boot.registry.classloading.spi.ClassLoaderService.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -52,6 +55,27 @@ public class BookingService {
     public List<Booking> getAllBookings() {
         return bookingRepo.findAll();
     }
+    
+    public HallSchedule getHallSchedules(Long hallId, LocalDateTime startTime) {
+        
+        if(isHallExists(hallId)) {
+            throw new IllegalArgumentException("Hall with id " + hallId + " does not exist");
+        }
+
+        Long workSpaceId = hallRepo.findById(hallId).get().getWorkspace().getId();
+        List<Workday> workdays = workdayRepo.findByWorkspaceId(workSpaceId);
+
+        List<Booking> bookings = bookingRepo.findByDateBefore(startTime.plus(Duration.ofDays(7)));
+
+        List<Period> bookingPeriods = bookings.stream()
+                .map(booking -> new Period(booking.getStartTime(), booking.getEndTime()))
+                .collect(Collectors.toList());
+
+        HallSchedule hallSchedule = new HallSchedule(workdays, bookingPeriods);
+
+        return hallSchedule;
+    }
+
     
     public void deleteBooking(Long bookingId) {
 
