@@ -2,6 +2,7 @@ package com.example.book_n_go.controller;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@CrossOrigin
 public class OAuth2Controller {
 
     private final JwtService jwtService;
@@ -27,7 +29,7 @@ public class OAuth2Controller {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
-        String password = oAuth2User.getAttribute("sub");
+        // String password = oAuth2User.getAttribute("sub");
         
         User user;
         try {
@@ -35,7 +37,7 @@ public class OAuth2Controller {
         } catch (Exception e) {
             user = User.builder()
                     .email(email)
-                    .password(password)
+                    .password("password")
                     .name(name)
                     .phone("")
                     .role(Role.CLIENT)
