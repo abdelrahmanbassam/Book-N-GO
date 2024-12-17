@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,15 +20,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.example.book_n_go.model.Workday;
 import com.example.book_n_go.model.Workspace;
-import com.example.book_n_go.repository.WorkdayRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
 
 @RestController
+@RequestMapping("/workspace/{workspaceId}")
 @CrossOrigin(origins = "http://localhost:3000")
 public class WorkdayController {
     @Autowired
@@ -59,23 +59,11 @@ public class WorkdayController {
         }
     }
 
-    @GetMapping("/workspaces/{workspaceId}/workdays")
-    public ResponseEntity<List<Workday>> getWorkdaysByWorkspaceId(@PathVariable("workspaceId") long workspaceId) {
-        try {
-            List<Workday> workdays = workdayRepo.findByWorkspaceId(workspaceId);
-            if (workdays.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(workdays, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @PostMapping("/workdays")
-    public ResponseEntity<Workday> createWorkday(@RequestBody Workday workday, @PathVariable("workspaceId") long workspaceId) {
+    public ResponseEntity<Workday> createWorkday(@RequestBody Workday workday,
+            @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
-        if(workspace.getProvider().getId() != AuthService.getRequestUser().getId()){
+        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         workday.setWorkspace(workspace);
@@ -98,7 +86,7 @@ public class WorkdayController {
         }
     }
 
-    @PutMapping("/workspaces/{workspaceId}/workdays")
+    @PutMapping("/workdays")
     @Transactional
     public ResponseEntity<List<Workday>> updateWorkdaysByWorkspaceId(@PathVariable("workspaceId") long workspaceId,
             @RequestBody List<Workday> workdays) {
@@ -119,11 +107,11 @@ public class WorkdayController {
             for (Workday workday : workdays) {
                 // if it exists skip it if not add it
                 if (!_workdays.stream().anyMatch(w -> w.getWeekDay() == workday.getWeekDay())) {
-                    workday.setWorkspaceId(workspaceId);
+                    workday.setWorkspace(workspaceRepo.findById(workspaceId).get());
                     workdayRepo.save(workday);
                 }
             }
-            return new ResponseEntity<>(workdays, HttpStatus.OK);
+            return new ResponseEntity<>(workdayRepo.findByWorkspaceId(workspaceId), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

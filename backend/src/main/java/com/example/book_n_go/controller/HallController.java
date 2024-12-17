@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.method.P;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,7 @@ import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
 
 @RestController
+@RequestMapping("/workspace/{workspaceId}")
 @CrossOrigin(origins = "http://localhost:3000")
 public class HallController {
     @Autowired
@@ -55,23 +57,10 @@ public class HallController {
         }
     }
 
-    @GetMapping("/workspaces/{workspaceId}/halls")
-    public ResponseEntity<List<Hall>> getHallsByWorkspaceId(@PathVariable("workspaceId") long workspaceId) {
-        try {
-            List<Hall> halls = hallRepo.findByWorkspaceId(workspaceId);
-            if (halls.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(halls, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @PostMapping("/halls")
     public ResponseEntity<Hall> createHall(@RequestBody Hall hall, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
-        if(workspace.getProvider().getId() != AuthService.getRequestUser().getId()){
+        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         hall.setWorkspace(workspace);

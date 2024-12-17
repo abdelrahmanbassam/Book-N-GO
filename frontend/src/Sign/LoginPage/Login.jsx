@@ -28,12 +28,11 @@ export const Login = () => {
       });
 
       const data = await response.json();
-
       if (!response.ok) {
         setError(data.message || 'Email or password is incorrect');
         return;
       }  
-
+      window.localStorage.setItem('token', data.token);
       console.log('Login successful:', data);
       setError('');
       navigate('/WorkSpace', { state: { email: formData.email } }); // Navigate with state

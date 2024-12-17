@@ -49,9 +49,10 @@ public class WorkspaceControllerTest {
     private Location location;
 
     public void setUp() {
-        location = new Location(1L, 1, 1, "Alexandria");
+        location = new Location(1L, 1, "Main St", "New York");
         user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
-        workspace = new Workspace(1L, location, user);
+        workspace = new Workspace(101, location, user, "Hamada Space", 3.0,
+                "A cozy workspace in NY, with a great view of the city. This workspace offers a comfortable and productive environment with modern amenities, high-speed internet, and a friendly community. Ideal for freelancers, remote workers");
     }
 
     @Test
@@ -61,7 +62,10 @@ public class WorkspaceControllerTest {
 
         mockMvc.perform(get("/workspaces"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].providerId").value(101));
+                .andExpect(jsonPath("$[0].name").value("Hamada Space"))
+                .andExpect(jsonPath("$[0].rating").value(3.0))
+                .andExpect(jsonPath("$[0].location.city").value("New York"))
+                .andExpect(jsonPath("$[0].provider.email").value("ahmad@gmail.com"));
     }
 
     @Test
@@ -86,7 +90,10 @@ public class WorkspaceControllerTest {
 
         mockMvc.perform(get("/workspaces/{id}", 1))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.providerId").value(101));
+                .andExpect(jsonPath("$.name").value("Hamada Space"))
+                .andExpect(jsonPath("$.rating").value(3.0))
+                .andExpect(jsonPath("$.location.city").value("New York"))
+                .andExpect(jsonPath("$.provider.email").value("ahmad@gmail.com"));
     }
 
     @Test
@@ -106,7 +113,10 @@ public class WorkspaceControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(workspace)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.providerId").value(101));
+                .andExpect(jsonPath("$.name").value("Hamada Space"))
+                .andExpect(jsonPath("$.rating").value(3.0))
+                .andExpect(jsonPath("$.location.city").value("New York"))
+                .andExpect(jsonPath("$.provider.email").value("ahmad@gmail.com"));
     }
 
     @Test
@@ -129,7 +139,7 @@ public class WorkspaceControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(workspace)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.providerId").value(101));
+                .andExpect(jsonPath("$.provider.email").value("ahmad@gmail.com"));
     }
 
     @Test
@@ -144,7 +154,7 @@ public class WorkspaceControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new ObjectMapper().writeValueAsString(workspace)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.providerId").value(101));
+                .andExpect(jsonPath("$.provider.email").value("ahmad@gmail.com"));
         verify(locationRepo, times(1)).save(any(Location.class));
     }
 

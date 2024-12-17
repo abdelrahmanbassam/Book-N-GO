@@ -19,11 +19,6 @@ public class Hall {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private long workspaceId;
-    @ManyToOne
-    @JoinColumn(name = "workspaceId", referencedColumnName = "id", insertable = false, updatable = false)
-    private Workspace workspace;
-    @Column(nullable = false)
     private int capacity;
     @Column(nullable = false)
     private String description;

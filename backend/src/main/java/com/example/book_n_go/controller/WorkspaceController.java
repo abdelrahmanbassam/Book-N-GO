@@ -54,25 +54,26 @@ public class WorkspaceController {
 
     @PostMapping("/workspaces")
     public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace workspace) {
-        User provider = AuthService.getRequestUser();
-        workspace.setProvider(provider);
-        Location location = locationRepo.save(workspace.getLocation());
-        workspace.setLocation(location);
-        Workspace _workspace = workspaceRepo.save(workspace);
-        return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
+        try {
+            User provider = AuthService.getRequestUser();
+            workspace.setProvider(provider);
+            Location location = locationRepo.save(workspace.getLocation());
+            workspace.setLocation(location);
+            Workspace _workspace = workspaceRepo.save(workspace);
+            return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/workspaces/{id}")
     public ResponseEntity<Workspace> updateWorkspace(@PathVariable("id") long id, @RequestBody Workspace workspace) {
         Optional<Workspace> workspaceData = workspaceRepo.findById(id);
         if (workspaceData.isPresent()) {
-            System.out.println(workspace.getLocationId());
             Workspace _workspace = workspaceData.get();
-            _workspace.setProviderId(workspace.getProviderId());
-            _workspace.setLocationId(workspace.getLocationId());
             _workspace.setName(workspace.getName());
             _workspace.setDescription(workspace.getDescription());
-            Optional<Location> locationData = locationRepo.findById(workspace.getLocationId());
+            Optional<Location> locationData = locationRepo.findById(workspace.getLocation().getId());
             if (locationData.isPresent()) {
                 Location location = locationData.get();
                 if (location.getCity() != workspace.getLocation().getCity()

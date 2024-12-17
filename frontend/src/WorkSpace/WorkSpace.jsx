@@ -23,8 +23,15 @@ export const WorkSpace = () => {
     // Fetch workspace details and hall cards
     useEffect(() => {
         const fetchWorkspaceDetails = async () => {
-            try {
-                const response = await fetch(`http://localhost:8080/workspaces/${workspaceId}`);
+            try {            
+                console.log(window.localStorage.getItem("token"));
+                const token = window.localStorage.getItem("token");
+                const response = await fetch(`http://localhost:8080/workspaces/${workspaceId}`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
                 const data = await response.json();
                 setWorkspaceName(data.name); 
                 setWorkspaceRating(data.rating); 
@@ -39,7 +46,13 @@ export const WorkSpace = () => {
 
         const fetchHallCards = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/workspaces/${workspaceId}/halls`);
+                const token = window.localStorage.getItem("token");
+                const response = await fetch(`http://localhost:8080/workspace/${workspaceId}/halls`, {
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });                
                 const data = await response.json();
                 setHallCards(data.map(hall => ({
                     id: hall.id,
@@ -55,7 +68,12 @@ export const WorkSpace = () => {
 
         const fetchWorkdays = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/workspaces/${workspaceId}/workdays`);
+                const response = await fetch(`http://localhost:8080/workspace/${workspaceId}/workdays`, {
+                    headers: {
+                        "Authorization": `Bearer ${window.localStorage.getItem("token")}`,
+                        "Content-Type": "application/json"
+                    }
+                });
                 const data = await response.json();
                 // sort workdays by week day
                 const days = ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
@@ -94,7 +112,7 @@ export const WorkSpace = () => {
             // Update workspace data on the server
             const response = await fetch(`http://localhost:8080/workspaces/${workspaceId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Authorization': `Bearer ${window.localStorage.getItem("token")}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedWorkspace)
             });
 
@@ -108,14 +126,17 @@ export const WorkSpace = () => {
                 setOpenEditDialog(false); // Close dialog after successful update
             }
 
-            const response2 = await fetch(`http://localhost:8080/workspaces/${workspaceId}/workdays`, {
+            const response2 = await fetch(`http://localhost:8080/workspace/${workspaceId}/workdays`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Authorization': `Bearer ${window.localStorage.getItem("token")}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedWorkdays)
             });
 
+            console.log(updatedWorkdays);
+
             if (response2.ok) {
                 const data = await response2.json();
+                console.log(data);
                 setWorkdays(data);
             }
 
@@ -213,25 +234,6 @@ export const WorkSpace = () => {
                                     src="/assets/plus.png"
                                     alt="plus_icon"
                                 />
-                    {/* cards container */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
-                        {hallCards.map((hall) => (
-                            <HallCard key={hall.id} image={hall.image} Name={hall.name} stars={hall.stars}/>
-                        ))}
-                        <div className={"flex flex-col min-h-[300px] border-secondary2"}>
-                            <div
-                                className={"text-white border-secondary2 border-2 border-dashed flex justify-center items-center h-full"}
-                            >
-                                <div
-                                    className={"w-[50%] aspect-square border-2 border-dashed rounded-full flex justify-center items-center hover:border-solid border-secondary2 "}
-                                >
-                                    <img
-                                        className={"p-10 cursor-pointer hover:scale-110"}
-                                        src={"assets/plus.png"}
-                                        alt={"plus_icon"}
-                                        onClick={() => {setOpenNewDialog(true);}}
-                                    />
-                                </div>
                             </div>
                         </div>
                     </div>

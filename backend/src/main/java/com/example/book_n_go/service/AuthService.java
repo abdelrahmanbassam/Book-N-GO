@@ -40,16 +40,14 @@ public class AuthService {
         return AuthResponse.builder().token(jwt).build();
     }
 
-
     public AuthResponse login(LoginRequest request) throws Exception {
         try {
             authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    request.getEmail(),
-                    request.getPassword()
-                )
-            );
-            var user = repository.findByEmail(request.getEmail()).orElseThrow(() -> new NoSuchElementException("User not found"));
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getPassword()));
+            var user = repository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new NoSuchElementException("User not found"));
             var jwt = jwtService.generateToken(user);
             return AuthResponse.builder().token(jwt).build();
         } catch (NoSuchElementException e) {
@@ -57,8 +55,8 @@ public class AuthService {
         }
     }
 
-    public static User getRequestUser(){
-      return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-      
+    public static User getRequestUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
     }
 }

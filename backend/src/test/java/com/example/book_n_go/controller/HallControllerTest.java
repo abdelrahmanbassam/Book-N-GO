@@ -56,10 +56,11 @@ public class HallControllerTest {
 
     @BeforeEach
     public void setUp() {
-        location = new Location(1L, 1, 1, "Alexandria");
+        Location location = new Location(0, 123, "Main St", "New York");
         user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
-        workspace = new Workspace(1L, location, user);
-        hall = new Hall(1L, 100, "Large Hall", 200.00, workspace, null);
+        workspace = new Workspace(101, location, user, "Hamada Space", 3.0,
+                "A cozy workspace in NY, with a great view of the city. This workspace offers a comfortable and productive environment with modern amenities, high-speed internet, and a friendly community. Ideal for freelancers, remote workers");
+        hall = new Hall(1L, "Large Hall", 101, "Large hall with a beautiful view", 200.0, 4.0, workspace, null);
         SecurityContextHolder.clearContext();
     }
 
