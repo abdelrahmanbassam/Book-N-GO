@@ -68,10 +68,10 @@ export const HallDetails = () => {
           <h2>Description:</h2>
           <p>{data['description']}</p>
         </div>
-        <div className={styles["hall-details__info__schedule"]}>
+        {/* <div className={styles["hall-details__info__schedule"]}>
           <h2>Schedules:</h2>
           <DayPilotCalendar viewType={'Week'} events={events} />
-        </div>
+        </div> */}
         <div className={styles["hall-details__info__comments"]}>
           <h2>Comments:</h2>
           <div className={styles["hall-details__info__comments__container"]}>
