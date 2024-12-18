@@ -18,6 +18,11 @@ export const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Check if the password is too short
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return;
+    }
     try {
       const body = {
         email: formData.email,
