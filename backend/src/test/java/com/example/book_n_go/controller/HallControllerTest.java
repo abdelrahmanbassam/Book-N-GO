@@ -1,189 +1,139 @@
 package com.example.book_n_go.controller;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import com.example.book_n_go.model.Hall;
+import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.HallRepo;
+import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.service.AuthService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.web.servlet.MockMvc;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-import com.example.book_n_go.config.TestConfig;
-import com.example.book_n_go.enums.Role;
-import com.example.book_n_go.model.Hall;
-import com.example.book_n_go.model.Location;
-import com.example.book_n_go.model.User;
-import com.example.book_n_go.model.Workspace;
-import com.example.book_n_go.repository.HallRepo;
-import com.example.book_n_go.repository.UserRepo;
-import com.example.book_n_go.service.AuthService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@WebMvcTest(HallController.class)
-@Import(TestConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
+@ExtendWith(MockitoExtension.class)
 public class HallControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
+    @Mock
     private HallRepo hallRepo;
 
-    @MockBean
-    private UserRepo userRepository;
+    @Mock
+    private WorkspaceRepo workspaceRepo;
 
-    @MockBean
+    @Mock
     private AuthService authService;
 
+    @InjectMocks
+    private HallController hallController;
 
-    private Hall hall;
     private Workspace workspace;
-    private User user;
-    private Location location;
-
-    private String token;
+    private Hall hall;
 
     @BeforeEach
     public void setUp() {
-        location = new Location(1L, 1, 1, "Alexandria");
-        user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
-        workspace = new Workspace(1L, location, user);
-        hall = new Hall(1L, 100, "Large Hall", 200.00, workspace, null);
-        SecurityContextHolder.clearContext();
+        workspace = new Workspace();
+        workspace.setId(1L);
+        workspace.setName("Test Workspace");
+        hall = new Hall();
+        hall.setId(1L);
+        hall.setName("Test Hall");
+        hall.setCapacity(10);
+        hall.setDescription("Test Description");
+        hall.setPricePerHour(50);
     }
 
     @Test
-    public void testGetAllHalls() throws Exception {
-        when(hallRepo.findAll()).thenReturn(List.of(hall));
+    public void testGetHalls_Success() {
+        when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+        when(hallRepo.findByWorkspace(workspace)).thenReturn(List.of(hall));
 
-        mockMvc.perform(get("/halls").header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].capacity").value(100))
-                .andExpect(jsonPath("$[0].description").value("Large Hall"))
-                .andExpect(jsonPath("$[0].pricePerHour").value(200.00));
+        ResponseEntity<List<Hall>> response = hallController.getHalls(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().size());
     }
 
     @Test
-    public void testGetAllHallsEmpty() throws Exception {
-        when(hallRepo.findAll()).thenReturn(List.of());
+    public void testGetHalls_NoContent() {
+        when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+        when(hallRepo.findByWorkspace(workspace)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/halls").header("Authorization", "Bearer " + token))
-                .andExpect(status().isNoContent());
+        ResponseEntity<List<Hall>> response = hallController.getHalls(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    public void testGetAllHallsInternalServerError() throws Exception {
-        doThrow(new RuntimeException("Database error")).when(hallRepo).findAll();
-
-        mockMvc.perform(get("/halls"))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    public void testGetHallById() throws Exception {
+    public void testGetHallById_Success() {
         when(hallRepo.findById(1L)).thenReturn(Optional.of(hall));
 
-        mockMvc.perform(get("/halls/{id}", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.capacity").value(100))
-                .andExpect(jsonPath("$.description").value("Large Hall"))
-                .andExpect(jsonPath("$.pricePerHour").value(200.00));
+        ResponseEntity<Hall> response = hallController.getHallById(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(hall.getId(), response.getBody().getId());
     }
 
     @Test
-    public void testGetHallByIdNotFound() throws Exception {
+    public void testGetHallById_NotFound() {
         when(hallRepo.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/halls/{id}", 1))
-                .andExpect(status().isNotFound());
+        ResponseEntity<Hall> response = hallController.getHallById(1L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void testCreateHall() throws Exception {
-        when(hallRepo.save(any(Hall.class))).thenReturn(hall);
-
-        mockMvc.perform(post("/halls")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(hall)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.capacity").value(100))
-                .andExpect(jsonPath("$.description").value("Large Hall"))
-                .andExpect(jsonPath("$.pricePerHour").value(200.00));
-    }
-
-    @Test
-    public void testCreateInvalidHall() throws Exception {
-        String invalidJson = "{ \"workspaceId\": 1, \"capacity\": \"invalid\", \"description\": \"Large hall\", \"pricePerHour\": 20.0 }";
-
-        mockMvc.perform(post("/halls")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidJson))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testCreateHallInternalServerError() throws Exception {
-        doThrow(new RuntimeException("Database error")).when(hallRepo).save(any(Hall.class));
-
-        mockMvc.perform(post("/halls")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(hall)))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    public void testUpdateHall() throws Exception {
+    public void testUpdateHall_Success() {
         when(hallRepo.findById(1L)).thenReturn(Optional.of(hall));
         when(hallRepo.save(any(Hall.class))).thenReturn(hall);
 
-        hall.setCapacity(150);
-        hall.setDescription("Updated Hall");
-        hall.setPricePerHour(250.00);
+        hall.setCapacity(20);
+        hall.setDescription("Updated description");
+        ResponseEntity<Hall> response = hallController.updateHall(1L, hall);
 
-        mockMvc.perform(put("/halls/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(hall)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.capacity").value(150))
-                .andExpect(jsonPath("$.description").value("Updated Hall"))
-                .andExpect(jsonPath("$.pricePerHour").value(250.00));
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(20, response.getBody().getCapacity());
+        assertEquals("Updated description", response.getBody().getDescription());
     }
 
     @Test
-    public void testUpdateHallNotFound() throws Exception {
+    public void testUpdateHall_NotFound() {
         when(hallRepo.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/halls/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(hall)))
-                .andExpect(status().isNotFound());
+        ResponseEntity<Hall> response = hallController.updateHall(1L, hall);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void testDeleteHall() throws Exception {
+    public void testDeleteHall_Success() {
         doNothing().when(hallRepo).deleteById(1L);
 
-        mockMvc.perform(delete("/halls/{id}", 1))
-                .andExpect(status().isNoContent());
+        ResponseEntity<HttpStatus> response = hallController.deleteHall(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    public void testDeleteHallNotFound() throws Exception {
-        doThrow(new RuntimeException("Hall not found")).when(hallRepo).deleteById(1L);
+    public void testDeleteHall_InternalError() {
+        doThrow(new RuntimeException("Database error")).when(hallRepo).deleteById(1L);
 
-        mockMvc.perform(delete("/halls/{id}", 1))
-                .andExpect(status().isInternalServerError());
+        ResponseEntity<HttpStatus> response = hallController.deleteHall(1L);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

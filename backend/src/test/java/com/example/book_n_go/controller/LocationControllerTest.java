@@ -36,7 +36,7 @@ public class LocationControllerTest {
     private Location location;
 
     public void setUp() {
-        location = new Location(1, 101, 200, "New York");
+        location = new Location(1, 101, "200", "New York");
     }
 
     @Test

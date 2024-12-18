@@ -4,11 +4,11 @@ import Rating from '@mui/material/Rating';
 export const HallCard = (props) => {
     return (
         <>
-            <div>
+            <div className="rounded-md overflow-hidden shadow-lg">
                 <div
-                    className={""}>
+                    className={"relative"}>
                     <img
-                        src={props.image}
+                        src={props.image || "/assets/WorkSpace.jpg"}
                         alt="hall"
                         className="w-full object-fill aspect-video min-h-[220px]"
                     />
