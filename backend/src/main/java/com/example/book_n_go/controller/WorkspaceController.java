@@ -1,19 +1,17 @@
 package com.example.book_n_go.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import com.example.book_n_go.repository.LocationRepo;
+import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.Workspace;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.http.*;
+import org.springframework.security.core.context.SecurityContext;
+
+import java.security.Security;
+import java.util.*;
 
 import com.example.book_n_go.model.Location;
 import com.example.book_n_go.model.User;
@@ -23,6 +21,7 @@ import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class WorkspaceController {
     @Autowired
     private WorkspaceRepo workspaceRepo;
@@ -55,12 +54,16 @@ public class WorkspaceController {
 
     @PostMapping("/workspaces")
     public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace workspace) {
-        User provider = AuthService.getRequestUser();
-        workspace.setProvider(provider);
-        Location location = locationRepo.save(workspace.getLocation());
-        workspace.setLocation(location);
-        Workspace _workspace = workspaceRepo.save(workspace);
-        return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
+        try {
+            User provider = AuthService.getRequestUser();
+            workspace.setProvider(provider);
+            Location location = locationRepo.save(workspace.getLocation());
+            workspace.setLocation(location);
+            Workspace _workspace = workspaceRepo.save(workspace);
+            return new ResponseEntity<>(_workspace, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/workspaces/{id}")
@@ -68,8 +71,22 @@ public class WorkspaceController {
         Optional<Workspace> workspaceData = workspaceRepo.findById(id);
         if (workspaceData.isPresent()) {
             Workspace _workspace = workspaceData.get();
-            _workspace.setProvider(workspace.getProvider());
-            _workspace.setLocation(workspace.getLocation());
+            _workspace.setName(workspace.getName());
+            _workspace.setDescription(workspace.getDescription());
+            Optional<Location> locationData = locationRepo.findById(workspace.getLocation().getId());
+            if (locationData.isPresent()) {
+                Location location = locationData.get();
+                if (location.getCity() != workspace.getLocation().getCity()
+                        || location.getStreet() != workspace.getLocation().getStreet()
+                        || location.getDepartmentNumber() != workspace.getLocation().getDepartmentNumber()) {
+                    location.setCity(workspace.getLocation().getCity());
+                    location.setStreet(workspace.getLocation().getStreet());
+                    location.setDepartmentNumber(workspace.getLocation().getDepartmentNumber());
+                    locationRepo.save(location);
+                }
+            } else {
+                locationRepo.save(workspace.getLocation());
+            }
             return new ResponseEntity<>(workspaceRepo.save(_workspace), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

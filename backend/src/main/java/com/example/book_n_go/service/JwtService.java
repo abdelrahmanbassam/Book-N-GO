@@ -19,10 +19,10 @@ import io.jsonwebtoken.security.Keys;
 public class JwtService {
 
     @Value("${Jwt.secret}")
-    private String secret;
+    public String secret;
 
     @Value("${Jwt.expiration}")
-    private long expirationTime;
+    public long expirationTime;
 
     public String extractEmail(String jwt) {
         return extractClaim(jwt, Claims::getSubject);
@@ -43,7 +43,7 @@ public class JwtService {
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .signWith(getSigningKey(),SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -52,15 +52,15 @@ public class JwtService {
         return (email.equals(userDetails.getUsername()) && !isTokenExpired(jwt));
     }
 
-    private boolean isTokenExpired(String jwt) {
+    public boolean isTokenExpired(String jwt) {
         return extractExpiration(jwt).before(new Date());
     }
 
-    private Date extractExpiration(String jwt) {
+    public Date extractExpiration(String jwt) {
         return extractClaim(jwt, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String jwt) {
+    public Claims extractAllClaims(String jwt) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -70,7 +70,7 @@ public class JwtService {
 
     }
 
-    private Key getSigningKey() {
+    public Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }

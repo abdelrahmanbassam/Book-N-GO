@@ -7,8 +7,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.security.access.method.P;
 import org.springframework.web.bind.annotation.CrossOrigin;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +39,8 @@ public class HallController {
     public ResponseEntity<List<Hall>> getHalls(@PathVariable("workspaceId") long workspaceId) {
         try {
             List<Hall> halls = new ArrayList<Hall>();
-            hallRepo.findByWorkspaceId(workspaceId).forEach(halls::add);
+            Workspace workspace = workspaceRepo.findById(workspaceId).get();
+            hallRepo.findByWorkspace(workspace).forEach(halls::add);
             if (halls.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -60,7 +63,7 @@ public class HallController {
     @PostMapping("/halls")
     public ResponseEntity<Hall> createHall(@RequestBody Hall hall, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
-        if(workspace.getProvider().getId() != AuthService.getRequestUser().getId()){
+        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         hall.setWorkspace(workspace);

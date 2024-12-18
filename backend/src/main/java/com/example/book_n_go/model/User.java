@@ -21,12 +21,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder //builder design pattern
+@Builder // builder design pattern
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements UserDetails{
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,163 +1,224 @@
 package com.example.book_n_go.controller;
 
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.sql.Time;
-import java.util.List;
-import java.util.Optional;
+import com.example.book_n_go.model.*;
+import com.example.book_n_go.enums.Day;
+import com.example.book_n_go.repository.WorkdayRepo;
+import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.service.AuthService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.example.book_n_go.config.TestConfig;
-import com.example.book_n_go.enums.Day;
-import com.example.book_n_go.enums.Role;
-import com.example.book_n_go.model.Location;
-import com.example.book_n_go.model.User;
-import com.example.book_n_go.model.Workday;
-import com.example.book_n_go.model.Workspace;
-import com.example.book_n_go.repository.WorkdayRepo;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.sql.Time;
+import java.util.*;
 
-@WebMvcTest(WorkdayController.class)
-@Import(TestConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-public class WorkdayControllerTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.*;
 
-    @Autowired
-    private MockMvc mockMvc;
+class WorkdayControllerTest {
 
-    @MockBean
-    private WorkdayRepo workdayRepo;
-    private Workspace workspace;
-    private User user;
-    private Location location;
+	@InjectMocks
+	private WorkdayController workdayController;
 
-    private Workday workday;
+	@Mock
+	private WorkdayRepo workdayRepo;
 
-    @BeforeEach
-    public void setUp() {
-        location = new Location(1L, 1, 1, "Alexandria");
-        user = new User(1L, "ahmad@gmail.com", "password", "Ahmad", "0123456789", Role.ADMIN);
-        workspace = new Workspace(1L, location, user);
-        workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.SUNDAY, workspace);
-    }
+	@Mock
+	private WorkspaceRepo workspaceRepo;
 
-    @Test
-    public void testGetAllWorkdays() throws Exception {
-        when(workdayRepo.findAll()).thenReturn(List.of(workday));
+	@Mock
+	private AuthService authService;
 
-        mockMvc.perform(get("/workdays"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].startTime").value("09:00:00"))
-                .andExpect(jsonPath("$[0].endTime").value("17:00:00"));
-    }
+	private Workspace workspace;
+	private User provider;
 
-    @Test
-    public void testGetAllWorkdaysEmpty() throws Exception {
-        when(workdayRepo.findAll()).thenReturn(List.of());
+	@BeforeEach
+	void setUp() {
+		MockitoAnnotations.openMocks(this);
 
-        mockMvc.perform(get("/workdays"))
-                .andExpect(status().isNoContent());
-    }
+		// Mock workspace and provider
+		provider = new User();
+		provider.setId(1L);
 
-    @Test
-    public void testGetAllWorkdaysInternalServerError() throws Exception {
-        doThrow(new RuntimeException("Database error")).when(workdayRepo).findAll();
+		workspace = new Workspace();
+		workspace.setId(1L);
+		workspace.setProvider(provider);
+		workspace.setName("Workspace 1");
+		// Set up SecurityContext with a mock Authentication
+		Authentication authentication = mock(Authentication.class);
+		when(authentication.getPrincipal()).thenReturn(provider);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+	}
 
-        mockMvc.perform(get("/workdays"))
-                .andExpect(status().isInternalServerError());
-    }
+	@Test
+	void testGetWorkdays_ReturnsListOfWorkdays() {
+		Workday workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace);
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+		when(workdayRepo.findByWorkspace(workspace)).thenReturn(Collections.singletonList(workday));
 
-    @Test
-    public void testGetWorkdayById() throws Exception {
-        when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
+		ResponseEntity<List<Workday>> response = workdayController.getWorkdays(1L);
 
-        mockMvc.perform(get("/workdays/{id}", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.startTime").value("09:00:00"))
-                .andExpect(jsonPath("$.endTime").value("17:00:00"));
-    }
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(1, response.getBody().size());
+		assertEquals(workday, response.getBody().get(0));
+	}
 
-    @Test
-    public void testGetWorkdayByIdNotFound() throws Exception {
-        when(workdayRepo.findById(1L)).thenReturn(Optional.empty());
+	@Test
+	void testGetWorkdays_ReturnsNoContent() {
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+		when(workdayRepo.findByWorkspace(workspace)).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/workdays/{id}", 1))
-                .andExpect(status().isNotFound());
-    }
+		ResponseEntity<List<Workday>> response = workdayController.getWorkdays(1L);
 
-    @Test
-    public void testCreateWorkday() throws Exception {
-        when(workdayRepo.save(any(Workday.class))).thenReturn(workday);
+		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+	}
 
-        mockMvc.perform(post("/workdays")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(workday)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.startTime").value("09:00:00"))
-                .andExpect(jsonPath("$.endTime").value("17:00:00"));
-    }
+	@Test
+	void testGetWorkdays_InternalServerError() {
+		when(workspaceRepo.findById(1L)).thenThrow(RuntimeException.class);
 
-    @Test
-    public void testCreateWorkdayInternalServerError() throws Exception {
-        doThrow(new RuntimeException("Database error")).when(workdayRepo).save(any(Workday.class));
+		ResponseEntity<List<Workday>> response = workdayController.getWorkdays(1L);
 
-        mockMvc.perform(post("/workdays")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(workday)))
-                .andExpect(status().isInternalServerError());
-    }
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+	}
 
-    @Test
-    public void testUpdateWorkday() throws Exception {
-        when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
-        when(workdayRepo.save(any(Workday.class))).thenReturn(workday);
+	@Test
+	void testGetWorkdayById_ReturnsWorkday() {
+		Workday workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace);
+		when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
 
-        workday.setStartTime(Time.valueOf("10:00:00"));
-        workday.setEndTime(Time.valueOf("18:00:00"));
+		ResponseEntity<Workday> response = workdayController.getWorkdayById(1L);
 
-        mockMvc.perform(put("/workdays/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(workday)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.startTime").value("10:00:00"))
-                .andExpect(jsonPath("$.endTime").value("18:00:00"));
-    }
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(workday, response.getBody());
+	}
 
-    @Test
-    public void testUpdateWorkdayNotFound() throws Exception {
-        when(workdayRepo.findById(1L)).thenReturn(Optional.empty());
+	@Test
+	void testGetWorkdayById_NotFound() {
+		when(workdayRepo.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/workdays/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(workday)))
-                .andExpect(status().isNotFound());
-    }
+		ResponseEntity<Workday> response = workdayController.getWorkdayById(1L);
 
-    @Test
-    public void testDeleteWorkday() throws Exception {
-        doNothing().when(workdayRepo).deleteById(1L);
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+	}
 
-        mockMvc.perform(delete("/workdays/{id}", 1))
-                .andExpect(status().isNoContent());
-    }
+	@Test
+	void testCreateWorkday_ReturnsCreatedWorkday() {
+		Workday workday = new Workday();
+		workday.setStartTime(Time.valueOf("09:00:00"));
+		workday.setEndTime(Time.valueOf("17:00:00"));
+		workday.setWeekDay(Day.TUESDAY);
 
-    @Test
-    public void testDeleteWorkdayNotFound() throws Exception {
-        doThrow(new RuntimeException("Workday not found")).when(workdayRepo).deleteById(1L);
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+		when(authService.getRequestUser()).thenReturn(provider);
+		when(workdayRepo.save(any(Workday.class))).thenAnswer(i -> i.getArgument(0));
 
-        mockMvc.perform(delete("/workdays/{id}", 1))
-                .andExpect(status().isInternalServerError());
-    }
+		ResponseEntity<Workday> response = workdayController.createWorkday(workday, 1L);
+
+		assertEquals(HttpStatus.CREATED, response.getStatusCode());
+		assertEquals(workspace, response.getBody().getWorkspace());
+	}
+
+	@Test
+	void testCreateWorkday_Unauthorized() {
+		User otherUser = new User();
+		otherUser.setId(2L);
+
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+		when(authService.getRequestUser()).thenReturn(otherUser);
+
+		ResponseEntity<Workday> response = workdayController.createWorkday(new Workday(), 1L);
+
+		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+	}
+
+	@Test
+	void testUpdateWorkday_ReturnsUpdatedWorkday() {
+		Workday workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace);
+		when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
+		when(workdayRepo.save(any(Workday.class))).thenAnswer(i -> i.getArgument(0));
+
+		workday.setStartTime(Time.valueOf("10:00:00"));
+		ResponseEntity<Workday> response = workdayController.updateWorkday(1L, workday);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(Time.valueOf("10:00:00"), response.getBody().getStartTime());
+	}
+
+	@Test
+	void testUpdateWorkday_NotFound() {
+		when(workdayRepo.findById(1L)).thenReturn(Optional.empty());
+
+		ResponseEntity<Workday> response = workdayController.updateWorkday(1L, new Workday());
+
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+	}
+
+	@Test
+	void testDeleteWorkday_ReturnsNoContent() {
+		doNothing().when(workdayRepo).deleteById(1L);
+
+		ResponseEntity<HttpStatus> response = workdayController.deleteWorkday(1L);
+
+		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+		verify(workdayRepo, times(1)).deleteById(1L);
+	}
+
+	@Test
+	void testDeleteWorkday_InternalServerError() {
+		doThrow(RuntimeException.class).when(workdayRepo).deleteById(1L);
+
+		ResponseEntity<HttpStatus> response = workdayController.deleteWorkday(1L);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+	}
+
+	@Test
+	void testUpdateWorkdays_UpdatesExistingWorkdays() {
+		List<Workday> existingWorkdays = Arrays.asList(
+				new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace),
+				new Workday(2L, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"), Day.TUESDAY, workspace));
+
+		List<Workday> updatedWorkdays = Arrays.asList(
+				new Workday(1L, Time.valueOf("08:00:00"), Time.valueOf("16:00:00"), Day.MONDAY, workspace),
+				new Workday(2L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.TUESDAY, workspace));
+
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+		when(workdayRepo.findByWorkspace(workspace)).thenReturn(existingWorkdays);
+		when(workdayRepo.save(any(Workday.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+		ResponseEntity<List<Workday>> response = workdayController.updateWorkdaysByWorkspaceId(1L, updatedWorkdays);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(2, response.getBody().size());
+		verify(workdayRepo, times(2)).save(any(Workday.class));
+	}
+
+	@Test
+	void testUpdateWorkdays_InvalidWorkspaceId_ReturnsInternalServerError() {
+		List<Workday> updatedWorkdays = Arrays.asList(
+				new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, null),
+				new Workday(2L, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"), Day.TUESDAY, null));
+
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.empty());
+
+		ResponseEntity<List<Workday>> response = workdayController.updateWorkdaysByWorkspaceId(1L, updatedWorkdays);
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+		verify(workdayRepo, never()).save(any(Workday.class));
+		verify(workdayRepo, never()).delete(any(Workday.class));
+	}
+
 }
