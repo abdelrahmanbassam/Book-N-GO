@@ -1,5 +1,14 @@
 package com.example.book_n_go.service;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.example.book_n_go.dto.BookingCreateRequest;
 import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
@@ -9,16 +18,12 @@ import com.example.book_n_go.model.Booking;
 import com.example.book_n_go.model.HallSchedule;
 import com.example.book_n_go.model.Period;
 import com.example.book_n_go.model.Workday;
-import com.example.book_n_go.repository.*;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.BookingRepo;
+import com.example.book_n_go.repository.HallRepo;
+import com.example.book_n_go.repository.UserRepo;
+import com.example.book_n_go.repository.WorkdayRepo;
+import com.example.book_n_go.repository.WorkspaceRepo;
 
 
 @Service
@@ -56,12 +61,12 @@ public class BookingService {
     
     public HallSchedule getHallSchedules(Long hallId, LocalDateTime endtTime) {
         
-        if(isHallExists(hallId)) {
+        if(!isHallExists(hallId)) {
             throw new IllegalArgumentException("Hall with id " + hallId + " does not exist");
         }
 
-        Long workSpaceId = hallRepo.findById(hallId).get().getWorkspace().getId();
-        List<Workday> workdays = workdayRepo.findByWorkspaceId(workSpaceId);
+        Workspace workSpace = hallRepo.findById(hallId).get().getWorkspace();
+        List<Workday> workdays = workdayRepo.findByWorkspace(workSpace);
 
         List<Booking> bookings = bookingRepo.findByEndTimeBefore(endtTime.plus(Duration.ofDays(7)));
 
@@ -92,6 +97,11 @@ public class BookingService {
 
         long hallId = bookingCreateRequest.getHallId();
         long userId = authService.getRequestUser().getId();
+
+        if (!isHallExists(bookingCreateRequest.getHallId())) {
+            throw new IllegalArgumentException("Hall with id " + bookingCreateRequest.getHallId() + " does not exist");
+        }
+
         long workspaceId = hallRepo.findById(hallId).get().getWorkspace().getId();
         LocalDateTime startTime = bookingCreateRequest.getStartTime();
         LocalDateTime endTime = bookingCreateRequest.getEndTime();
@@ -104,9 +114,6 @@ public class BookingService {
             throw new IllegalArgumentException("User with id " + userId + " does not exist");
         }
 
-        if (!isHallExists(bookingCreateRequest.getHallId())) {
-            throw new IllegalArgumentException("Hall with id " + bookingCreateRequest.getHallId() + " does not exist");
-        }
 
         if (!isValidDuration(workspaceId, startTime, endTime)) {
             throw new IllegalArgumentException("Invalid duration");

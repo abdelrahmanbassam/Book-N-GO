@@ -38,8 +38,9 @@ public class ReservationService {
         reservationsRequest.add(new ReservationRequest(4L, "Hall5", "Client1", Status.PENDING, LocalDateTime.of(2021, 12, 12, 12, 0, 0), LocalDateTime.of(2021, 12, 12, 14, 0, 0), "Description1"));
         reservationsRequest.add(new ReservationRequest(2L, "Hall2", "Client2", Status.CONFIRMED, LocalDateTime.of(2021, 12, 12, 12, 0, 0), LocalDateTime.of(2021, 12, 12, 14, 0, 0), "Description2"));
         reservationsRequest.add(new ReservationRequest(3L, "Hall3", "Client3", Status.REJECTED, LocalDateTime.of(2021, 12, 12, 12, 0, 0), LocalDateTime.of(2021, 12, 12, 14, 0, 0), "Description3"));
-
-        User currentUser = AuthService.getRequestUser();
+        User currentUser = new User(null, "provider1@example.com", "Provider One", "1234567890", "password1",
+                Role.CLIENT);
+        System.out.println(currentUser);
         List<Booking> bookings;
         if (currentUser.getRole() == Role.CLIENT) {
             bookings = bookingRepo.findByUserId(currentUser.getId());

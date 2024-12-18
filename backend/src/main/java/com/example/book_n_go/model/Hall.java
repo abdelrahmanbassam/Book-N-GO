@@ -17,11 +17,15 @@ public class Hall {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
     private int capacity;
     @Column(nullable = false)
     private String description;
     @Column(nullable = false)
     private double pricePerHour;
+    @Column(nullable = false)
+    private double rating;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -33,6 +37,4 @@ public class Hall {
     @Enumerated(EnumType.STRING)
     private Aminity[] aminities;
 
-    @Column(nullable = false)
-    private String name;
 }

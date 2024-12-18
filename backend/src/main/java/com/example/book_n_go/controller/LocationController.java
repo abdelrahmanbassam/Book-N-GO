@@ -63,7 +63,7 @@ public class LocationController {
         if (locationData.isPresent()) {
             Location _location = locationData.get();
             _location.setDepartmentNumber(location.getDepartmentNumber());
-            _location.setStreetNumber(location.getStreetNumber());
+            _location.setStreet(location.getStreet());
             _location.setCity(location.getCity());
             return new ResponseEntity<>(locationRepo.save(_location), HttpStatus.OK);
         } else {

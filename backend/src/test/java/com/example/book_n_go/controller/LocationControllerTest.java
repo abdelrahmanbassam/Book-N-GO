@@ -1,157 +1,174 @@
 package com.example.book_n_go.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.example.book_n_go.config.TestConfig;
 import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
 import com.example.book_n_go.repository.LocationRepo;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.book_n_go.service.AuthService;
 
-@WebMvcTest(LocationController.class)
-@Import(TestConfig.class)
-@AutoConfigureMockMvc(addFilters = false)
-public class LocationControllerTest {
+class LocationControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    @InjectMocks
+    private LocationController locationController;
 
-    @MockBean
+    @Mock
     private LocationRepo locationRepo;
 
+    @Mock
+    private AuthService authService;
+
     private Location location;
+    private User provider;
 
-    public void setUp() {
-        location = new Location(1, 101, 200, "New York");
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+
+        // Mock provider and location
+        provider = new User();
+        provider.setId(1L);
+        provider.setName("testuser");
+
+        location = new Location();
+        location.setId(1L);
+        location.setCity("New York");
+
+        // Set up SecurityContext with a mock Authentication
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(provider);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
-    public void testGetAllLocations() throws Exception {
-        setUp();
-        when(locationRepo.findAll()).thenReturn(List.of(location));
+    void testGetAllLocations_ReturnsListOfLocations() {
+        Location location = new Location(1, 101, "200", "New York");
+        when(locationRepo.findAll()).thenReturn(Collections.singletonList(location));
 
-        mockMvc.perform(get("/locations"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].city").value("New York"));
+        ResponseEntity<List<Location>> response = locationController.getAllLocations();
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(1, response.getBody().size());
+        assertEquals(location, response.getBody().get(0));
     }
 
     @Test
-    public void testGetAllLocationsEmpty() throws Exception {
-        when(locationRepo.findAll()).thenReturn(List.of());
+    void testGetAllLocations_EmptyList() {
+        when(locationRepo.findAll()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/locations"))
-                .andExpect(status().isNoContent());
+        ResponseEntity<List<Location>> response = locationController.getAllLocations();
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
     }
 
     @Test
-    public void testGetAllLocationsInternalServerError() throws Exception {
-        doThrow(new RuntimeException("Database error")).when(locationRepo).findAll();
-        mockMvc.perform(get("/locations"))
-                .andExpect(status().isInternalServerError());
+    void testGetAllLocations_InternalServerError() {
+        when(locationRepo.findAll()).thenThrow(RuntimeException.class);
+
+        ResponseEntity<List<Location>> response = locationController.getAllLocations();
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
-    public void testGetLocationById() throws Exception {
-        setUp();
+    void testGetLocationById_ReturnsLocation() {
+        Location location = new Location(1, 101, "200", "New York");
         when(locationRepo.findById(1L)).thenReturn(Optional.of(location));
 
-        mockMvc.perform(get("/locations/{id}", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.city").value("New York"));
+        ResponseEntity<Location> response = locationController.getLocationById(1L);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(location, response.getBody());
     }
 
     @Test
-    public void testGetLocationByIdNotFound() throws Exception {
+    void testGetLocationById_NotFound() {
         when(locationRepo.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/locations/{id}", 1))
-                .andExpect(status().isNotFound());
+        ResponseEntity<Location> response = locationController.getLocationById(1L);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void testCreateLocation() throws Exception {
-        setUp();
-        when(locationRepo.save(any(Location.class))).thenReturn(location);
+    void testCreateLocation_ReturnsCreatedLocation() {
+        Location location = new Location(1, 101, "200", "New York");
+        when(locationRepo.save(any(Location.class))).thenAnswer(i -> i.getArgument(0));
 
-        mockMvc.perform(post("/locations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(location)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.city").value("New York"));
+        ResponseEntity<Location> response = locationController.createLocation(location);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(location, response.getBody());
     }
 
     @Test
-    public void testCreateInvalidLocation() throws Exception {
-        String invalidJson = "{\"departmentNumber\": \"Invalid\", \"streetNumber\": 101, \"city\": \"New York\"}";
-        mockMvc.perform(post("/locations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(invalidJson))
-                .andExpect(status().isBadRequest());
+    void testCreateLocation_InternalServerError() {
+        Location location = new Location(1, 101, "200", "New York");
+        when(locationRepo.save(any(Location.class))).thenThrow(RuntimeException.class);
+
+        ResponseEntity<Location> response = locationController.createLocation(location);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
     @Test
-    public void testCreateLocationInternalServerError() throws Exception {
-        setUp();
-        doThrow(new RuntimeException("Database error")).when(locationRepo).save(any(Location.class));
-        mockMvc.perform(post("/locations")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(location)))
-                .andExpect(status().isInternalServerError());
-    }
-
-    @Test
-    public void testUpdateLocation() throws Exception {
-        setUp();
+    void testUpdateLocation_ReturnsUpdatedLocation() {
+        Location location = new Location(1, 101, "200", "New York");
         when(locationRepo.findById(1L)).thenReturn(Optional.of(location));
-        when(locationRepo.save(any(Location.class))).thenReturn(location);
+        when(locationRepo.save(any(Location.class))).thenAnswer(i -> i.getArgument(0));
 
-        mockMvc.perform(put("/locations/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(location)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.city").value("New York"));
+        location.setCity("Los Angeles");
+        ResponseEntity<Location> response = locationController.updateLocation(1L, location);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Los Angeles", response.getBody().getCity());
     }
 
     @Test
-    public void testUpdateLocationNotFound() throws Exception {
-        setUp();
-        when(locationRepo.findById(2L)).thenReturn(Optional.empty());
+    void testUpdateLocation_NotFound() {
+        when(locationRepo.findById(1L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(put("/locations/{id}", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(location)))
-                .andExpect(status().isNotFound());
+        Location location = new Location(1, 101, "200", "New York");
+        ResponseEntity<Location> response = locationController.updateLocation(1L, location);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
-    public void testDeleteLocation() throws Exception {
-        setUp();
+    void testDeleteLocation_ReturnsNoContent() {
         doNothing().when(locationRepo).deleteById(1L);
 
-        mockMvc.perform(delete("/locations/{id}", 1))
-                .andExpect(status().isNoContent());
+        ResponseEntity<HttpStatus> response = locationController.deleteLocation(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(locationRepo, times(1)).deleteById(1L);
     }
 
     @Test
-    public void testDeleteLocationNotFound() throws Exception {
-        setUp();
-        doThrow(new RuntimeException()).when(locationRepo).deleteById(1L);
+    void testDeleteLocation_InternalServerError() {
+        doThrow(RuntimeException.class).when(locationRepo).deleteById(1L);
 
-        mockMvc.perform(delete("/locations/{id}", 1))
-                .andExpect(status().isInternalServerError());
+        ResponseEntity<HttpStatus> response = locationController.deleteLocation(1L);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

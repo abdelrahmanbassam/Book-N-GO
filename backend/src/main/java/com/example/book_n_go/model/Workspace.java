@@ -2,7 +2,6 @@ package com.example.book_n_go.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "Workspaces")
@@ -21,4 +20,10 @@ public class Workspace {
     @ManyToOne
     @JoinColumn(nullable = false)
     private User provider;
+    @Column(nullable = false)
+    private String name;
+    @Column(nullable = false)
+    private double rating;
+    @Column(nullable = false)
+    private String description;
 }

@@ -48,11 +48,10 @@ public class BookingController {
         return new ResponseEntity<>(bookings, HttpStatus.OK);
     }
 
-    @GetMapping("/hall/schedule/{id}")
+    @GetMapping("/hall/{id}/schedule")
     public ResponseEntity<HallSchedule> getHallSchedules(@PathVariable("id") Long hallId, LocalDateTime startTime) {
         HallSchedule hallSchedule = bookingService.getHallSchedules(hallId, startTime);
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
-        
     }
 
 //    @GetMapping("/workspace/{id}")

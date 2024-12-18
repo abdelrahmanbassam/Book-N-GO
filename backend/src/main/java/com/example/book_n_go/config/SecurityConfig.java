@@ -1,5 +1,6 @@
 package com.example.book_n_go.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -7,8 +8,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import com.example.book_n_go.securityFilter.JwtAuthenticationFilter;
 
@@ -23,26 +27,34 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
 
+    @Autowired
+    private CorsConfigurationSource corsConfigurationSource;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/signup", "/auth/login", "/auth/google", "/auth/oauth2-success",
+                    .requestMatchers("/auth/signup", "/auth/login", "/auth/google", "/auth/oauth2-success",
                         "reservations/all", "reservations/status/update", "reservations/status/{status}"
                 ).permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
-                .defaultSuccessUrl("/auth/oauth2-success", true) // Redirect after success
+                .defaultSuccessUrl("/auth/oauth2-success", true)
             )
-            .formLogin(form -> form.disable()) // Disable form login if not needed
+            .formLogin(form -> form.disable())
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) // Allow sessions for OAuth2
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             )
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-    
 }
+
