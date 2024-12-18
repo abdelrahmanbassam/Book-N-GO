@@ -34,7 +34,8 @@ public class HallController {
     public ResponseEntity<List<Hall>> getHalls(@PathVariable("workspaceId") long workspaceId) {
         try {
             List<Hall> halls = new ArrayList<Hall>();
-            hallRepo.findByWorkspaceId(workspaceId).forEach(halls::add);
+            Workspace workspace = workspaceRepo.findById(workspaceId).get();
+            hallRepo.findByWorkspace(workspace).forEach(halls::add);
             if (halls.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
