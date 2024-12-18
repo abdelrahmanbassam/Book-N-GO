@@ -56,7 +56,7 @@ public class BookingService {
     
     public HallSchedule getHallSchedules(Long hallId, LocalDateTime endtTime) {
         
-        if(isHallExists(hallId)) {
+        if(!isHallExists(hallId)) {
             throw new IllegalArgumentException("Hall with id " + hallId + " does not exist");
         }
 
@@ -92,6 +92,11 @@ public class BookingService {
 
         long hallId = bookingCreateRequest.getHallId();
         long userId = authService.getRequestUser().getId();
+
+        if (!isHallExists(bookingCreateRequest.getHallId())) {
+            throw new IllegalArgumentException("Hall with id " + bookingCreateRequest.getHallId() + " does not exist");
+        }
+
         long workspaceId = hallRepo.findById(hallId).get().getWorkspace().getId();
         LocalDateTime startTime = bookingCreateRequest.getStartTime();
         LocalDateTime endTime = bookingCreateRequest.getEndTime();
@@ -104,9 +109,6 @@ public class BookingService {
             throw new IllegalArgumentException("User with id " + userId + " does not exist");
         }
 
-        if (!isHallExists(bookingCreateRequest.getHallId())) {
-            throw new IllegalArgumentException("Hall with id " + bookingCreateRequest.getHallId() + " does not exist");
-        }
 
         if (!isValidDuration(workspaceId, startTime, endTime)) {
             throw new IllegalArgumentException("Invalid duration");
