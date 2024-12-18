@@ -8,7 +8,15 @@ export const login = async (email, password) => {
 }
 
 // Hall
-
+export const fetchHalls = async (requestBody) => {
+  try {
+    const response = await client.post("/filterHalls", requestBody);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch halls:', error);
+    throw error;
+  }
+};
 
 // Workspace
 

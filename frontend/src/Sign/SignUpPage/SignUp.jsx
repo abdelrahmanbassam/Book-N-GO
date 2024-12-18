@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { FormInput } from '../components/FormInput';
-import { HeaderButtons } from '../components/HeaderButtons';
 import { Logo } from '../components/Logo';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { HeaderButtons } from '../components/HeaderButtons';
+import { FormInput } from '../components/FormInput';
 import styles from './SignUp.module.css';
 
 export const SignUp = () => {
@@ -26,7 +26,8 @@ export const SignUp = () => {
         name: formData.username,
         role: formData.accountType,
       };
-
+      console.log('Request Body:', JSON.stringify(body, null, 2)); // Print the JSON stringified body with indentation
+  
       const response = await fetch('http://localhost:8080/auth/signup', {
         method: 'POST',
         headers: {
@@ -34,30 +35,43 @@ export const SignUp = () => {
         },
         body: JSON.stringify(body),
       });
-
+  
+      console.log('Response status:', response.status); // Log the response status
+  
+      
       if (!response.ok) {
         setError('Username already exists');
         return;
       }
-
+  
+      console.log('SignUp successful:');
       setError('');
       navigate('/login');
     } catch (err) {
+      console.error('Error during signup:', err);
       setError('An error occurred. Please try again.');
     }
   };
 
   const handleChange = (e) => {
-    setError('');
+    setError(''); // Clear error when user starts typing
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value
     });
   };
 
-  const handleGoogleSignIn = () => {
-    const accountType = formData.accountType;
-    window.location.href = `http://localhost:8080/oauth2/authorization/google`;
+  // Mock API function - replace with actual API call
+  const mockSignUpAPI = async (data) => {
+    // Simulating API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Simulate failed signup for demo
+    if (data.username === 'existing') {
+      return { success: false };
+    }
+    
+    return { success: true, data: { username: data.username } };
   };
 
   return (
@@ -65,7 +79,7 @@ export const SignUp = () => {
       <Logo />
       <HeaderButtons />
       <div className={styles.decorativeShape} />
-
+      
       <div className={styles.formContainer}>
         <h1 className={styles.title}>SIGN UP!</h1>
         <form onSubmit={handleSubmit}>
@@ -106,7 +120,7 @@ export const SignUp = () => {
             onChange={handleChange}
             required
           />
-
+          
           <div className={styles.radioGroup}>
             <label className={styles.radioLabel}>
               <input
@@ -134,12 +148,6 @@ export const SignUp = () => {
             SIGN UP
           </button>
         </form>
-
-        <div className={styles.googleSignInContainer}>
-          <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
-            Sign in with Google
-          </button>
-        </div>
       </div>
     </div>
   );
