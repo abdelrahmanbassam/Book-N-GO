@@ -18,7 +18,7 @@ public interface ReservationsRepo extends JpaRepository<Reservation, Long> {
     // get provider workspaces
     // get all halls in those workspaces
     // get all reservations in those halls
-    @Query("SELECT r FROM Reservation r JOIN r.hall h JOIN h.workspace w WHERE w.providerId = ?1 ")
+    @Query("SELECT r FROM Reservation r JOIN r.hall h JOIN h.workspace w WHERE w.id = ?1")
     List<Reservation> findByProviderId(Long providerId);
 
     // filter reservations by status for client
@@ -26,7 +26,7 @@ public interface ReservationsRepo extends JpaRepository<Reservation, Long> {
     List<Reservation> findByStatusAndUser(Long userId,Status status);
 
     // filter reservations by status for provider
-    @Query("SELECT r FROM Reservation r JOIN r.hall h JOIN h.workspace w WHERE w.providerId = ?1 AND r.status = ?2")
+    @Query("SELECT r FROM Reservation r JOIN r.hall h JOIN h.workspace w WHERE w.id = ?1 AND r.status = ?2")
     List<Reservation> findByStatusAndProvider(Long providerId,Status status);
 
 }

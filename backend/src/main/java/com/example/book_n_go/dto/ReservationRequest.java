@@ -4,9 +4,11 @@ import com.example.book_n_go.enums.Status;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -16,9 +18,8 @@ public class ReservationRequest {
      String HallName ;
      String clientName ;
      Status status ;
-     Date date ;
-     Time startTime;
-     Time endTime ;
+     private LocalDateTime startTime;
+     private LocalDateTime endTime;
      String hallDescription ;
 
 }

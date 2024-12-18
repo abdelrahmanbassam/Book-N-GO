@@ -90,7 +90,7 @@ export const Reservations = () => {
 
     return (
         <div className="min-h-[100vh] bg-primary">
-            <Header searchBar={true} />
+            {/*<Header searchBar={true} />*/}
             <div className="flex flex-col md:mx-10 mx-4">
                 <h1 className="text-3xl text-white my-8">Reservations</h1>
                 <StatusFilterMenu  availableFilters={['all', 'pending', 'accepted', 'rejected', 'canceled']}  onFilterChange={(filter) => onFilterChange(filter)} selectedFilter={selectedFilter} />
