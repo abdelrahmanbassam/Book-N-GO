@@ -78,6 +78,7 @@ export const WorkSpace = () => {
                 // sort workdays by week day
                 const days = ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
                 data.sort((a, b) => days.indexOf(a.weekDay) - days.indexOf(b.weekDay));
+                data.forEach(workday => delete workday.workspace);
                 setWorkdays(data);
             } catch (error) {
                 console.error('Error fetching workdays:', error);
@@ -108,6 +109,8 @@ export const WorkSpace = () => {
                 description: updatedData.description,
                 location: updatedData.location
             };
+            // Remove provider field from workspace data
+            delete updatedWorkspace.provider;
             console.log(updatedWorkdays);
             // Update workspace data on the server
             const response = await fetch(`http://localhost:8080/workspaces/${workspaceId}`, {
@@ -132,11 +135,14 @@ export const WorkSpace = () => {
                 body: JSON.stringify(updatedWorkdays)
             });
 
-            console.log(updatedWorkdays);
+            console.log(JSON.stringify(updatedWorkdays));
 
             if (response2.ok) {
-                const data = await response2.json();
-                console.log(data);
+                const data = await response2.json();                
+                // sort workdays by week day
+                const days = ['SATURDAY', 'SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY'];
+                data.sort((a, b) => days.indexOf(a.weekDay) - days.indexOf(b.weekDay));
+                data.forEach(workday => delete workday.workspace);
                 setWorkdays(data);
             }
 
