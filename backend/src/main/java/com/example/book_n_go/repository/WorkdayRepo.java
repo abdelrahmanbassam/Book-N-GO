@@ -1,6 +1,7 @@
 package com.example.book_n_go.repository;
 
 import com.example.book_n_go.model.Workday;
+import com.example.book_n_go.model.Workspace;
 
 import java.util.List;
 
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WorkdayRepo extends JpaRepository<Workday, Long> {
-    List<Workday> findByWorkspaceId(long workspaceId);
+    List<Workday> findByWorkspace(Workspace workspace);
 
-    List<Workday> deleteByWorkspaceId(long workspaceId);
+    List<Workday> deleteByWorkspace(Workspace workspace);
 }

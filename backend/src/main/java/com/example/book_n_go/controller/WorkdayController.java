@@ -39,7 +39,8 @@ public class WorkdayController {
     public ResponseEntity<List<Workday>> getWorkdays(@PathVariable("workspaceId") long workspaceId) {
         try {
             List<Workday> workdays = new ArrayList<Workday>();
-            workdayRepo.findByWorkspaceId(workspaceId).forEach(workdays::add);
+            Workspace workspace = workspaceRepo.findById(workspaceId).get();
+            workdayRepo.findByWorkspace(workspace).forEach(workdays::add);
             if (workdays.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -91,7 +92,8 @@ public class WorkdayController {
     public ResponseEntity<List<Workday>> updateWorkdaysByWorkspaceId(@PathVariable("workspaceId") long workspaceId,
             @RequestBody List<Workday> workdays) {
         try {
-            List<Workday> _workdays = workdayRepo.findByWorkspaceId(workspaceId);
+            Workspace workspace = workspaceRepo.findById(workspaceId).get();
+            List<Workday> _workdays = workdayRepo.findByWorkspace(workspace);
             for (Workday workday : _workdays) {
                 // if it exists update it if not delete it
                 if (workdays.stream().anyMatch(w -> w.getId() == workday.getId())) {
@@ -111,7 +113,7 @@ public class WorkdayController {
                     workdayRepo.save(workday);
                 }
             }
-            return new ResponseEntity<>(workdayRepo.findByWorkspaceId(workspaceId), HttpStatus.OK);
+            return new ResponseEntity<>(workdayRepo.findByWorkspace(workspace), HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
