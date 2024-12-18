@@ -26,7 +26,7 @@ public class ReservationController {
         return new ResponseEntity<>(reservations, HttpStatus.OK);
     }
     // update status
-    @PutMapping("/status/update")
+    @PostMapping("/status/update")
     public ResponseEntity<String> updateStatus(@RequestBody BookingUpdateStatusRequest bookingUpdateStatusRequest) {
         reservationsService.UpdateBookingStatus(bookingUpdateStatusRequest);
         return new ResponseEntity<>(HttpStatus.OK);

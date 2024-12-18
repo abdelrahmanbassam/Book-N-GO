@@ -4,6 +4,11 @@ import {ReservationCard} from "./components/ReservationCard";
 import {StatusFilterMenu} from "./components/StatusFilterMenu";
 
 export const Reservations = () => {
+    const Status = Object.freeze({
+        PENDING: 'PENDING',
+        CONFIRMED: 'CONFIRMED',
+        REJECTED: 'REJECTED'
+    });
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [reservations, setReservations] = useState([
         {
@@ -30,7 +35,7 @@ export const Reservations = () => {
     //fetching reservations
     const fetchReservations = async () => {
         try {
-            const response = await fetch('http://localhost:8080/reservations/client/1');
+            const response = await fetch('http://localhost:8080/reservations/all');
             const data = await response.json();
             console.log(response)
             console.log('Reservations fetched:', data);
@@ -42,16 +47,19 @@ export const Reservations = () => {
     useEffect(() => {
         fetchReservations();
     }, []);
+
     //fetching update status
-    const fetchUpdateStatus = async (reservationId, status) => {
-        const action = status.toLocaleLowerCase().slice(0,-2)
+    const fetchUpdateStatus = async (reservationId, action) => {
         try {
-            const response = await fetch(`http://localhost:8080/reservations/${action}`, {
+            const response = await fetch(`http://localhost:8080/reservations/status/update`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ reservationId })
+                body: JSON.stringify({
+                    bookingId: reservationId,
+                    status: action
+                })
             });
             if (response.ok) {
                 console.log('Reservation accepted successfully');
@@ -65,6 +73,18 @@ export const Reservations = () => {
         }
 
     }
+
+    // fetch get reservation by status
+    const fetchGetReservationByStatus = async (status) => {
+        try {
+            const response = await fetch(`http://localhost:8080/reservations/status/${status}`);
+            const data = await response.json();
+            console.log('Reservations fetched:', data);
+            setReservations(data);
+        } catch (error) {
+            console.error('Error fetching reservations:', error);
+        }
+    };
     // set reservation status
     function setReservationStatus(reservationId, status) {
         const updatedReservations = reservations.map(reservation => {
@@ -80,28 +100,28 @@ export const Reservations = () => {
     // on filter change
     function onFilterChange(filter) {
         console.log('Filter changed:', filter);
-        if (filter === 'all') {
-            fetchReservations()
-        } else {
-            setReservations(reservations.filter(reservation => reservation.status === filter.toUpperCase()));
-        }
         setSelectedFilter(filter);
+        if (filter === 'all') {
+            fetchReservations();
+        } else {
+            fetchGetReservationByStatus(filter.toUpperCase());
+        }
     }
 
     return (
         <div className="min-h-[100vh] bg-primary">
-            {/*<Header searchBar={true} />*/}
-            <div className="flex flex-col md:mx-10 mx-4">
+            <Header searchBar={true} />
+            <div className="flex flex-col md:mx-10 mx-4 py-4">
                 <h1 className="text-3xl text-white my-8">Reservations</h1>
-                <StatusFilterMenu  availableFilters={['all', 'pending', 'accepted', 'rejected', 'canceled']}  onFilterChange={(filter) => onFilterChange(filter)} selectedFilter={selectedFilter} />
+                <StatusFilterMenu  availableFilters={['all', 'pending', 'confirmed', 'rejected', 'canceled']}  onFilterChange={(filter) => onFilterChange(filter)} selectedFilter={selectedFilter} />
                 <div className="flex flex-col w-full ">
                     {reservations.map((reservation, index) => (
                         <ReservationCard
                             key={index}
                             reservation={reservation}
                             reservationId={reservation.id}
-                            isProvider={false}
-                            onAccept={() =>  setReservationStatus(reservation.id, 'ACCEPTED')}
+                            isProvider={true}
+                            onAccept={() =>  setReservationStatus(reservation.id, 'CONFIRMED')}
                             onReject={() => setReservationStatus(reservation.id, 'REJECTED')}
                             onCancel={() => setReservationStatus(reservation.id, 'CANCELED')}
                         />

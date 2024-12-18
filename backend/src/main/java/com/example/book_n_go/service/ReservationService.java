@@ -14,6 +14,8 @@ import org.h2.result.UpdatableRow;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,23 +31,27 @@ public class ReservationService {
 
     @Autowired
     private UserRepo userRepo;
-
-
     public List<ReservationRequest> getAllReservations() {
-        User currentUser = AuthService.getRequestUser();
-        List<Booking> bookings;
-        if (currentUser.getRole() == Role.CLIENT) {
-            bookings = bookingRepo.findByUserId(currentUser.getId());
-        } else {
-            bookings = bookingRepo.findByProviderId(currentUser.getId());
-        }
         ArrayList<ReservationRequest> reservationsRequest = new ArrayList<>(List.of());
-        for (Booking book : bookings) {
-            ReservationRequest reservationRequest = getReservationRequest(book);
-            reservationsRequest.add(reservationRequest);
-        }
+        reservationsRequest.add(new ReservationRequest(1L, "Hall1", "Client1", Status.PENDING, LocalDateTime.of(2021, 12, 12, 12, 0, 0), LocalDateTime.of(2021, 12, 12, 14, 0, 0), "Description1"));
+        reservationsRequest.add(new ReservationRequest(4L, "Hall5", "Client1", Status.PENDING, LocalDateTime.of(2021, 12, 12, 12, 0, 0), LocalDateTime.of(2021, 12, 12, 14, 0, 0), "Description1"));
+        reservationsRequest.add(new ReservationRequest(2L, "Hall2", "Client2", Status.CONFIRMED, LocalDateTime.of(2021, 12, 12, 12, 0, 0), LocalDateTime.of(2021, 12, 12, 14, 0, 0), "Description2"));
+        reservationsRequest.add(new ReservationRequest(3L, "Hall3", "Client3", Status.REJECTED, LocalDateTime.of(2021, 12, 12, 12, 0, 0), LocalDateTime.of(2021, 12, 12, 14, 0, 0), "Description3"));
+
+//        User currentUser = AuthService.getRequestUser();
+//        List<Booking> bookings;
+//        if (currentUser.getRole() == Role.CLIENT) {
+//            bookings = bookingRepo.findByUserId(currentUser.getId());
+//        } else {
+//            bookings = bookingRepo.findByProviderId(currentUser.getId());
+//        }
+//        for (Booking book : bookings) {
+//            ReservationRequest reservationRequest = getReservationRequest(book);
+//            reservationsRequest.add(reservationRequest);
+//        }
         return reservationsRequest;
     }
+
     private ReservationRequest getReservationRequest(Booking Book) {
         ReservationRequest reservationRequest = new ReservationRequest();
         reservationRequest.setId(Book.getId());
@@ -76,6 +82,7 @@ public class ReservationService {
     }
 
     public List<ReservationRequest>  FilterReservationsByStatus(Status status) {
+        ArrayList<ReservationRequest> reservationsRequest = new ArrayList<>(List.of());
         User currentUser = AuthService.getRequestUser();
         List<Booking> bookings;
         if (currentUser.getRole() == Role.CLIENT) {
@@ -83,7 +90,6 @@ public class ReservationService {
         } else {
             bookings = bookingRepo.findByStatusAndProvider(currentUser.getId(), status);
         }
-        ArrayList<ReservationRequest> reservationsRequest = new ArrayList<>(List.of());
         for (Booking book : bookings) {
             ReservationRequest reservationRequest = getReservationRequest(book);
             reservationsRequest.add(reservationRequest);

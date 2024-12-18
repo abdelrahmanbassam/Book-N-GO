@@ -10,7 +10,7 @@ import {Button} from "@mui/material";
 export const ReservationCard =(props) =>{
     const statusColors = {
         PENDING: 'bg-yellow-100 text-yellow-800',
-        ACCEPTED: 'bg-green-100 text-green-800',
+        CONFIRMED: 'bg-green-100 text-green-800',
         REJECTED: 'bg-red-100 text-red-800',
         CANCELED: 'bg-gray-100 text-gray-800',
     };
@@ -26,13 +26,13 @@ export const ReservationCard =(props) =>{
                     </div>
                 </div>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[props.reservation.status]}`}>
-          {props.reservation.status.charAt(0) + props.reservation.status.slice(1).toLowerCase()}
+                    {props.reservation.status.charAt(0) + props.reservation.status.slice(1).toLowerCase()}
         </span>
             </div>
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="flex items-center text-gray-600">
                     <Calendar size={18} className="mr-2" />
-                    <span>{props.reservation.date}</span>
+                    <span>{ new Date(props.reservation.startTime).toLocaleDateString()}</span>
                 </div>
                 <TimeDisplay startTime={props.reservation.startTime} endTime={props.reservation.endTime} />
             </div>
