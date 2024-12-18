@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@daypilot/daypilot-lite-react": "^3.31.0",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
     "@material-tailwind/react": "^2.1.10",

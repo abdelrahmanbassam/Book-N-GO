@@ -20,7 +20,7 @@ function App() {
         {/* {<Route path='/hall' element={<HallDetails/>}/>} */}
         {<Route path='/login' element={<Login/>}/>}
         {<Route path='/signup' element={<SignUp/>}/>}
-        <Route path='/hall/:id' element={<HallDetails/>}/>
+        <Route path='/workspace/:workspaceId/hall/:id' element={<HallDetails/>}/>
         {/* <Route path='/login' element={<LoginPage/>}/> */}
       </Routes>
     </Router>

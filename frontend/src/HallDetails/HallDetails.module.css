@@ -1,7 +1,6 @@
 .hall-details__container {
   background-color: #010F18;
   display: flex;
-  height: calc(100% - 2 * 50px);
   padding: 50px 0;
   clip-path: polygon(0% 0%, 100% 0, 100% 80%, 85% 100%, 0% 100%);
 }

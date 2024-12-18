@@ -3,6 +3,7 @@ import { Logo } from '../components/Logo';
 import { HeaderButtons } from '../components/HeaderButtons';
 import { FormInput } from '../components/FormInput';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { login } from '../../api';
 import styles from './Login.module.css';
 
 export const Login = () => {
@@ -16,20 +17,10 @@ export const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:8080/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      const data = await login(formData.email, formData.password);
 
-      const data = await response.json();
 
-      if (!response.ok) {
+      if (!data.token) {
         setError(data.message || 'Email or password is incorrect');
         return;
       }  

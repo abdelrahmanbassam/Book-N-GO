@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ import com.example.book_n_go.service.BookingService;
 
 @RestController
 @RequestMapping("/bookings")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BookingController {
     
     @Autowired
@@ -52,7 +54,6 @@ public class BookingController {
     public ResponseEntity<HallSchedule> getHallSchedules(@PathVariable("id") Long hallId, LocalDateTime startTime) {
         HallSchedule hallSchedule = bookingService.getHallSchedules(hallId, startTime);
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
-        
     }
 
 //    @GetMapping("/workspace/{id}")

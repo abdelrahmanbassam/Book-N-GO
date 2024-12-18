@@ -5,9 +5,15 @@ const client = axios.create({
   json: true
 });
 
+const permitAll = ['/auth/login', '/auth/register'];
+
 client.interceptors.request.use(
   config => {
     const token = window.localStorage.getItem('token');
+    console.log(config.url)
+    if(!token && !permitAll.includes(config.url)) {
+      window.location = '/login';
+    }
     config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
   },
