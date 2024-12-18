@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.book_n_go.dto.HallsFilterRequest;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
+import com.example.book_n_go.service.HallsListFilterService;
 
 @RestController
 @RequestMapping("/workspace/{workspaceId}")
@@ -91,6 +93,20 @@ public class HallController {
         try {
             hallRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Autowired
+    private HallsListFilterService hallsListFilterService;
+    @PostMapping("/filterHalls")
+    public ResponseEntity<List<Hall>> filterHalls(@RequestBody HallsFilterRequest request) {
+        try {
+            System.out.println("Request: " + request);
+            List<Hall> halls = hallsListFilterService.applyCriterias(request);
+            
+            return new ResponseEntity<>(halls, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

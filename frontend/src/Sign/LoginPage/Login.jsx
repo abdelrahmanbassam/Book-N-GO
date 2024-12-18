@@ -27,7 +27,8 @@ export const Login = () => {
       window.localStorage.setItem('token', data.token);
       console.log('Login successful:', data);
       setError('');
-      navigate('/WorkSpace', { state: { email: formData.email } }); // Navigate with state
+      // navigate('/WorkSpace', { state: { email: formData.email } }); // Navigate with state
+      navigate('/hallsList'); // Navigate without state
     } catch (err) {
       setError('An error occurred. Please try again.');
     }

@@ -10,9 +10,7 @@ import { Login } from './Sign/LoginPage/Login';
 import {WorkSpace} from "./WorkSpace/WorkSpace";
 import { Navigate } from 'react-router-dom';
 
-import { SignUp } from './Sign/SignUpPage/SignUp';
-
-
+import { HallsList} from './HallsList&Filter/HallsListPage/HallsList';
 
 function App() {
   return (
@@ -27,6 +25,7 @@ function App() {
         {<Route path='/signup' element={<SignUp/>}/>}
         <Route path='/workspace/:workspaceId/hall/:id' element={<HallDetails/>}/>
         {/* <Route path='/login' element={<LoginPage/>}/> */}
+        <Route path='/hallsList' element={<HallsList/>}/>
       </Routes>
     </Router>
   );

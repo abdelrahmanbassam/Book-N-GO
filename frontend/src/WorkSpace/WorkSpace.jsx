@@ -20,8 +20,8 @@ export const WorkSpace = () => {
     const [workdays, setWorkdays] = useState([]);
     const [openEditDialog, setOpenEditDialog] = useState(false); // State for dialog visibility
     const [workspaceData, setWorkspaceData] = useState(null); // State to store fetched workspace data
-    
     const [openNewDialog, setOpenNewDialog] = useState(false);
+
     // Fetch workspace details and hall cards
     useEffect(() => {
         const fetchWorkspaceDetails = async () => {
@@ -232,7 +232,7 @@ export const WorkSpace = () => {
                             />
                         </div>
                     ))}
-                    
+
                     {/* Add Hall Button */}
                     <div className="flex flex-col min-h-[300px] border-secondary2 hover:scale-110 transition-transform duration-300 cursor-pointer">
                         <div className="text-white border-secondary2 border-2 border-dashed flex justify-center items-center h-full hover:border-solid">
@@ -248,7 +248,6 @@ export const WorkSpace = () => {
                     </div>
                 </div>
             </div>
-            {/* Add Hall Dialog */}
             <HallDialog open={openNewDialog} setOpen={setOpenNewDialog}/>
             {/* Edit Workspace Dialog */}
             {workspaceData && (
