@@ -42,14 +42,19 @@ public class HallsListFilterService {
                     cB.like(cB.lower(hall.get("name")), "%" + request.getSearchWord().toLowerCase() + "%"));
             }
 
-            // // Filter by Aminities (wait for ahmed hassan to add Aminities to the Hall model)
-            // if (request.getAminities() != null && !request.getAminities().isEmpty()) {
-            //     for (String aminity : request.getAminities()) {
-            //         Aminity aminityEnum = Aminity.valueOf(aminity.toUpperCase().replace(" ", "_"));
-            //         spec = spec.and((hall, query1, cB) ->
-            //             cB.isMember(aminityEnum, hall.get("Aminities")));
-            //     }
-            // }
+            // Filter by Aminities (wait for ahmed hassan to add Aminities to the Hall model)
+            if (request.getAminities() != null && !request.getAminities().isEmpty()) {
+                for (String aminity : request.getAminities()) {
+                    try {
+                        Aminity aminityEnum = Aminity.valueOf(aminity.toUpperCase().replace(" ", "_"));
+                        spec = spec.and((hall, query1, cB) ->
+                            cB.isMember(aminityEnum, hall.get("aminities"))); // Ensure the attribute name matches the entity field
+                    } catch (IllegalArgumentException e) {
+                        // Handle the case where the enum value does not exist
+                        throw new RuntimeException("Invalid aminity: " + aminity, e);
+                    }
+                }
+            }
 
             return spec.toPredicate(root, query, criteriaBuilder);
         };
