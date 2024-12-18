@@ -23,7 +23,7 @@ public class Workspace {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
-    private double rating = 3;
+    private double rating;
     @Column(nullable = false)
     private String description;
 }

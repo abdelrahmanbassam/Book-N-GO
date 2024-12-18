@@ -25,7 +25,7 @@ public class Hall {
     @Column(nullable = false)
     private double pricePerHour;
     @Column(nullable = false)
-    private double rating = 3;
+    private double rating;
 
     @ManyToOne
     @JoinColumn(nullable = false)
