@@ -6,6 +6,7 @@ import {
 import './App.css';
 import { HallDetails } from './HallDetails/HallDetails';
 import { Login } from './Sign/LoginPage/Login';
+import { SignUp } from './Sign/SignUpPage/SignUp';
 
 import {WorkSpace} from "./WorkSpace/WorkSpace";
 import { Navigate } from 'react-router-dom';
