@@ -1,24 +1,15 @@
 package com.example.book_n_go.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.book_n_go.dto.BookingCreateRequest;
-import com.example.book_n_go.dto.BookingUpdateDurationRequest;
-import com.example.book_n_go.dto.BookingUpdateStatusRequest;
-import com.example.book_n_go.enums.Day;
-import com.example.book_n_go.enums.Status;
-import com.example.book_n_go.model.*;
-import com.example.book_n_go.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -28,6 +19,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import com.example.book_n_go.dto.BookingCreateRequest;
+import com.example.book_n_go.dto.BookingUpdateDurationRequest;
+import com.example.book_n_go.dto.BookingUpdateStatusRequest;
+import com.example.book_n_go.enums.Day;
+import com.example.book_n_go.enums.Status;
+import com.example.book_n_go.model.Booking;
+import com.example.book_n_go.model.Hall;
+import com.example.book_n_go.model.HallSchedule;
+import com.example.book_n_go.model.Period;
+import com.example.book_n_go.model.User;
+import com.example.book_n_go.model.Workday;
+import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.BookingRepo;
+import com.example.book_n_go.repository.HallRepo;
+import com.example.book_n_go.repository.UserRepo;
+import com.example.book_n_go.repository.WorkdayRepo;
+import com.example.book_n_go.repository.WorkspaceRepo;
 
 @SpringBootTest
 public class BookingServiceTest {
@@ -141,7 +150,7 @@ public class BookingServiceTest {
     public void testGetHallSchedules() {
         when(hallRepo.existsById(1L)).thenReturn(true);
         when(hallRepo.findById(1L)).thenReturn(Optional.of(hall));
-        when(workdayRepo.findByWorkspaceId(any(Long.class))).thenReturn(Arrays.asList(workday));
+        when(workdayRepo.findByWorkspace(any(Workspace.class))).thenReturn(Arrays.asList(workday));
         when(bookingRepo.findByEndTimeBefore(any(LocalDateTime.class))).thenReturn(Arrays.asList(booking));
 
         HallSchedule hallSchedule = bookingService.getHallSchedules(1L, LocalDateTime.now().plusDays(1));
