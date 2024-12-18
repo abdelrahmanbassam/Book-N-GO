@@ -3,8 +3,8 @@ import { Clock } from 'lucide-react';
 
 
 export function TimeDisplay(timeSlot) {
-    const start = new Date(`Mon Dec 16 2024 ${timeSlot.startTime} GMT+0200 (Eastern European Standard Time)`);
-    const end = new Date(`Mon Dec 16 2024 ${timeSlot.endTime} GMT+0200 (Eastern European Standard Time)`);
+    const start = new Date(timeSlot.startTime);
+    const end = new Date(timeSlot.endTime);
 
     const duration = calculateDuration(start,end);
 
