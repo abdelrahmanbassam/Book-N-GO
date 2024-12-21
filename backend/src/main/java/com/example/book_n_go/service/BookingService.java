@@ -3,6 +3,7 @@ package com.example.book_n_go.service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,6 +78,47 @@ public class BookingService {
         HallSchedule hallSchedule = new HallSchedule(workdays, bookingPeriods);
 
         return hallSchedule;
+    }
+
+    public List<Period> getHallAvailability(Long hallId, LocalDateTime checkDay) {
+        
+        if(!isHallExists(hallId)) {
+            throw new IllegalArgumentException("Hall with id " + hallId + " does not exist");
+        }
+
+        Workspace workSpace = hallRepo.findById(hallId).get().getWorkspace();
+        List<Workday> workdays = workdayRepo.findByWorkspace(workSpace);
+
+        List<Booking> bookings = bookingRepo.findByEndTimeBefore(checkDay.plus(Duration.ofDays(7)));
+
+        List<Period> bookingPeriods = bookings.stream()
+                .map(booking -> new Period(booking.getStartTime(), booking.getEndTime()))
+                .collect(Collectors.toList());
+
+        List<Period> availabilities = new ArrayList<Period>();
+        // get weekday of checkday
+        String weekDay = checkDay.getDayOfWeek().name();
+        // get workday of the weekday
+        Workday workday = workdayRepo.findByWorkspaceIdAndWeekDay(workSpace.getId(), Day.valueOf(weekDay));
+        if(workday == null) {
+            return availabilities;
+        }
+        // get workday start time
+        LocalTime workdayStartTime = workday.getStartTime().toLocalTime();
+        // get workday end time
+        LocalTime workdayEndTime = workday.getEndTime().toLocalTime();
+        Period currentPeriod = new Period(checkDay.withHour(workdayStartTime.getHour()), null);
+        for (Period period : bookingPeriods) {
+            if (period.getStartTime().isAfter(currentPeriod.getStartTime()) && period.getStartTime().isBefore(checkDay.withHour(workdayEndTime.getHour()))) {
+                currentPeriod.setEndTime(period.getStartTime());
+                availabilities.add(currentPeriod);
+                currentPeriod = new Period(period.getEndTime(), null);
+            }
+        }
+        currentPeriod.setEndTime(checkDay.withHour(workdayEndTime.getHour()));
+        availabilities.add(currentPeriod);
+
+        return availabilities;
     }
 
     
@@ -213,8 +255,7 @@ public class BookingService {
         LocalTime workdayStartTime = workday.getStartTime().toLocalTime();
         LocalTime workdayEndTime = workday.getEndTime().toLocalTime();
 
-        if (startTime.toLocalTime().isBefore(workdayStartTime)
-        || endTime.toLocalTime().isAfter(workdayEndTime)) {
+        if (startTime.toLocalTime().isBefore(workdayStartTime) || endTime.toLocalTime().isAfter(workdayEndTime)) {
             return false;
         }
 

@@ -21,6 +21,7 @@ import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.model.Booking;
 import com.example.book_n_go.model.HallSchedule;
+import com.example.book_n_go.model.Period;
 import com.example.book_n_go.service.BookingService;
 
 
@@ -53,6 +54,11 @@ public class BookingController {
     @GetMapping("/hall/{id}/schedule")
     public ResponseEntity<HallSchedule> getHallSchedules(@PathVariable("id") Long hallId, LocalDateTime startTime) {
         HallSchedule hallSchedule = bookingService.getHallSchedules(hallId, startTime);
+        return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
+    }
+    @GetMapping("/hall/{id}/availability")
+    public ResponseEntity<List<Period>> getHallAvailability(@PathVariable("id") Long hallId, LocalDateTime startTime) {
+        List<Period> hallSchedule = bookingService.getHallAvailability(hallId, startTime);
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
     }
 

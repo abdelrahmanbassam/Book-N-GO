@@ -34,7 +34,15 @@ export const getHallData = async (workspaceId, id) => {
 
 
 // Booking
-export const schedules = async (id) => {
-  const response = await client.get(`/bookings/hall/schedule/${id}`);
+export const schedules = async (id, startDateTime) => {
+  const response = await client.get(`/bookings/hall/${id}/schedule`, {
+    params: { startTime: startDateTime }
+  });
+  return response.data;
+}
+export const availability = async (id, startDateTime) => {
+  const response = await client.get(`/bookings/hall/${id}/availability`, {
+    params: { startTime: startDateTime }
+  });
   return response.data;
 }
