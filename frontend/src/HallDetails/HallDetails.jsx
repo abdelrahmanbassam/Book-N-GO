@@ -7,25 +7,12 @@ import { useParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import {DayPilotCalendar} from "@daypilot/daypilot-lite-react";
 import { schedules, getHallData, availability } from "../api";
+import WeekCalender from "./components/WeekCalender";
 
 export const HallDetails = () => {
   const {id, workspaceId} = useParams();
   const [startDate, setStartDate] = useState(new Date());
-  
-  const [events, setEvents] = useState([
-    {
-      id: 1,
-      text: "Available Slot",
-      start: "2023-10-01T10:00:00",
-      end: "2023-10-01T12:00:00"
-    },
-    {
-      id: 2,
-      text: "Available Slot",
-      start: "2024-12-18T14:00:00",
-      end: "2024-12-18T16:00:00"
-    }
-  ]);
+
 
   const [data, setData] = useState({
     "name": "Alexandria bibliotheca Great Hall",
@@ -38,33 +25,9 @@ export const HallDetails = () => {
     ]
   });
 
-  const updateDate = (date) => {
-    availability(id, date.toISOString().split('Z')[0]).then(data => {
-      console.log(data);
-      const events = data.map((event, index) => ({
-        id: index,
-        text: "Available Slot",
-        start: event['startTime'],
-        end: event['endTime']
-      }));
-      setEvents(events);
-      setStartDate(date);
-    });
-  }
-
   useEffect(() => {
     getHallData(workspaceId, id).then(data => setData(data));
-    availability(id, startDate.toISOString().split('Z')[0]).then(data => {
-      
-      const events = data.map((event, index) => ({
-        id: index,
-        text: "Available Slot",
-        start: event['startTime'],
-        end: event['endTime']
-      }));
-      setEvents(events);
-      // setEvents(events);
-    });
+
   }, [id]);
 
 
@@ -96,10 +59,11 @@ export const HallDetails = () => {
         <div className={styles["hall-details__info__schedule"]}>
           <h2>Schedules:</h2>
           <div className={styles["hall-details__info__schedule__pagination"]}>
-            <button onClick={() => updateDate(new Date(startDate.setDate(startDate.getDate() - 1)))}>Previous</button>
-            <button onClick={() => updateDate(new Date(startDate.setDate(startDate.getDate() + 1)))}>Next</button>
+            <button onClick={() => setStartDate(new Date(startDate.setDate(startDate.getDate() - 3)))}>Previous</button>
+            <button onClick={() => setStartDate(new Date(startDate.setDate(startDate.getDate() + 3)))}>Next</button>
           </div>
-          <DayPilotCalendar viewType={'Day'} events={events} startDate={startDate} eventMoveHandling="Disabled"/>
+          {/* <DayPilotCalendar viewType={'Day'} events={events} startDate={startDate} eventMoveHandling="Disabled"/> */}
+          <WeekCalender  hallId={id} startDate={startDate}/>
         </div>
         {/* <div className={styles["hall-details__info__comments"]}>
           <h2>Comments:</h2>
