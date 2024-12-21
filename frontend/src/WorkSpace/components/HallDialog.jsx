@@ -7,11 +7,11 @@ import { createHall } from '../../api';
 
 export default function HallDialog({ open, setOpen, workspaceId }) {
   const Amenities = {
-    'Screen': 'Screen',
-    'Projector': 'Projector',
+    'SCREEN': 'Screen',
+    'PROJECTOR': 'Projector',
     'AC': 'AC',
-    'Ceiling_Fans': 'Ceiling Fans',
-    'White_Board': 'White Board'
+    'CEILING_FANS': 'Ceiling Fans',
+    'WHITE_BOARD': 'White Board'
   }
 
   const [hall, setHall] = useState({

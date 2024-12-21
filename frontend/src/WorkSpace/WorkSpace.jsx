@@ -15,6 +15,12 @@ export const WorkSpace = () => {
     const [workspaceRating, setWorkspaceRating] = useState(4.2);
     const [workspaceDescription, setWorkspaceDescription] = useState('Workspace Description');
     const [profilePic, setProfilePic] = useState('');
+    const [workspaceLocation, setWorkspaceLocation] = useState('');
+    const [hallCards, setHallCards] = useState([]);
+    const [workdays, setWorkdays] = useState([]);
+    const [openEditDialog, setOpenEditDialog] = useState(false); // State for dialog visibility
+    const [workspaceData, setWorkspaceData] = useState(null); // State to store fetched workspace data
+    
     const [openNewDialog, setOpenNewDialog] = useState(false);
     // Fetch workspace details and hall cards
     useEffect(() => {
@@ -243,7 +249,7 @@ export const WorkSpace = () => {
                 </div>
             </div>
             {/* Add Hall Dialog */}
-            <HallDialog open={openNewDialog} setOpen={setOpenNewDialog}/>
+            <HallDialog open={openNewDialog} setOpen={setOpenNewDialog} workspaceId={workspaceId}/>
             {/* Edit Workspace Dialog */}
             {workspaceData && (
                 <EditWorkspaceDialog
