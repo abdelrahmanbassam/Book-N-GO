@@ -40,8 +40,8 @@ public class SecurityConfig {
 								"/auth/oauth2-success/**")
 						.permitAll()
 						.anyRequest().authenticated())
-				// .oauth2Login(oauth2 -> oauth2
-				// 		.defaultSuccessUrl("/auth/oauth2-success", true))
+				.oauth2Login(oauth2 -> oauth2
+						.defaultSuccessUrl("/auth/oauth2-success", true))
 				.formLogin(form -> form.disable())
 				.sessionManagement(session -> session
 						.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))

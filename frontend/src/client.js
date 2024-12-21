@@ -14,6 +14,11 @@ client.interceptors.request.use(
     if(!token && !permitAll.includes(config.url)) {
       window.location = '/login';
     }
+
+    if(permitAll.includes(config.url)) {
+      return config;
+    }
+    
     config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
   },
