@@ -27,9 +27,9 @@ export const Header = (props) => {
                     <img src={Logo} alt={"logo"} className={"h-full"} />
                 </div>
                 {/*search bar*/}
-                <div className={"flex md:basis-1/2 basis-5/12 items-center"}>
+                {/* <div className={"flex md:basis-1/2 basis-5/12 items-center"}>
                     {props.searchBar ? <SearchBar /> : null}
-                </div>
+                </div> */}
                 {/*profile*/}
                 <div className={"flex lg:basis-1/6 justify-end md:gap-4 items-center"}>
                     {/*switch button*/}

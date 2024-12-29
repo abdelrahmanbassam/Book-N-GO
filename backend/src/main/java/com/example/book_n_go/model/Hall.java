@@ -5,6 +5,8 @@ import com.example.book_n_go.enums.Aminity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "Halls")
 @NoArgsConstructor
