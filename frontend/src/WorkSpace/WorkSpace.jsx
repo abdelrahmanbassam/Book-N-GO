@@ -314,7 +314,11 @@ export const WorkSpace = () => {
                         <div
                             key={hall.id}
                             className="relative transition-transform duration-300 transform hover:scale-105 cursor-pointer"
-                            onClick={() => navigate(`/hall/${hall.id}`)}
+                            onClick={() =>
+                                navigate(
+                                    `/workspace/${workspaceId}/hall/${hall.id}`
+                                )
+                            } // Redirect to hall details page
                         >
                             <HallCard
                                 image={hall.image}
