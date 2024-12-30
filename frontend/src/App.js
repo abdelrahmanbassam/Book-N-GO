@@ -1,10 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
 import {
+  Navigate,
   BrowserRouter as Router,
   Routes,
   Route,
 } from "react-router-dom";
+import './App.css';
 import { HallDetails } from './HallDetails/HallDetails';
 import { SignUp } from './Sign/SignUpPage/SignUp';
 import { Login } from './Sign/LoginPage/Login';
@@ -14,6 +16,9 @@ import {Reservations} from "./Reservations/Reservations";
 import { Navigate } from 'react-router-dom';
 
 import { HallsList} from './HallsList&Filter/HallsListPage/HallsList';
+import { SelectRole } from './Sign/SelectRolePage/SelectRole';
+import { SignUp } from './Sign/SignUpPage/SignUp';
+import { WorkSpace } from "./WorkSpace/WorkSpace";
 
 function App() {
   return (
@@ -22,10 +27,12 @@ function App() {
         <Route path='/' element={<Navigate to="/login" />} />
         {/* <Route path='/' element={<HomePage/>}/> */}
         { <Route path='/workspace' element={<WorkSpace/>}/> }
+          { <Route path='/workspace/:workspaceId' element={<WorkSpace/>}/> }
           {<Route path='/reservations' element={<Reservations/>}/>}
         {/* {<Route path='/hall' element={<HallDetails/>}/>} */}
         {<Route path='/login' element={<Login/>}/>}
         {<Route path='/signup' element={<SignUp/>}/>}
+        {<Route path="/select-role" element={<SelectRole />} />}
         <Route path='/hall/:id' element={<HallDetails/>}/>
         {/* <Route path='/login' element={<LoginPage/>}/> */}
         <Route path='/hallsList' element={<HallsList/>}/>

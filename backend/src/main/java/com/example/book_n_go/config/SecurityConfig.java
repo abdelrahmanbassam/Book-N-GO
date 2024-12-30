@@ -30,15 +30,12 @@ public class SecurityConfig {
     @Autowired
     private CorsConfigurationSource corsConfigurationSource;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/auth/signup", "/auth/login", "/auth/google", "/auth/oauth2-success",
                         "reservations/all", "reservations/status/update", "reservations/status/{status}"
@@ -57,4 +54,3 @@ public class SecurityConfig {
         return http.build();
     }
 }
-
