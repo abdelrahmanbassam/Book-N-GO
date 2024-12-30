@@ -1,6 +1,8 @@
 package com.example.book_n_go.model;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.example.book_n_go.enums.Day;
 
@@ -19,12 +21,12 @@ public class Workday {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column(nullable = false)
-    private Time startTime;
+    private LocalDateTime startTime;
     @Column(nullable = false)
-    private Time endTime;
+    private LocalDateTime endTime;
     @Column(nullable = false)
     private Day weekDay;
     @ManyToOne
-    @JoinColumn(nullable = false)
+    // @JoinColumn(nullable = false)
     private Workspace workspace;
 }

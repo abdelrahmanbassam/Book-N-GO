@@ -6,7 +6,7 @@ import { useLocation, useParams, useNavigate } from "react-router-dom";
 import EditWorkspaceDialog from "./components/EditWorkspaceDialog";
 import HallImage from "../assets/Alexandria-Library.png";
 import HallDialog from "./components/HallDialog";
-import { is } from "date-fns/locale";
+import { de, is } from "date-fns/locale";
 export const WorkSpace = () => {
     const { workspaceId } = useParams(); // Get the workspace ID from the URL params
     const location = useLocation();
@@ -31,6 +31,27 @@ export const WorkSpace = () => {
             "Content-Type": "application/json",
         };
     };
+
+    const adjustWorkdays = (workdays) => {
+        const days = [
+            "SATURDAY",
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THURSDAY",
+            "FRIDAY",
+        ];
+        workdays.sort(
+            (a, b) => days.indexOf(a.weekDay) - days.indexOf(b.weekDay)
+        );
+        workdays.forEach((workday) => {
+            workday.startTime = workday.startTime.split("T")[1];
+            workday.endTime = workday.endTime.split("T")[1];
+            delete workday.workspace;
+        });
+    };
+
     // Fetch workspace details and hall cards
     useEffect(() => {
         const isWorkspaceProvider = async () => {
@@ -107,20 +128,7 @@ export const WorkSpace = () => {
                     }
                 );
                 const data = await response.json();
-                // sort workdays by week day
-                const days = [
-                    "SATURDAY",
-                    "SUNDAY",
-                    "MONDAY",
-                    "TUESDAY",
-                    "WEDNESDAY",
-                    "THURSDAY",
-                    "FRIDAY",
-                ];
-                data.sort(
-                    (a, b) => days.indexOf(a.weekDay) - days.indexOf(b.weekDay)
-                );
-                data.forEach((workday) => delete workday.workspace);
+                adjustWorkdays(data);
                 setWorkdays(data);
             } catch (error) {
                 console.error("Error fetching workdays:", error);
@@ -176,33 +184,26 @@ export const WorkSpace = () => {
                 setOpenEditDialog(false); // Close dialog after successful update
             }
 
+            const adjustedWorkdays = updatedWorkdays.map((workday) => ({
+                ...workday,
+                startTime: `2024-01-01T${workday.startTime}`,
+                endTime: `2024-01-01T${workday.endTime}`,
+            }));
+
             const response2 = await fetch(
                 `http://localhost:8080/workspace/${workspaceId}/workdays`,
                 {
                     method: "PUT",
                     headers: getFetchHeaders(),
-                    body: JSON.stringify(updatedWorkdays),
+                    body: JSON.stringify(adjustedWorkdays),
                 }
             );
 
-            console.log(JSON.stringify(updatedWorkdays));
+            console.log(JSON.stringify(adjustedWorkdays));
 
             if (response2.ok) {
                 const data = await response2.json();
-                // sort workdays by week day
-                const days = [
-                    "SATURDAY",
-                    "SUNDAY",
-                    "MONDAY",
-                    "TUESDAY",
-                    "WEDNESDAY",
-                    "THURSDAY",
-                    "FRIDAY",
-                ];
-                data.sort(
-                    (a, b) => days.indexOf(a.weekDay) - days.indexOf(b.weekDay)
-                );
-                data.forEach((workday) => delete workday.workspace);
+                adjustWorkdays(data);
                 setWorkdays(data);
             }
         } catch (error) {

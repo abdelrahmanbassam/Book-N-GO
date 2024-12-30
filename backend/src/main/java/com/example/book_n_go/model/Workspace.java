@@ -12,13 +12,13 @@ import lombok.*;
 @ToString
 public class Workspace {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
-    @JoinColumn(nullable = false)
+    // @JoinColumn(nullable = false)
     private Location location;
     @ManyToOne
-    @JoinColumn(nullable = false)
+    // @JoinColumn(nullable = false)
     private User provider;
     @Column(nullable = false)
     private String name;
