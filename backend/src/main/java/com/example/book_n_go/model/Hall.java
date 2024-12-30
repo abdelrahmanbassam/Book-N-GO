@@ -28,7 +28,7 @@ public class Hall {
     private double rating;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    // @JoinColumn(nullable = false)
     private Workspace workspace;
 
     @ElementCollection(targetClass = Aminity.class)
