@@ -87,8 +87,7 @@ public class DataLoader implements CommandLineRunner {
                 Workday workday5 = new Workday(0, LocalDateTime.of(2021, 9, 10, 9, 0), LocalDateTime.of(2021, 9, 10, 17, 0), Day.FRIDAY, workspace1);
                 Workday workday6 = new Workday(0, LocalDateTime.of(2021, 9, 11, 10, 0), LocalDateTime.of(2021, 9, 11, 18, 0), Day.SATURDAY, workspace2);
                 Workday workday7 = new Workday(0, LocalDateTime.of(2021, 9, 12, 9, 0), LocalDateTime.of(2021, 9, 12, 17, 0), Day.SUNDAY, workspace1);
-                workdayRepo.saveAll(
-                                Arrays.asList(workday1, workday2, workday3, workday4, workday5, workday6, workday7));
+                workdayRepo.saveAll(Arrays.asList(workday1, workday2, workday3, workday4, workday5, workday6, workday7));
 
                 System.out.println("Sample data loaded successfully.");
         }
