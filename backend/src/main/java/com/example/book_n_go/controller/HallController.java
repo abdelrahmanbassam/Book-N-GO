@@ -65,9 +65,9 @@ public class HallController {
     @PostMapping("/halls")
     public ResponseEntity<Hall> createHall(@RequestBody Hall hall, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
-        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        // if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
+        //     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        // }
         hall.setWorkspace(workspace);
         Hall _hall = hallRepo.save(hall);
         return new ResponseEntity<>(_hall, HttpStatus.CREATED);
