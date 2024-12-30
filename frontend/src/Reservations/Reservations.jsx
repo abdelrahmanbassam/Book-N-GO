@@ -51,7 +51,7 @@ export const Reservations = () => {
     //fetching update status
     const fetchUpdateStatus = async (reservationId, action) => {
         try {
-            const response = await fetch(`http://localhost:8080/reservations/status/update`, {
+            const response = await fetch(`http://localhost:8080/reservations/updateStatus`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

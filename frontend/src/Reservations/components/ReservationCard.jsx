@@ -25,7 +25,7 @@ export const ReservationCard =(props) =>{
                         <span>{props.reservation.clientName}</span>
                     </div>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[props.reservation.status]}`}>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[props.reservation.status.toUpperCase()]}`}>
                     {props.reservation.status.charAt(0) + props.reservation.status.slice(1).toLowerCase()}
         </span>
             </div>

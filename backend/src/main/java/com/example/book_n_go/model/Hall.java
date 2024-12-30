@@ -1,7 +1,5 @@
 package com.example.book_n_go.model;
 
-import com.example.book_n_go.enums.Aminity;
-
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -33,10 +31,12 @@ public class Hall {
     @JoinColumn(nullable = false)
     private Workspace workspace;
 
-    @ElementCollection(targetClass = Aminity.class)
-    @CollectionTable(name = "hall_aminities", joinColumns = @JoinColumn(name = "hall_id"))
-    @Column(name = "aminity", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Aminity[] aminities;
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "hall_aminities",
+            joinColumns = @JoinColumn(name = "hall_id"),
+            inverseJoinColumns = @JoinColumn(name = "aminity_id")
+    )
+    @ToString.Exclude
+    private Set<Aminity> aminities;
 }
