@@ -31,8 +31,7 @@ export const SignUp = () => {
         name: formData.username,
         role: formData.accountType,
       };
-      console.log('Request Body:', JSON.stringify(body, null, 2)); // Print the JSON stringified body with indentation
-  
+
       const response = await fetch('http://localhost:8080/auth/signup', {
         method: 'POST',
         headers: {
@@ -40,29 +39,24 @@ export const SignUp = () => {
         },
         body: JSON.stringify(body),
       });
-  
-      console.log('Response status:', response.status); // Log the response status
-  
-      
+
       if (!response.ok) {
         setError('Username already exists');
         return;
       }
-  
-      console.log('SignUp successful:');
+
       setError('');
       navigate('/login');
     } catch (err) {
-      console.error('Error during signup:', err);
       setError('An error occurred. Please try again.');
     }
   };
 
   const handleChange = (e) => {
-    setError(''); // Clear error when user starts typing
+    setError('');
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -88,7 +82,7 @@ export const SignUp = () => {
       <Logo />
       <HeaderButtons />
       <div className={styles.decorativeShape} />
-      
+
       <div className={styles.formContainer}>
         <h1 className={styles.title}>SIGN UP!</h1>
         <form onSubmit={handleSubmit}>
@@ -129,7 +123,7 @@ export const SignUp = () => {
             onChange={handleChange}
             required
           />
-          
+
           <div className={styles.radioGroup}>
             <label className={styles.radioLabel}>
               <input
@@ -162,6 +156,12 @@ export const SignUp = () => {
           </button>
           </div>
         </form>
+
+        <div className={styles.googleSignInContainer}>
+          <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
+            Sign in with Google
+          </button>
+        </div>
       </div>
     </div>
   );

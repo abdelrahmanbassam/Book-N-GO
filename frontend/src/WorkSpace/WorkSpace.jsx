@@ -249,7 +249,7 @@ export const WorkSpace = () => {
                 </div>
             </div>
             {/* Add Hall Dialog */}
-            <HallDialog open={openNewDialog} setOpen={setOpenNewDialog}/>
+            <HallDialog open={openNewDialog} setOpen={setOpenNewDialog} workspaceId={workspaceId}/>
             {/* Edit Workspace Dialog */}
             {workspaceData && (
                 <EditWorkspaceDialog
