@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Logo } from '../components/Logo';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { HeaderButtons } from '../components/HeaderButtons';
+import { useNavigate } from 'react-router-dom';
 import { FormInput } from '../components/FormInput';
+import { HeaderButtons } from '../components/HeaderButtons';
+import { Logo } from '../components/Logo';
 import styles from './SignUp.module.css';
 
 export const SignUp = () => {
@@ -64,6 +64,10 @@ export const SignUp = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleGoogleSignIn = () => {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
   // Mock API function - replace with actual API call
@@ -149,9 +153,14 @@ export const SignUp = () => {
             </label>
           </div>
 
-          <button type="submit" className={styles.button}>
-            SIGN UP
+          <div className={styles.formButtons}>
+            <button type="submit" className={styles.button}>
+              SIGN UP
+            </button>
+            <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
+              Sign up with Google
           </button>
+          </div>
         </form>
       </div>
     </div>

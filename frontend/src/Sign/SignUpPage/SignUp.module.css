@@ -104,3 +104,9 @@
   margin: 0;
   text-align: center;
 }
+
+.formButtons{
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 0.5rem;
+}
