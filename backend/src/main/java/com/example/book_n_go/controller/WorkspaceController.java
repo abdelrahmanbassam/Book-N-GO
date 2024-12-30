@@ -2,6 +2,7 @@ package com.example.book_n_go.controller;
 
 import com.example.book_n_go.repository.LocationRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.enums.Role;
 import com.example.book_n_go.model.Location;
 import com.example.book_n_go.model.Workspace;
 
@@ -52,10 +53,29 @@ public class WorkspaceController {
         }
     }
 
+    @GetMapping("/workspaces/{id}/provider")
+    public ResponseEntity<Boolean> isProvider(@PathVariable("id") long id) {
+        Optional<Workspace> workspaceData = workspaceRepo.findById(id);
+        if (!workspaceData.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        User provider = AuthService.getRequestUser();
+        Long providerId = provider.getId();
+        Long workspaceProviderId = workspaceData.get().getProvider().getId();
+        if (workspaceProviderId.equals(providerId))
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        else 
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        
+    }
+
     @PostMapping("/workspaces")
     public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace workspace) {
         try {
             User provider = AuthService.getRequestUser();
+            if (provider.getRole() == Role.CLIENT) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             workspace.setProvider(provider);
             Location location = locationRepo.save(workspace.getLocation());
             workspace.setLocation(location);
@@ -69,32 +89,42 @@ public class WorkspaceController {
     @PutMapping("/workspaces/{id}")
     public ResponseEntity<Workspace> updateWorkspace(@PathVariable("id") long id, @RequestBody Workspace workspace) {
         Optional<Workspace> workspaceData = workspaceRepo.findById(id);
-        if (workspaceData.isPresent()) {
-            Workspace _workspace = workspaceData.get();
-            _workspace.setName(workspace.getName());
-            _workspace.setDescription(workspace.getDescription());
-            Optional<Location> locationData = locationRepo.findById(workspace.getLocation().getId());
-            if (locationData.isPresent()) {
-                Location location = locationData.get();
-                if (location.getCity() != workspace.getLocation().getCity()
-                        || location.getStreet() != workspace.getLocation().getStreet()
-                        || location.getDepartmentNumber() != workspace.getLocation().getDepartmentNumber()) {
-                    location.setCity(workspace.getLocation().getCity());
-                    location.setStreet(workspace.getLocation().getStreet());
-                    location.setDepartmentNumber(workspace.getLocation().getDepartmentNumber());
-                    locationRepo.save(location);
-                }
-            } else {
-                locationRepo.save(workspace.getLocation());
-            }
-            return new ResponseEntity<>(workspaceRepo.save(_workspace), HttpStatus.OK);
-        } else {
+        if (!workspaceData.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        if (!workspaceData.get().getProvider().getId().equals(AuthService.getRequestUser().getId())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Workspace _workspace = workspaceData.get();
+        _workspace.setName(workspace.getName());
+        _workspace.setDescription(workspace.getDescription());
+        Optional<Location> locationData = locationRepo.findById(workspace.getLocation().getId());
+        if (locationData.isPresent()) {
+            Location location = locationData.get();
+            if (location.getCity() != workspace.getLocation().getCity()
+                    || location.getStreet() != workspace.getLocation().getStreet()
+                    || location.getDepartmentNumber() != workspace.getLocation().getDepartmentNumber()) {
+                location.setCity(workspace.getLocation().getCity());
+                location.setStreet(workspace.getLocation().getStreet());
+                location.setDepartmentNumber(workspace.getLocation().getDepartmentNumber());
+                locationRepo.save(location);
+            }
+        } else {
+            locationRepo.save(workspace.getLocation());
+        }
+        return new ResponseEntity<>(workspaceRepo.save(_workspace), HttpStatus.OK);
     }
 
     @DeleteMapping("/workspaces/{id}")
     public ResponseEntity<HttpStatus> deleteWorkspace(@PathVariable("id") long id) {
+        User provider = AuthService.getRequestUser();
+        Optional<Workspace> workspaceData = workspaceRepo.findById(id);
+        if (!workspaceData.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (!workspaceData.get().getProvider().getId().equals(provider.getId())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         try {
             workspaceRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
