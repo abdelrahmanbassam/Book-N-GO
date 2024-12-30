@@ -25,6 +25,7 @@ public class Workday {
     @Column(nullable = false)
     private LocalDateTime endTime;
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Day weekDay;
     @ManyToOne
     // @JoinColumn(nullable = false)
