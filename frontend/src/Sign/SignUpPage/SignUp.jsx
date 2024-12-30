@@ -68,12 +68,12 @@ export const SignUp = () => {
   const mockSignUpAPI = async (data) => {
     // Simulating API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     // Simulate failed signup for demo
     if (data.username === 'existing') {
       return { success: false };
     }
-    
+
     return { success: true, data: { username: data.username } };
   };
 
@@ -153,15 +153,9 @@ export const SignUp = () => {
             </button>
             <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
               Sign up with Google
-          </button>
+            </button>
           </div>
         </form>
-
-        <div className={styles.googleSignInContainer}>
-          <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
-            Sign in with Google
-          </button>
-        </div>
       </div>
     </div>
   );

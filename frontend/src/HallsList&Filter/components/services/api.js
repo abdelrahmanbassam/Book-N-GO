@@ -22,15 +22,15 @@
 
 //   // Apply search filter
 //   if (params.search) {
-//     filteredHalls = filteredHalls.filter(hall => 
+//     filteredHalls = filteredHalls.filter(hall =>
 //       hall.title.toLowerCase().includes(params.search.toLowerCase())
 //     );
 //   }
 
 //   // Apply amenities filter
 //   if (params.amenities?.length > 0) {
-//     filteredHalls = filteredHalls.filter(hall => 
-//       params.amenities.every(amenity => 
+//     filteredHalls = filteredHalls.filter(hall =>
+//       params.amenities.every(amenity =>
 //         hall.amenities[amenity.toLowerCase().replace(' ', '')]
 //       )
 //     );
@@ -38,14 +38,14 @@
 
 //   // Apply size filter
 //   if (params.minSize && params.maxSize) {
-//     filteredHalls = filteredHalls.filter(hall => 
+//     filteredHalls = filteredHalls.filter(hall =>
 //       hall.capacity >= params.minSize && hall.capacity <= params.maxSize
 //     );
 //   }
 
 //   // Apply rating filter
 //   if (params.rating) {
-//     filteredHalls = filteredHalls.filter(hall => 
+//     filteredHalls = filteredHalls.filter(hall =>
 //       hall.rating >= params.rating
 //     );
 //   }
@@ -70,7 +70,7 @@
 //   const totalPages = Math.ceil(totalItems / params.pageSize);
 //   const start = (params.page - 1) * params.pageSize;
 //   const end = start + params.pageSize;
-  
+
 //   return {
 //     halls: filteredHalls.slice(start, end),
 //     totalPages,
@@ -78,24 +78,29 @@
 //   };
 // };
 export const fetchHalls = async (requestBody) => {
-  try {
-    const token = window.localStorage.getItem("token");
-    const response = await fetch('http://localhost:8080/workspace/1/filterHalls', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestBody),
-    });
+    try {
+        const token = window.localStorage.getItem("token");
+        const response = await fetch(
+            "http://localhost:8080/workspace/1/filterHalls",
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+            }
+        );
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        // console.log('Fetched halls:', data);
+
+        return data;
+    } catch (error) {
+        console.error("Failed to fetch halls:", error);
+        throw error;
     }
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error('Failed to fetch halls:', error);
-    throw error;
-  }
 };
