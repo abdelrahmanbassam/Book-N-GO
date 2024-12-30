@@ -61,8 +61,20 @@ export const SignUp = () => {
   };
 
   const handleGoogleSignIn = () => {
-    const accountType = formData.accountType;
-    window.location.href = `http://localhost:8080/oauth2/authorization/google`;
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  };
+
+  // Mock API function - replace with actual API call
+  const mockSignUpAPI = async (data) => {
+    // Simulating API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Simulate failed signup for demo
+    if (data.username === 'existing') {
+      return { success: false };
+    }
+    
+    return { success: true, data: { username: data.username } };
   };
 
   return (
@@ -135,9 +147,14 @@ export const SignUp = () => {
             </label>
           </div>
 
-          <button type="submit" className={styles.button}>
-            SIGN UP
+          <div className={styles.formButtons}>
+            <button type="submit" className={styles.button}>
+              SIGN UP
+            </button>
+            <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
+              Sign up with Google
           </button>
+          </div>
         </form>
 
         <div className={styles.googleSignInContainer}>

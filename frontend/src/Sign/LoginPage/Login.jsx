@@ -23,12 +23,28 @@ export const Login = () => {
       if (!data.token) {
         setError(data.message || 'Email or password is incorrect');
         return;
-      }  
-      window.localStorage.setItem('token', data.token);
+      }
+
+      localStorage.setItem('token', data.token);
+
       console.log('Login successful:', data);
-      setError('');
-      // navigate('/WorkSpace', { state: { email: formData.email } }); // Navigate with state
-      navigate('/hallsList'); // Navigate without state
+
+      const user = await fetch('http://localhost:8080/auth/get-user-info', {
+        headers: {
+          'Authorization': 'Bearer ' + data.token
+        }
+      });
+      const userData = await user.json();
+
+      console.log('User data:', userData);
+
+      if (userData.role === 'ADMIN') {
+        navigate('/admin');
+      } else if (userData.role === 'PROVIDER') {
+        navigate('/hallOwner');
+      } else if (userData.role === 'CLIENT') {
+        navigate('/hallsList');
+      }
     } catch (err) {
       setError('An error occurred. Please try again.');
     }
@@ -43,29 +59,16 @@ export const Login = () => {
   };
 
   const handleGoogleSignIn = () => {
-    const accountType = formData.accountType;
-    window.location.href = `http://localhost:8080/oauth2/authorization/google`;
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
   };
 
-  // Mock API function - replace with actual API call
-  const mockLoginAPI = async (data) => {
-    // Simulating API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Simulate failed login for demo
-    if (data.email !== 'demo@example.com' || data.password !== 'password') {
-      return { success: false };
-    }
-    
-    return { success: true, data: { email: data.email } };
-  };
 
   return (
     <div className={styles.container}>
       <Logo />
       <HeaderButtons />
       <div className={styles.decorativeShape} />
-      
+
       <div className={styles.formContainer}>
         <h1 className={styles.title}>LOGIN</h1>
         <form onSubmit={handleSubmit}>
@@ -90,19 +93,20 @@ export const Login = () => {
             onChange={handleChange}
             required
           />
-          
+
           <a href="/forgot-password" className={styles.forgotPassword}>
             Forgot Password?
           </a>
 
-          <button type="submit" className={styles.button}>
-            LOGIN
-          </button>
-            <div className={styles.googleSignInContainer}>
-              <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
-                Sign in with Google
-              </button>
-            </div>
+
+          <div className={styles.formButtons}>
+            <button type="submit" className={styles.button}>
+              LOGIN
+            </button>
+            <button className={`${styles.button} ${styles.googleSignInButton}`} onClick={handleGoogleSignIn}>
+              Log in with Google
+            </button>
+          </div>
         </form>
       </div>
     </div>
