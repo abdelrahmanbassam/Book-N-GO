@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.example.book_n_go.enums.Permission;
 import com.example.book_n_go.model.Workday;
 import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.WorkspaceRepo;
@@ -64,7 +65,7 @@ public class WorkdayController {
     public ResponseEntity<Workday> createWorkday(@RequestBody Workday workday,
             @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
-        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
+        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId() || !AuthService.userHasPermission(Permission.PROVIDER_WRITE)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         workday.setWorkspace(workspace);
@@ -75,6 +76,9 @@ public class WorkdayController {
     @PutMapping("/workdays/{id}")
     public ResponseEntity<Workday> updateWorkday(@PathVariable("id") long id, @RequestBody Workday workday) {
         Optional<Workday> workdayData = workdayRepo.findById(id);
+        if(!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || AuthService.getRequestUser().getId() != workday.getWorkspace().getProvider().getId()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if (workdayData.isPresent()) {
             Workday _workday = workdayData.get();
             _workday.setWorkspace(workday.getWorkspace());
@@ -94,6 +98,11 @@ public class WorkdayController {
         try {
             Workspace workspace = workspaceRepo.findById(workspaceId).get();
             List<Workday> _workdays = workdayRepo.findByWorkspace(workspace);
+
+            if(!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || AuthService.getRequestUser().getId() != workspace.getProvider().getId()) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+
             for (Workday workday : _workdays) {
                 // if it exists update it if not delete it
                 if (workdays.stream().anyMatch(w -> w.getId() == workday.getId())) {
@@ -123,6 +132,9 @@ public class WorkdayController {
     @DeleteMapping("/workdays/{id}")
     public ResponseEntity<HttpStatus> deleteWorkday(@PathVariable("id") long id) {
         try {
+            if (!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || AuthService.getRequestUser().getId() != workdayRepo.findById(id).get().getWorkspace().getProvider().getId()) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             workdayRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

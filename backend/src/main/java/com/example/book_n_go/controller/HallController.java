@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.book_n_go.dto.HallsFilterRequest;
+import com.example.book_n_go.enums.Permission;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.HallRepo;
@@ -65,9 +66,9 @@ public class HallController {
     @PostMapping("/halls")
     public ResponseEntity<Hall> createHall(@RequestBody Hall hall, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
-        // if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
-        //     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        // }
+        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId() || !AuthService.userHasPermission(Permission.PROVIDER_WRITE)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         hall.setWorkspace(workspace);
         Hall _hall = hallRepo.save(hall);
         return new ResponseEntity<>(_hall, HttpStatus.CREATED);
@@ -76,6 +77,9 @@ public class HallController {
     @PutMapping("/halls/{id}")
     public ResponseEntity<Hall> updateHall(@PathVariable("id") long id, @RequestBody Hall hall) {
         Optional<Hall> hallData = hallRepo.findById(id);
+        if(!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || AuthService.getRequestUser().getId() != hallData.get().getWorkspace().getProvider().getId()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if (hallData.isPresent()) {
             Hall _hall = hallData.get();
             _hall.setWorkspace(hall.getWorkspace());
@@ -91,6 +95,9 @@ public class HallController {
     @DeleteMapping("/halls/{id}")
     public ResponseEntity<HttpStatus> deleteHall(@PathVariable("id") long id) {
         try {
+            if(!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || AuthService.getRequestUser().getId() != hallRepo.findById(id).get().getWorkspace().getProvider().getId()) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             hallRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

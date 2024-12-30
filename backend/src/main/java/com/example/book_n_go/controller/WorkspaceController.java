@@ -2,6 +2,7 @@ package com.example.book_n_go.controller;
 
 import com.example.book_n_go.repository.LocationRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
+import com.example.book_n_go.enums.Permission;
 import com.example.book_n_go.model.Location;
 import com.example.book_n_go.model.Workspace;
 
@@ -55,6 +56,9 @@ public class WorkspaceController {
     @PostMapping("/workspaces")
     public ResponseEntity<Workspace> createWorkspace(@RequestBody Workspace workspace) {
         try {
+            if(!AuthService.userHasPermission(Permission.PROVIDER_WRITE)) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             User provider = AuthService.getRequestUser();
             workspace.setProvider(provider);
             Location location = locationRepo.save(workspace.getLocation());
@@ -68,6 +72,11 @@ public class WorkspaceController {
 
     @PutMapping("/workspaces/{id}")
     public ResponseEntity<Workspace> updateWorkspace(@PathVariable("id") long id, @RequestBody Workspace workspace) {
+
+        if(!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || AuthService.getRequestUser().getId() != workspace.getProvider().getId()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
         Optional<Workspace> workspaceData = workspaceRepo.findById(id);
         if (workspaceData.isPresent()) {
             Workspace _workspace = workspaceData.get();
@@ -95,6 +104,9 @@ public class WorkspaceController {
 
     @DeleteMapping("/workspaces/{id}")
     public ResponseEntity<HttpStatus> deleteWorkspace(@PathVariable("id") long id) {
+        if(!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || AuthService.getRequestUser().getId() != workspaceRepo.findById(id).get().getProvider().getId()) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         try {
             workspaceRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
