@@ -13,8 +13,6 @@ import { Login } from './Sign/LoginPage/Login';
 import {WorkSpace} from "./WorkSpace/WorkSpace";
 import {Reservations} from "./Reservations/Reservations";
 
-import { Navigate } from 'react-router-dom';
-
 import { HallsList} from './HallsList&Filter/HallsListPage/HallsList';
 import { SelectRole } from './Sign/SelectRolePage/SelectRole';
 
