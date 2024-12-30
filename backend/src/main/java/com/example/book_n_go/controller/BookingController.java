@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.book_n_go.dto.BookingCreateRequest;
@@ -20,11 +22,13 @@ import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.model.Booking;
 import com.example.book_n_go.model.HallSchedule;
+import com.example.book_n_go.model.Period;
 import com.example.book_n_go.service.BookingService;
 
 
 @RestController
 @RequestMapping("/bookings")
+@CrossOrigin(origins = "http://localhost:3000")
 public class BookingController {
     
     @Autowired
@@ -51,6 +55,11 @@ public class BookingController {
     @GetMapping("/hall/{id}/schedule")
     public ResponseEntity<HallSchedule> getHallSchedules(@PathVariable("id") Long hallId, LocalDateTime startTime) {
         HallSchedule hallSchedule = bookingService.getHallSchedules(hallId, startTime);
+        return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
+    }
+    @GetMapping("/hall/{id}/availability")
+    public ResponseEntity<List<Period>> getHallAvailability(@PathVariable("id") Long hallId, @RequestParam("startTime") LocalDateTime startTime) {
+        List<Period> hallSchedule = bookingService.getHallAvailability(hallId, startTime);
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
     }
 
