@@ -13,7 +13,7 @@ function Copilot() {
 
   const genAI = new GoogleGenerativeAI("AIzaSyBuGGkUtK3mqCeGBo3STEscCP7Gi-wNT2I");
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-  const systemPrompt = "You are a call center for Hall booking platform called 'Book'n Go' that is website for booking halls of a workspace online and you should help user and answer his questions of the opened page.\n You will get the content of html page and user question. You should generate the answer for the user question based on the content of the page.\n\n";
+  const systemPrompt = "You are a call center for Hall booking platform called 'Book'n Go' that is website for booking halls of a workspace online and you should help user and answer his questions of the opened page.\n You will get the content of html page and user question. You should generate the answer for the user question based on the content of the page.\n\nTry to be friendly and give a good customer experience.";
   const getAnswer = (question) => {
     let page_content = divRef.current.getHTML();
     console.log(page_content);
