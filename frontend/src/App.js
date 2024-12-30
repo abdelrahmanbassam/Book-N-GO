@@ -4,18 +4,35 @@ import {
     BrowserRouter as Router,
     Routes,
 } from "react-router-dom";
-import "./App.css";
-import { HallDetails } from "./HallDetails/HallDetails";
-import { Login } from "./Sign/LoginPage/Login";
-import { SignUp } from "./Sign/SignUpPage/SignUp";
+import './App.css';
+import { HallDetails } from './HallDetails/HallDetails';
+import { Login } from './Sign/LoginPage/Login';
+import { SignUp } from './Sign/SignUpPage/SignUp';
+
 import { WorkSpace } from "./WorkSpace/WorkSpace";
-import { HallsList } from "./HallsList&Filter/HallsListPage/HallsList";
-import { SelectRole } from "./Sign/SelectRolePage/SelectRole";
+import { SelectRole } from './Sign/SelectRolePage/SelectRole';
+import { HallsList } from './HallsList&Filter/HallsListPage/HallsList';
+
+import { UserContext } from './UserContext';
+import { useEffect, useState } from "react";
+import { info } from "./api";
 
 function App() {
-    return (
-        <Router>
-            <Routes>
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      info()
+      .then(user => setUser(user))
+      .catch(() => localStorage.removeItem('token'));
+    }
+  }, []);
+
+  return (
+    <Router>
+      <UserContext.Provider value={{ user, setUser }}>
+        <Routes>
                 <Route path="/" element={<Navigate to="/login" />} />
                 {/* <Route path='/' element={<HomePage/>}/> */}
                 {<Route path="/workspace" element={<WorkSpace />} />}
@@ -36,8 +53,10 @@ function App() {
                 {/* <Route path='/login' element={<LoginPage/>}/> */}
                 <Route path="/hallsList" element={<HallsList />} />
             </Routes>
-        </Router>
-    );
+      </UserContext.Provider>
+
+    </Router>
+  );
 }
 
 export default App;
