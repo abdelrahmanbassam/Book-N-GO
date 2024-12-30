@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.book_n_go.dto.BookingCreateRequest;
@@ -57,7 +58,7 @@ public class BookingController {
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
     }
     @GetMapping("/hall/{id}/availability")
-    public ResponseEntity<List<Period>> getHallAvailability(@PathVariable("id") Long hallId, LocalDateTime startTime) {
+    public ResponseEntity<List<Period>> getHallAvailability(@PathVariable("id") Long hallId, @RequestParam("startTime") LocalDateTime startTime) {
         List<Period> hallSchedule = bookingService.getHallAvailability(hallId, startTime);
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
     }
