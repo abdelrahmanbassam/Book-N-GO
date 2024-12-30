@@ -25,6 +25,12 @@ export const WorkSpace = () => {
     const [workspaceData, setWorkspaceData] = useState(null); // State to store fetched workspace data
     const [isProvider, setIsProvider] = useState(false);
     const [openNewDialog, setOpenNewDialog] = useState(false);
+    const getFetchHeaders = () => {
+        return {
+            Authorization: `Bearer ${window.localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+        };
+    };
     // Fetch workspace details and hall cards
     useEffect(() => {
         const isWorkspaceProvider = async () => {
@@ -33,10 +39,7 @@ export const WorkSpace = () => {
                 const response = await fetch(
                     `http://localhost:8080/workspaces/${workspaceId}/provider`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json",
-                        },
+                        headers: getFetchHeaders(),
                     }
                 );
                 const data = await response.json();
@@ -54,10 +57,7 @@ export const WorkSpace = () => {
                 const response = await fetch(
                     `http://localhost:8080/workspaces/${workspaceId}`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json",
-                        },
+                        headers: getFetchHeaders(),
                     }
                 );
                 const data = await response.json();
@@ -80,10 +80,7 @@ export const WorkSpace = () => {
                 const response = await fetch(
                     `http://localhost:8080/workspace/${workspaceId}/halls`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            "Content-Type": "application/json",
-                        },
+                        headers: getFetchHeaders(),
                     }
                 );
                 const data = await response.json();
@@ -106,12 +103,7 @@ export const WorkSpace = () => {
                 const response = await fetch(
                     `http://localhost:8080/workspace/${workspaceId}/workdays`,
                     {
-                        headers: {
-                            Authorization: `Bearer ${window.localStorage.getItem(
-                                "token"
-                            )}`,
-                            "Content-Type": "application/json",
-                        },
+                        headers: getFetchHeaders(),
                     }
                 );
                 const data = await response.json();
@@ -167,12 +159,7 @@ export const WorkSpace = () => {
                 `http://localhost:8080/workspaces/${workspaceId}`,
                 {
                     method: "PUT",
-                    headers: {
-                        Authorization: `Bearer ${window.localStorage.getItem(
-                            "token"
-                        )}`,
-                        "Content-Type": "application/json",
-                    },
+                    headers: getFetchHeaders(),
                     body: JSON.stringify(updatedWorkspace),
                 }
             );
@@ -193,12 +180,7 @@ export const WorkSpace = () => {
                 `http://localhost:8080/workspace/${workspaceId}/workdays`,
                 {
                     method: "PUT",
-                    headers: {
-                        Authorization: `Bearer ${window.localStorage.getItem(
-                            "token"
-                        )}`,
-                        "Content-Type": "application/json",
-                    },
+                    headers: getFetchHeaders(),
                     body: JSON.stringify(updatedWorkdays),
                 }
             );
