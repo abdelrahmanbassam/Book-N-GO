@@ -1,17 +1,24 @@
 package com.example.book_n_go.controller;
 
 import com.example.book_n_go.dto.HallRequest;
+import com.example.book_n_go.dto.HallsFilterRequest;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
+import com.example.book_n_go.service.HallsListFilterService;
+
+import org.springframework.data.domain.Page;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import java.util.Collections;
@@ -34,6 +41,8 @@ public class HallControllerTest {
 
     @Mock
     private AuthService authService;
+    @Mock
+    private HallsListFilterService hallsListFilterService;
 
     @InjectMocks
     private HallController hallController;
@@ -155,4 +164,74 @@ public class HallControllerTest {
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
+
+    @Test
+    public void testFilterHalls_Success() {
+        HallsFilterRequest request = new HallsFilterRequest();
+        request.setPage(1);
+        request.setPageSize(5);
+        request.setAminities(Collections.singletonList("WiFi"));
+
+        Hall hallEntity = new Hall();
+        hallEntity.setId(1L);
+        hallEntity.setName("Test Hall");
+        hallEntity.setCapacity(10);
+        hallEntity.setDescription("Test Description");
+        hallEntity.setPricePerHour(50);
+
+        Page<Hall> pageHalls = new PageImpl<>(List.of(hallEntity), PageRequest.of(0, 5), 1);
+
+        when(hallsListFilterService.applyCriterias(request)).thenReturn(pageHalls);
+
+        ResponseEntity<Map<String, Object>> response = hallController.filterHalls(request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(1, ((List<Hall>) response.getBody().get("halls")).size());
+
+        Map<String, Object> pagination = (Map<String, Object>) response.getBody().get("pagination");
+        assertNotNull(pagination);
+        assertEquals(1, pagination.get("currentPage"));
+        assertEquals(1, pagination.get("totalPages"));
+        assertEquals(5, pagination.get("pageSize"));
+        assertEquals(1L, pagination.get("totalItems"));
+    }
+
+    @Test
+    public void testFilterHalls_EmptyResult() {
+        HallsFilterRequest request = new HallsFilterRequest();
+        request.setPage(1);
+        request.setPageSize(5);
+
+        Page<Hall> pageHalls = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 5), 0);
+
+        when(hallsListFilterService.applyCriterias(request)).thenReturn(pageHalls);
+
+        ResponseEntity<Map<String, Object>> response = hallController.filterHalls(request);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals(0, ((List<Hall>) response.getBody().get("halls")).size());
+
+        Map<String, Object> pagination = (Map<String, Object>) response.getBody().get("pagination");
+        assertNotNull(pagination);
+        assertEquals(1, pagination.get("currentPage"));
+        assertEquals(0, pagination.get("totalPages"));
+        assertEquals(5, pagination.get("pageSize"));
+        assertEquals(0L, pagination.get("totalItems"));
+    }
+
+    @Test
+    public void testFilterHalls_InternalServerError() {
+        HallsFilterRequest request = new HallsFilterRequest();
+        request.setPage(1);
+        request.setPageSize(5);
+
+        when(hallsListFilterService.applyCriterias(request)).thenThrow(new RuntimeException("Error processing request"));
+
+        ResponseEntity<Map<String, Object>> response = hallController.filterHalls(request);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
 }
