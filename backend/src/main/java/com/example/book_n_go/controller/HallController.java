@@ -1,8 +1,10 @@
 package com.example.book_n_go.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.book_n_go.dto.HallRequest;
 import com.example.book_n_go.dto.HallsFilterRequest;
+import com.example.book_n_go.model.Aminity;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.AminityRepo;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
@@ -36,6 +41,8 @@ public class HallController {
     private HallRepo hallRepo;
     @Autowired
     private WorkspaceRepo workspaceRepo;
+    @Autowired
+    private AminityRepo aminityRepo;
 
     @GetMapping("/halls")
     public ResponseEntity<List<Hall>> getHalls(@PathVariable("workspaceId") long workspaceId) {
@@ -64,25 +71,41 @@ public class HallController {
     }
 
     @PostMapping("/halls")
-    public ResponseEntity<Hall> createHall(@RequestBody Hall hall, @PathVariable("workspaceId") long workspaceId) {
+    public ResponseEntity<Hall> createHall(@RequestBody HallRequest hallRequest, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
         // if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
         //     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         // }
+        Hall hall = new Hall();
+        hall.setName(hallRequest.getName());
+        hall.setCapacity(hallRequest.getCapacity());
+        hall.setDescription(hallRequest.getDescription());
+        hall.setPricePerHour(hallRequest.getPricePerHour());
+        hall.setRating(0);
+
+        Set<Aminity> aminities = new HashSet<>();
+        for(Long aminityId: hallRequest.getAminitiesIds()) {
+            aminities.add(aminityRepo.findById(aminityId).get());
+        }
+        hall.setAminities(aminities);
         hall.setWorkspace(workspace);
         Hall _hall = hallRepo.save(hall);
         return new ResponseEntity<>(_hall, HttpStatus.CREATED);
     }
 
     @PutMapping("/halls/{id}")
-    public ResponseEntity<Hall> updateHall(@PathVariable("id") long id, @RequestBody Hall hall) {
+    public ResponseEntity<Hall> updateHall(@PathVariable("id") long id, @RequestBody HallRequest hall) {
         Optional<Hall> hallData = hallRepo.findById(id);
         if (hallData.isPresent()) {
             Hall _hall = hallData.get();
-            _hall.setWorkspace(hall.getWorkspace());
             _hall.setCapacity(hall.getCapacity());
             _hall.setDescription(hall.getDescription());
             _hall.setPricePerHour(hall.getPricePerHour());
+            Set<Aminity> aminities = new HashSet<>();
+            for(Long aminityId: hall.getAminitiesIds()) {
+                aminities.add(aminityRepo.findById(aminityId).get());
+            }
+            _hall.setAminities(aminities);
             return new ResponseEntity<>(hallRepo.save(_hall), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
