@@ -138,7 +138,7 @@ public class BookingService {
     public Booking createBooking (BookingCreateRequest bookingCreateRequest) {
 
         long hallId = bookingCreateRequest.getHallId();
-        long userId = authService.getRequestUser().getId();
+        long userId = AuthService.getRequestUser().getId();
 
         if (!isHallExists(bookingCreateRequest.getHallId())) {
             throw new IllegalArgumentException("Hall with id " + bookingCreateRequest.getHallId() + " does not exist");
@@ -165,14 +165,14 @@ public class BookingService {
             throw new IllegalArgumentException("Hall is not available at the requested time");
         }
 
-        Booking booking = new Booking();
-        booking.setHall(hallRepo.findById(hallId).get());
-        booking.setUser(userRepo.findById(userId).get());
-        booking.setStartTime(startTime);
-        booking.setEndTime(endTime);
-        double totalCost = booking.getHall().getPricePerHour() * Duration.between(booking.getStartTime(), booking.getEndTime()).toHours();
-        booking.setTotalCost(totalCost);
-        booking.setStatus(Status.PENDING);
+        Booking booking = Booking.builder()
+                .hall(hallRepo.findById(hallId).get())
+                .user(userRepo.findById(userId).get())
+                .startTime(startTime)
+                .endTime(endTime)
+                .status(Status.PENDING)
+                .totalCost(hallRepo.findById(hallId).get().getPricePerHour() * Duration.between(startTime, endTime).toHours())
+                .build();
 
         return bookingRepo.save(booking);
     }
