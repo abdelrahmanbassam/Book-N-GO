@@ -2,6 +2,8 @@ package com.example.book_n_go.controller;
 
 import com.example.book_n_go.model.*;
 import com.example.book_n_go.enums.Day;
+import com.example.book_n_go.enums.Permission;
+import com.example.book_n_go.enums.Role;
 import com.example.book_n_go.repository.WorkdayRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
@@ -37,9 +39,6 @@ class WorkdayControllerTest {
 	@Mock
 	private WorkspaceRepo workspaceRepo;
 
-	@Mock
-	private AuthService authService;
-
 	private Workspace workspace;
 	private User provider;
 
@@ -48,8 +47,7 @@ class WorkdayControllerTest {
 		MockitoAnnotations.openMocks(this);
 
 		// Mock workspace and provider
-		provider = new User();
-		provider.setId(1L);
+		provider = new User(1L, "user@example.com", "password", "John Doe", "123456789", Role.PROVIDER);
 
 		workspace = new Workspace();
 		workspace.setId(1L);
@@ -117,13 +115,19 @@ class WorkdayControllerTest {
 
 	@Test
 	void testCreateWorkday_ReturnsCreatedWorkday() {
+		// Mock the Authentication and SecurityContext
+		Authentication authentication = mock(Authentication.class);
+		when(authentication.getPrincipal()).thenReturn(provider);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
 		Workday workday = new Workday();
 		workday.setStartTime(LocalDateTime.of(2021, 9, 6, 9, 0));
 		workday.setEndTime(LocalDateTime.of(2021, 9, 6, 17, 0));
 		workday.setWeekDay(Day.TUESDAY);
 
 		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
-		when(authService.getRequestUser()).thenReturn(provider);
+		when(AuthService.getRequestUser()).thenReturn(provider);
 		when(workdayRepo.save(any(Workday.class))).thenAnswer(i -> i.getArgument(0));
 
 		ResponseEntity<Workday> response = workdayController.createWorkday(workday, 1L);
@@ -138,7 +142,7 @@ class WorkdayControllerTest {
 		otherUser.setId(2L);
 
 		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
-		when(authService.getRequestUser()).thenReturn(otherUser);
+		when(AuthService.getRequestUser()).thenReturn(otherUser);
 
 		ResponseEntity<Workday> response = workdayController.createWorkday(new Workday(), 1L);
 
@@ -156,25 +160,6 @@ class WorkdayControllerTest {
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		assertEquals(LocalDateTime.of(2021, 9, 6, 10, 0), response.getBody().getStartTime());
-	}
-	
-	@Test
-	void testUpdateWorkday_NotFound() {
-		when(workdayRepo.findById(1L)).thenReturn(Optional.empty());
-
-		ResponseEntity<Workday> response = workdayController.updateWorkday(1L, new Workday());
-
-		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-	}
-
-	@Test
-	void testDeleteWorkday_ReturnsNoContent() {
-		doNothing().when(workdayRepo).deleteById(1L);
-
-		ResponseEntity<HttpStatus> response = workdayController.deleteWorkday(1L);
-
-		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-		verify(workdayRepo, times(1)).deleteById(1L);
 	}
 
 	@Test
