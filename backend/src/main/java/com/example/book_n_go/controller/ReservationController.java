@@ -53,7 +53,7 @@ public class ReservationController {
     }
 
     @GetMapping("/status/{status}")
-    public ResponseEntity<List<ReservationRequest>> getReservationsByStatus(@PathVariable Status status) {
+    public ResponseEntity<List<ReservationRequest>> getReservationsByStatus(@PathVariable("status") Status status) {
         try {
             User user = authService.getRequestUser();
             if (user == null) {

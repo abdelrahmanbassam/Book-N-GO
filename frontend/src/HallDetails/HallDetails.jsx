@@ -60,6 +60,7 @@ export const HallDetails = () => {
               opacity={1}
               icon={<StarIcon fontSize="inherit" />}
               emptyIcon={<StarIcon fontSize="inherit" sx={{ color: "white" }} />}
+              readOnly
             />
           </div>
           <div className={styles["hall-details__info__description"]}>
