@@ -53,7 +53,7 @@ public class BookingController {
     }
 
     @GetMapping("/hall/{id}/schedule")
-    public ResponseEntity<HallSchedule> getHallSchedules(@PathVariable("id") Long hallId, LocalDateTime startTime) {
+    public ResponseEntity<HallSchedule> getHallSchedules(@PathVariable("id") Long hallId, @RequestParam("startTime") LocalDateTime startTime) {
         HallSchedule hallSchedule = bookingService.getHallSchedules(hallId, startTime);
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
     }
@@ -62,12 +62,6 @@ public class BookingController {
         List<Period> hallSchedule = bookingService.getHallAvailability(hallId, startTime);
         return new ResponseEntity<>(hallSchedule, HttpStatus.OK);
     }
-
-//    @GetMapping("/workspace/{id}")
-//    public ResponseEntity<List<Booking>> getBookingsByWorkspaceId(@PathVariable("id") Long workspaceId) {
-//        List<Booking> bookings = bookingService.getBookingsByWorkspaceId(workspaceId);
-//        return new ResponseEntity<>(bookings, HttpStatus.OK);
-//    }
 
     @PostMapping("/create")
     public ResponseEntity<Booking> createBooking (@RequestBody BookingCreateRequest bookingCreateRequest) {

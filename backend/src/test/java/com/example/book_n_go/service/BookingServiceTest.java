@@ -24,6 +24,7 @@ import com.example.book_n_go.dto.BookingCreateRequest;
 import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.enums.Day;
+import com.example.book_n_go.enums.Role;
 import com.example.book_n_go.enums.Status;
 import com.example.book_n_go.model.Booking;
 import com.example.book_n_go.model.Hall;
@@ -64,6 +65,7 @@ public class BookingServiceTest {
 
     private Hall hall;
     private User user;
+    private User provider;
     private Workspace workspace;
     private Booking booking;
     private BookingCreateRequest bookingCreateRequest;
@@ -78,15 +80,25 @@ public class BookingServiceTest {
 
         workspace = new Workspace();
         workspace.setId(1L);
-
-
+        workspace.setName("Workspace");
+        
+        
         hall = new Hall();
         hall.setId(1L);
         hall.setWorkspace(workspace);
+        hall.setCapacity(10);
+        hall.setPricePerHour(50);
+        
 
         user = new User();
         user.setId(1L);
+        user.setRole(Role.CLIENT);
 
+        provider = new User();
+        provider.setId(2L);
+        provider.setRole(Role.PROVIDER);
+        
+        workspace.setProvider(provider);
 
         booking = new Booking();
         booking.setId(1L);
@@ -109,11 +121,17 @@ public class BookingServiceTest {
         bookingUpdateStatusRequest.setStatus(Status.CONFIRMED);
 
         workday = new Workday();
-        workday.setStartTime(LocalDateTime.of(2024, 9, 6, 9, 0));
-        workday.setEndTime(LocalDateTime.of(2024, 9, 6, 17, 0));
+        workday.setStartTime(LocalDateTime.of(2024, 9, 6, 0, 0));
+        workday.setEndTime(LocalDateTime.of(2024, 9, 6, 23, 59));
 
 
         period = new Period(booking.getStartTime(), booking.getEndTime());
+
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
@@ -168,12 +186,11 @@ public class BookingServiceTest {
         when(authentication.getPrincipal()).thenReturn(user);
         SecurityContextHolder.setContext(securityContext);
 
-
         when(hallRepo.existsById(1L)).thenReturn(true);
         when(hallRepo.findById(1L)).thenReturn(Optional.of(hall));
         when(userRepo.existsById(1L)).thenReturn(true);
         when(userRepo.findById(1L)).thenReturn(Optional.of(user));
-        when(authService.getRequestUser()).thenReturn(user);
+        when(AuthService.getRequestUser()).thenReturn(user);
         when(workspaceRepo.existsById(any(Long.class))).thenReturn(true);
         when(workdayRepo.findByWorkspaceIdAndWeekDay(any(Long.class), any(Day.class))).thenReturn(workday);
         when(bookingRepo.findConflictingBookings(any(Long.class), any(LocalDateTime.class), any(LocalDateTime.class))).thenReturn(Arrays.asList());
@@ -186,7 +203,43 @@ public class BookingServiceTest {
     }
 
     @Test
+    public void testGetHallAvailability () {
+        LocalDateTime checkDay = LocalDateTime.of(2024, 12, 31, 0, 0);
+        Workday workday1 = new Workday();
+        workday1.setWorkspace(workspace);
+        workday1.setWeekDay(Day.TUESDAY);
+        workday1.setStartTime(LocalDateTime.of(2024, 12, 31, 9, 0));
+        workday1.setEndTime(LocalDateTime.of(2024, 12, 31, 17, 0));
+
+        Booking booking1 = new Booking();
+        booking1.setStartTime(LocalDateTime.of(2024, 12, 31, 10, 0));
+        booking1.setEndTime(LocalDateTime.of(2024, 12, 31, 12, 0));
+
+        when(hallRepo.existsById(1L)).thenReturn(true);
+        when(hallRepo.findById(1L)).thenReturn(Optional.of(hall));
+        when(workdayRepo.findByWorkspaceIdAndWeekDay(1L, Day.TUESDAY)).thenReturn(workday1);
+        when(bookingRepo.findByEndTimeBefore(any(LocalDateTime.class))).thenReturn(Arrays.asList(booking1));
+
+        List<Period> hallAvailability = bookingService.getHallAvailability(1L, checkDay);
+
+        assertEquals(2, hallAvailability.size());
+        assertEquals(LocalDateTime.of(2024, 12, 31, 9, 0), hallAvailability.get(0).getStartTime());
+        assertEquals(LocalDateTime.of(2024, 12, 31, 10, 0), hallAvailability.get(0).getEndTime());
+        assertEquals(LocalDateTime.of(2024, 12, 31, 12, 0), hallAvailability.get(1).getStartTime());
+        assertEquals(LocalDateTime.of(2024, 12, 31, 17, 0), hallAvailability.get(1).getEndTime());
+    
+    }
+
+
+    @Test
     public void testUpdateBookingDuration() {
+        // Mock SecurityContext and Authentication
+        SecurityContext securityContext = mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(provider);
+        SecurityContextHolder.setContext(securityContext);
+
         when(bookingRepo.existsById(1L)).thenReturn(true);
         when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
         when(hallRepo.findById(1L)).thenReturn(Optional.of(hall));
@@ -202,6 +255,13 @@ public class BookingServiceTest {
 
     @Test
     public void testUpdateBookingStatus() {
+        // Mock SecurityContext and Authentication
+        SecurityContext securityContext = mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(provider);
+        SecurityContextHolder.setContext(securityContext);
+
         when(bookingRepo.existsById(1L)).thenReturn(true);
         when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
         when(bookingRepo.save(any(Booking.class))).thenReturn(booking);
@@ -214,6 +274,13 @@ public class BookingServiceTest {
 
     @Test
     public void testDeleteBooking() {
+        // Mock SecurityContext and Authentication
+        SecurityContext securityContext = mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(provider);
+        SecurityContextHolder.setContext(securityContext);
+
         when(bookingRepo.existsById(1L)).thenReturn(true);
         when(bookingRepo.findById(1L)).thenReturn(Optional.of(booking));
 
