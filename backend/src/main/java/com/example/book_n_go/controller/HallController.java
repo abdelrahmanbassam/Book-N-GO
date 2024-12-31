@@ -66,7 +66,7 @@ public class HallController {
     @PostMapping("/halls")
     public ResponseEntity<Hall> createHall(@RequestBody Hall hall, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
-        if (workspace.getProvider().getId() != AuthService.getRequestUser().getId() || !AuthService.userHasPermission(Permission.PROVIDER_WRITE)) {
+        if (!workspace.getProvider().getId().equals(AuthService.getRequestUser().getId()) || !AuthService.userHasPermission(Permission.PROVIDER_WRITE)) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         hall.setWorkspace(workspace);
@@ -77,7 +77,7 @@ public class HallController {
     @PutMapping("/halls/{id}")
     public ResponseEntity<Hall> updateHall(@PathVariable("id") long id, @RequestBody Hall hall) {
         Optional<Hall> hallData = hallRepo.findById(id);
-        if(!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || AuthService.getRequestUser().getId() != hallData.get().getWorkspace().getProvider().getId()) {
+        if (!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || !AuthService.getRequestUser().getId().equals(hallData.get().getWorkspace().getProvider().getId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         if (hallData.isPresent()) {
@@ -95,8 +95,8 @@ public class HallController {
     @DeleteMapping("/halls/{id}")
     public ResponseEntity<HttpStatus> deleteHall(@PathVariable("id") long id) {
         try {
-            if(!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || AuthService.getRequestUser().getId() != hallRepo.findById(id).get().getWorkspace().getProvider().getId()) {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            if(!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || !AuthService.getRequestUser().getId().equals(hallRepo.findById(id).get().getWorkspace().getProvider().getId())) {
+              return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
             hallRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -73,7 +73,7 @@ public class WorkspaceController {
     @PutMapping("/workspaces/{id}")
     public ResponseEntity<Workspace> updateWorkspace(@PathVariable("id") long id, @RequestBody Workspace workspace) {
 
-        if(!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || AuthService.getRequestUser().getId() != workspace.getProvider().getId()) {
+        if(!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || !AuthService.getRequestUser().getId().equals(workspace.getProvider().getId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
@@ -104,7 +104,7 @@ public class WorkspaceController {
 
     @DeleteMapping("/workspaces/{id}")
     public ResponseEntity<HttpStatus> deleteWorkspace(@PathVariable("id") long id) {
-        if(!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || AuthService.getRequestUser().getId() != workspaceRepo.findById(id).get().getProvider().getId()) {
+        if(!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || !AuthService.getRequestUser().getId().equals(workspaceRepo.findById(id).get().getProvider().getId())) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         try {

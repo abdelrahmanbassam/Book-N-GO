@@ -133,8 +133,8 @@ public class BookingService {
             throw new IllegalArgumentException("Cannot delete booking within 48 hours of the start time");
         }
 
-        if(!((authService.userHasPermission(Permission.PROVIDER_DELETE) && authService.getRequestUser().getId() == bookingRepo.findById(bookingId).get().getHall().getWorkspace().getProvider().getId())
-              || (authService.userHasPermission(Permission.CLIENT_DELETE) && authService.getRequestUser().getId() == bookingRepo.findById(bookingId).get().getUser().getId()))) {
+        if(!((authService.userHasPermission(Permission.PROVIDER_DELETE) && authService.getRequestUser().getId().equals(bookingRepo.findById(bookingId).get().getHall().getWorkspace().getProvider().getId()))
+              || (authService.userHasPermission(Permission.CLIENT_DELETE) && authService.getRequestUser().getId().equals(bookingRepo.findById(bookingId).get().getUser().getId())))) {
             throw new IllegalArgumentException("Unauthorized");
         }
 
@@ -211,8 +211,8 @@ public class BookingService {
         Booking booking = bookingRepo.findById(bookingId).get();
 
         // Authorization
-        if(!((authService.userHasPermission(Permission.PROVIDER_UPDATE) && authService.getRequestUser().getId() != booking.getHall().getWorkspace().getProvider().getId())
-            || (authService.userHasPermission(Permission.CLIENT_UPDATE) && authService.getRequestUser().getId() != booking.getUser().getId()))) {
+        if(!((authService.userHasPermission(Permission.PROVIDER_UPDATE) && authService.getRequestUser().getId().equals(booking.getHall().getWorkspace().getProvider().getId()))
+            || (authService.userHasPermission(Permission.CLIENT_UPDATE) && authService.getRequestUser().getId().equals(booking.getUser().getId())))) {
             throw new IllegalArgumentException("Unauthorized");
         }
 
@@ -245,8 +245,8 @@ public class BookingService {
         }
 
         // Authorization
-        if(!((authService.userHasPermission(Permission.PROVIDER_UPDATE) && authService.getRequestUser().getId() == booking.getHall().getWorkspace().getProvider().getId())
-            || (authService.userHasPermission(Permission.CLIENT_UPDATE) && authService.getRequestUser().getId() == booking.getUser().getId()))) {
+        if(!((authService.userHasPermission(Permission.PROVIDER_UPDATE) && authService.getRequestUser().getId().equals(booking.getHall().getWorkspace().getProvider().getId()))
+            || (authService.userHasPermission(Permission.CLIENT_UPDATE) && authService.getRequestUser().getId().equals(booking.getUser().getId())))) {
             throw new IllegalArgumentException("Unauthorized");
         }
 
