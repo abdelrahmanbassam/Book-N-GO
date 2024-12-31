@@ -22,35 +22,32 @@ public class FeedbackController {
     public ResponseEntity<?> addFeedback(@PathVariable Long hallId, @RequestParam Long userId, @RequestBody FeedbackRequest feedbackRequest) {
         Optional<Hall> hallOptional = feedbackService.addFeedbackAndReturnHall(hallId, userId, feedbackRequest);
 
-        if (hallOptional.isPresent()) {
-            return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
-        } else {
+        if (!hallOptional.isPresent()) {
             return new ResponseEntity<>("User already has feedback on this hall", HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
+        
     }
 
-    @PostMapping("/edit/{feedbackId}")
+    @PutMapping("/edit/{feedbackId}")
     public ResponseEntity<?> editFeedback(@PathVariable Long hallId, @PathVariable Long feedbackId, @RequestBody FeedbackRequest feedbackRequest) {
         Optional<Hall> hallOptional = feedbackService.editFeedback(hallId, feedbackId, feedbackRequest);
-        if (hallOptional.isPresent()) {
-            return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
-        } else {
+        if (!hallOptional.isPresent()) {
             return new ResponseEntity<>("Feedback not found", HttpStatus.NO_CONTENT);
-        }
+        } 
+        return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
+        
     }
 
     @DeleteMapping("/delete/{feedbackId}")
     public ResponseEntity<?> deleteFeedback(@PathVariable Long hallId, @PathVariable Long feedbackId) {
         Optional<Hall> hallOptional = feedbackService.deleteFeedback(hallId, feedbackId);
 
-        if (hallOptional.isPresent()) {
-            return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
-        } else {
+        if (!hallOptional.isPresent()) {
             return new ResponseEntity<>("Feedback not found", HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
+        
     }
-    @GetMapping("/greeting")
-    public ResponseEntity<String> greeting() {
-        return new ResponseEntity<>("Hello, welcome to the Feedback API!", HttpStatus.OK);
-    }
+    
 }
