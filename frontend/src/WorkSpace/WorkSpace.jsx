@@ -358,6 +358,7 @@ export const WorkSpace = () => {
                     open={openEditDialog}
                     onClose={handleCloseDialog}
                     onSave={handleSubmitEdit} // Passing 'handleSubmitEdit' as 'onSave'
+                    title="Edit Workspace"
                     workspaceData={workspaceData}
                     workdays={workdays}
                 />

@@ -42,6 +42,19 @@ export const getProviderWorkspaces = async () => {
     return response.data;
 };
 
+export const createWorkspace = async (workspace) => {
+    const response = await client.post("/workspaces", workspace);
+    return response.data;
+};
+
+export const updateWorkspaceWorkdays = async (workspaceId, workdays) => {
+    const response = await client.put(
+        `/workspace/${workspaceId}/workdays`,
+        workdays
+    );
+    return response.data;
+};
+
 // Booking
 export const schedules = async (id, startDateTime) => {
     const response = await client.get(`/bookings/hall/${id}/schedule`, {

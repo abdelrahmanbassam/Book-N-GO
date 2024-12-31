@@ -6,9 +6,13 @@ import { Header } from "../components/Header";
 import { getProviderWorkspaces } from "../api";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { WorkspaceDialog } from "./components/WorkspaceDialog";
+import WorkspaceDialog from "./components/WorkspaceDialog";
+import { createWorkspace, updateWorkspaceWorkdays } from "../api";
+import { set } from "date-fns";
+
 export const MyWorkspaces = () => {
     const [workspaces, setWorkspaces] = useState([]);
+    const [showDialog, setShowDialog] = useState(false);
     const navigate = useNavigate();
     useEffect(() => {
         getProviderWorkspaces()
@@ -16,6 +20,32 @@ export const MyWorkspaces = () => {
             .catch((err) => console.error(err));
     }, []);
 
+    const handleCreateWorkspace = () => {
+        setShowDialog(true);
+        console.log("Create workspace");
+    };
+
+    const handleSaveNewWorkspace = (newWorkspace, workdays) => {
+        createWorkspace(newWorkspace)
+            .then((data) => {
+                console.log("Workspace created", data);
+                newWorkspace = data;
+                // console.log("Workdays", workdays);
+                if (workdays.length > 0) {
+                    const adjustedWorkdays = workdays.map((workday) => ({
+                        ...workday,
+                        startTime: `2024-01-01T${workday.startTime}`,
+                        endTime: `2024-01-01T${workday.endTime}`,
+                    }));
+                    updateWorkspaceWorkdays(newWorkspace.id, adjustedWorkdays)
+                        .then((data) => console.log("Workdays updated", data))
+                        .catch((err) => console.error(err));
+                }
+                setWorkspaces([...workspaces, newWorkspace]);
+            })
+            .catch((err) => console.error(err));
+        setShowDialog(false);
+    };
     return (
         <div className="min-h-screen bg-primary text-white">
             <Header searchBar={true} />
@@ -26,25 +56,46 @@ export const MyWorkspaces = () => {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    <CreateWorkspaceCard
-                        onClick={() => console.log("Creating new workspace")}
-                    />
-                    {workspaces.map((workspace) => (
-                        <WorkspaceCard
-                            key={workspace.id}
-                            name={workspace.name}
-                            rating={workspace.rating}
-                            location={workspace.location}
-                            imageUrl={
-                                workspace.imageUrl || "/assets/WorkSpace.jpg"
-                            }
-                            onClick={() =>
-                                navigate(`/workspace/${workspace.id}`)
-                            }
-                        />
-                    ))}
+                    <CreateWorkspaceCard onClick={handleCreateWorkspace} />
+                    {workspaces.length === 0 && (
+                        <div className="text-center text-lg col-span-4">
+                            You don't have any workspaces yet
+                        </div>
+                    )}
+                    {workspaces.length > 0 &&
+                        workspaces.map((workspace) => (
+                            <WorkspaceCard
+                                key={workspace.id}
+                                name={workspace.name}
+                                rating={workspace.rating}
+                                location={workspace.location}
+                                imageUrl={
+                                    workspace.imageUrl ||
+                                    "/assets/WorkSpace.jpg"
+                                }
+                                onClick={() =>
+                                    navigate(`/workspace/${workspace.id}`)
+                                }
+                            />
+                        ))}
                 </div>
             </div>
+            <WorkspaceDialog
+                open={showDialog}
+                onClose={() => setShowDialog(false)}
+                onSave={handleSaveNewWorkspace}
+                title="Create a new workspace"
+                workspaceData={{
+                    name: "",
+                    description: "",
+                    location: {
+                        departmentNumber: "",
+                        street: "",
+                        city: "",
+                    },
+                }}
+                workdays={[]}
+            />
         </div>
     );
 };

@@ -15,6 +15,7 @@ import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers"; // 
 const WorkspaceDialog = ({
     open,
     onClose,
+    title,
     workspaceData,
     workdays,
     onSave,
@@ -109,6 +110,12 @@ const WorkspaceDialog = ({
             (wd) => wd.startTime !== wd.endTime
         );
         onSave(updatedWorkspace, updatedWorkdays);
+        // clear the form
+        setWorkspaceName("");
+        setWorkspaceDescription("");
+        setWorkspaceLocation({});
+        setWorkspaceWorkdays([]);
+        setValidationErrors({});
     };
 
     const handleLocationChange = (e) => {
@@ -182,7 +189,7 @@ const WorkspaceDialog = ({
                     paddingBottom: "0.5rem",
                 }}
             >
-                Edit Workspace
+                {title}
             </DialogTitle>
             <DialogContent
                 className="bg-primary"
