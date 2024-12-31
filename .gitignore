@@ -1,6 +1,7 @@
 .idea/*
 .vscode/*
 data/*
+.snapadmin_internal.mv
 
 HELP.md
 .gradle

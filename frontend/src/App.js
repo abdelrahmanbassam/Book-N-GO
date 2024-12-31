@@ -1,8 +1,8 @@
 import {
-  Navigate,
-  Route,
-  BrowserRouter as Router,
-  Routes,
+    Navigate,
+    Route,
+    BrowserRouter as Router,
+    Routes,
 } from "react-router-dom";
 
 import "./App.css";
@@ -10,16 +10,18 @@ import { HallDetails } from "./HallDetails/HallDetails";
 import { Login } from "./Sign/LoginPage/Login";
 import { SignUp } from "./Sign/SignUpPage/SignUp";
 
-import { WorkSpace } from "./WorkSpace/WorkSpace";
-import { SelectRole } from "./Sign/SelectRolePage/SelectRole";
-import { HallsList } from "./HallsList&Filter/HallsListPage/HallsList";
-import { MyWorkspaces } from "./WorkSpace/MyWorkspaces";
-import { UserContext } from "./UserContext";
-import { Reservations } from "./Reservations/Reservations";
 import { useEffect, useRef, useState } from "react";
 import { info } from "./api";
-import { PageContext } from "./PageContext";
 import Copilot from "./components/Copilot";
+import { HallsList } from "./HallsList&Filter/HallsListPage/HallsList";
+import { PageContext } from "./PageContext";
+import { Reservations } from "./Reservations/Reservations";
+import { SelectRole } from "./Sign/SelectRolePage/SelectRole";
+import { UserContext } from "./UserContext";
+import { MyWorkspaces } from "./WorkSpace/MyWorkspaces";
+import { WorkSpace } from "./WorkSpace/WorkSpace";
+
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -37,6 +39,7 @@ function App() {
   return (
     <Router>
       <div className="App" ref={divRef}>
+
         <PageContext.Provider value={{ divRef }}>
           <UserContext.Provider value={{ user, setUser }}>
             <Routes>

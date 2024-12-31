@@ -1,12 +1,10 @@
-import { useState, useEffect } from "react";
+import Rating from "@mui/material/Rating";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import { HallCard } from "./components/HallCard";
-import Rating from "@mui/material/Rating";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
-import WorkspaceDialog from "./components/WorkspaceDialog";
-import HallImage from "../assets/Alexandria-Library.png";
 import HallDialog from "./components/HallDialog";
-import { de, is } from "date-fns/locale";
+import WorkspaceDialog from "./components/WorkspaceDialog";
 export const WorkSpace = () => {
     const { workspaceId } = useParams(); // Get the workspace ID from the URL params
     const location = useLocation();
@@ -216,8 +214,10 @@ export const WorkSpace = () => {
     };
 
     return (
+        <>
+        <Header/>
         <div className="min-h-[100vh] bg-primary">
-            <Header searchBar={true} />
+            
             <div className="py-10 md:px-10 px-4">
                 <div className="flex justify-between md:flex-row flex-col">
                     {/* Profile Pic */}
@@ -368,5 +368,6 @@ export const WorkSpace = () => {
                 />
             )}
         </div>
+        </>
     );
 };

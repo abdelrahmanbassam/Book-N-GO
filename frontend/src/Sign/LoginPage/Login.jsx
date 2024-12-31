@@ -1,11 +1,10 @@
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FormInput } from "../components/FormInput";
-import { HeaderButtons } from "../components/HeaderButtons";
-import { Logo } from "../components/Logo";
 import { info, login } from "../../api";
-import styles from "./Login.module.css";
+import { Header } from "../../components/Header";
 import { UserContext } from "../../UserContext";
+import { FormInput } from "../components/FormInput";
+import styles from "./Login.module.css";
 
 export const Login = () => {
     const [formData, setFormData] = useState({
@@ -61,56 +60,55 @@ export const Login = () => {
     };
 
     return (
-        <div className={styles.container}>
-            <Logo />
-            <HeaderButtons />
-            <div className={styles.decorativeShape} />
+        <>
+            <Header />
+            <div className={styles.container}>
+                <div className={styles.formContainer}>
+                    <h1 className={styles.title}>LOGIN</h1>
+                    <form onSubmit={handleSubmit}>
+                        {error && (
+                            <div className={styles.errorContainer}>
+                                <p className={styles.errorText}>{error}</p>
+                            </div>
+                        )}
+                        <FormInput
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                        <FormInput
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
 
-            <div className={styles.formContainer}>
-                <h1 className={styles.title}>LOGIN</h1>
-                <form onSubmit={handleSubmit}>
-                    {error && (
-                        <div className={styles.errorContainer}>
-                            <p className={styles.errorText}>{error}</p>
-                        </div>
-                    )}
-                    <FormInput
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                    <FormInput
-                        type="password"
-                        name="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-
-                    <a
-                        href="/forgot-password"
-                        className={styles.forgotPassword}
-                    >
-                        Forgot Password?
-                    </a>
-
-                    <div className={styles.formButtons}>
-                        <button type="submit" className={styles.button}>
-                            LOGIN
-                        </button>
-                        <button
-                            className={`${styles.button} ${styles.googleSignInButton}`}
-                            onClick={handleGoogleSignIn}
+                        {/* <a
+                            href="/forgot-password"
+                            className={styles.forgotPassword}
                         >
-                            Log in with Google
-                        </button>
-                    </div>
-                </form>
+                            Forgot Password?
+                        </a> */}
+
+                        <div className={styles.formButtons}>
+                            <button type="submit" className={styles.button}>
+                            LOG IN
+                            </button>
+                            <button
+                                className={`${styles.button} ${styles.googleSignInButton}`}
+                                onClick={handleGoogleSignIn}
+                            >
+                                GOOGLE LOG IN
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+        </>
     );
 };

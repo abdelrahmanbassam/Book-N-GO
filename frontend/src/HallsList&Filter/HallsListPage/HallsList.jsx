@@ -12,24 +12,23 @@ if (token != null) localStorage.setItem('token', token);
 
 export const HallsList = () => {
   return (
-    <HallProvider>
-      <div className={styles.container}>
-        <Header />
-        <SearchBar />
-        <div className={styles.content}>
-          <aside className={styles.sidebar}>
-            <Filters />
-          </aside>
-          <main className={styles.main}>
-            <HallGrid />
-            <div className={styles.paginationContainer} >
-              <Pagination />
-            </div>
-          </main>
-        </div>
+    <>
+      <Header />
+      <HallProvider>
+        <div className={styles.container}>
 
-      </div>
-    </HallProvider>
+          <SearchBar />
+          <div className={styles.content}>
+            <aside className={styles.sidebar}>
+              <Filters />
+            </aside>
+            <main className={styles.main}>
+              <HallGrid />
+            </main>
+          </div>
+        </div>
+      </HallProvider>
+    </>
   );
 };
 
