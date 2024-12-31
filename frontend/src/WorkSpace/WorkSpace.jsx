@@ -49,89 +49,90 @@ export const WorkSpace = () => {
             delete workday.workspace;
         });
     };
+    const isWorkspaceProvider = async () => {
+      try {
+          const token = window.localStorage.getItem("token");
+          const response = await fetch(
+              `http://localhost:8080/workspaces/${workspaceId}/provider`,
+              {
+                  headers: getFetchHeaders(),
+              }
+          );
+          const data = await response.json();
+          setIsProvider(data);
+          console.log("isProvider", data);
+      } catch (error) {
+          console.error("Error fetching provider data:", error);
+      }
+  };
 
+  const fetchWorkspaceDetails = async () => {
+      try {
+          console.log(window.localStorage.getItem("token"));
+          const token = window.localStorage.getItem("token");
+          const response = await fetch(
+              `http://localhost:8080/workspaces/${workspaceId}`,
+              {
+                  headers: getFetchHeaders(),
+              }
+          );
+          const data = await response.json();
+          setWorkspaceName(data.name);
+          setWorkspaceRating(data.rating);
+          setWorkspaceDescription(data.description);
+          setWorkspaceLocation(
+              `${data.location.departmentNumber}, ${data.location.street}, ${data.location.city}`
+          );
+          setProfilePic(data.profilePic);
+          setWorkspaceData(data); // Store workspace data for editing
+      } catch (error) {
+          console.error("Error fetching workspace details:", error);
+      }
+  };
+
+  const fetchHallCards = async () => {
+      try {
+          const token = window.localStorage.getItem("token");
+          const response = await fetch(
+              `http://localhost:8080/workspace/${workspaceId}/halls`,
+              {
+                  headers: getFetchHeaders(),
+              }
+          );
+          const data = await response.json();
+          setHallCards(
+              data.map((hall) => ({
+                  id: hall.id,
+                  image: hall.image,
+                  name: hall.name,
+                  stars: hall.rating, // Assuming hall data includes a rating field
+                  rate: hall.ratePerHour, // Assuming your backend provides ratePerHour for the hall
+              }))
+          );
+          console.log(data);
+      } catch (error) {
+          console.error("Error fetching hall cards:", error);
+      }
+  };
+
+  const fetchWorkdays = async () => {
+      try {
+          const response = await fetch(
+              `http://localhost:8080/workspace/${workspaceId}/workdays`,
+              {
+                  headers: getFetchHeaders(),
+              }
+          );
+          const data = await response.json();
+          adjustWorkdays(data);
+          setWorkdays(data);
+      } catch (error) {
+          console.error("Error fetching workdays:", error);
+      }
+  };
     // Fetch workspace details and hall cards
     useEffect(() => {
-        const isWorkspaceProvider = async () => {
-            try {
-                const token = window.localStorage.getItem("token");
-                const response = await fetch(
-                    `http://localhost:8080/workspaces/${workspaceId}/provider`,
-                    {
-                        headers: getFetchHeaders(),
-                    }
-                );
-                const data = await response.json();
-                setIsProvider(data);
-                console.log("isProvider", data);
-            } catch (error) {
-                console.error("Error fetching provider data:", error);
-            }
-        };
 
-        const fetchWorkspaceDetails = async () => {
-            try {
-                console.log(window.localStorage.getItem("token"));
-                const token = window.localStorage.getItem("token");
-                const response = await fetch(
-                    `http://localhost:8080/workspaces/${workspaceId}`,
-                    {
-                        headers: getFetchHeaders(),
-                    }
-                );
-                const data = await response.json();
-                setWorkspaceName(data.name);
-                setWorkspaceRating(data.rating);
-                setWorkspaceDescription(data.description);
-                setWorkspaceLocation(
-                    `${data.location.departmentNumber}, ${data.location.street}, ${data.location.city}`
-                );
-                setProfilePic(data.profilePic);
-                setWorkspaceData(data); // Store workspace data for editing
-            } catch (error) {
-                console.error("Error fetching workspace details:", error);
-            }
-        };
-
-        const fetchHallCards = async () => {
-            try {
-                const token = window.localStorage.getItem("token");
-                const response = await fetch(
-                    `http://localhost:8080/workspace/${workspaceId}/halls`,
-                    {
-                        headers: getFetchHeaders(),
-                    }
-                );
-                const data = await response.json();
-                setHallCards(
-                    data.map((hall) => ({
-                        id: hall.id,
-                        image: hall.image,
-                        name: hall.name,
-                        stars: hall.rating, // Assuming hall data includes a rating field
-                        rate: hall.ratePerHour, // Assuming your backend provides ratePerHour for the hall
-                    }))
-                );
-            } catch (error) {
-                console.error("Error fetching hall cards:", error);
-            }
-        };
-
-        const fetchWorkdays = async () => {
-            try {
-                const response = await fetch(
-                    `http://localhost:8080/workspace/${workspaceId}/workdays`,
-                    {
-                        headers: getFetchHeaders(),
-                    }
-                );
-                const data = await response.json();
-                adjustWorkdays(data);
-                setWorkdays(data);
-            } catch (error) {
-                console.error("Error fetching workdays:", error);
-            }
-        };
         isWorkspaceProvider();
         fetchWorkspaceDetails();
         fetchHallCards();
@@ -204,9 +205,12 @@ export const WorkSpace = () => {
                 adjustWorkdays(data);
                 setWorkdays(data);
             }
-        } catch (error) {
+
+            
+            
+          } catch (error) {
             console.error("Error updating workspace:", error);
-        }
+          }
     };
 
     return (

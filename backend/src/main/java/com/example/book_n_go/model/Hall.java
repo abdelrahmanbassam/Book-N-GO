@@ -42,4 +42,8 @@ public class Hall {
     @ToString.Exclude
     @JsonManagedReference
     private Set<Aminity> aminities;
+
+    @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private Set<Feedback> feedbacks;
 }

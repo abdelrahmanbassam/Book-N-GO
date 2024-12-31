@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.book_n_go.enums.Permission;
 import com.example.book_n_go.model.Location;
+import com.example.book_n_go.model.User;
 import com.example.book_n_go.repository.LocationRepo;
+import com.example.book_n_go.service.AuthService;
 
 @RestController
 public class LocationController {
@@ -39,6 +42,7 @@ public class LocationController {
 
     @GetMapping("/locations/{id}")
     public ResponseEntity<Location> getLocationById(@PathVariable("id") long id) {
+
         Optional<Location> locationData = locationRepo.findById(id);
         if (locationData.isPresent()) {
             return new ResponseEntity<>(locationData.get(), HttpStatus.OK);
@@ -50,6 +54,9 @@ public class LocationController {
     @PostMapping("/locations")
     public ResponseEntity<Location> createLocation(@RequestBody Location location) {
         try {
+            if (!AuthService.userHasPermission(Permission.PROVIDER_WRITE)) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             Location _location = locationRepo.save(location);
             return new ResponseEntity<>(_location, HttpStatus.CREATED);
         } catch (Exception e) {
@@ -61,6 +68,9 @@ public class LocationController {
     public ResponseEntity<Location> updateLocation(@PathVariable("id") long id, @RequestBody Location location) {
         Optional<Location> locationData = locationRepo.findById(id);
         if (locationData.isPresent()) {
+            if (!AuthService.userHasPermission(Permission.ADMIN_UPDATE)) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             Location _location = locationData.get();
             _location.setDepartmentNumber(location.getDepartmentNumber());
             _location.setStreet(location.getStreet());
@@ -74,6 +84,9 @@ public class LocationController {
     @DeleteMapping("/locations/{id}")
     public ResponseEntity<HttpStatus> deleteLocation(@PathVariable("id") long id) {
         try {
+            if (!AuthService.userHasPermission(Permission.ADMIN_DELETE)) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             locationRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

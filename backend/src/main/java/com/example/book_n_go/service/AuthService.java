@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.example.book_n_go.dto.AuthResponse;
 import com.example.book_n_go.dto.LoginRequest;
 import com.example.book_n_go.dto.SignupRequest;
+import com.example.book_n_go.enums.Permission;
 import com.example.book_n_go.model.User;
 import com.example.book_n_go.repository.UserRepo;
 
@@ -56,5 +57,9 @@ public class AuthService {
 
     public static User getRequestUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
+    public static boolean userHasPermission(Permission permission){
+        return getRequestUser().hasPermission(permission);
     }
 }
