@@ -1,25 +1,27 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import Style from './HallDialog.module.css';
 import { MenuItem, OutlinedInput, Select } from '@mui/material';
-import { createHall } from '../../api';
+import { createHall, getAminities } from '../../api';
 
 export default function HallDialog({ open, setOpen, workspaceId }) {
-  const Amenities = {
-    'SCREEN': 'Screen',
-    'PROJECTOR': 'Projector',
-    'AC': 'AC',
-    'CEILING_FANS': 'Ceiling Fans',
-    'WHITE_BOARD': 'White Board'
-  }
+  const [aminities, setAminities] = useState([
+    { id: 1, name: "Projector" },
+  ]);
 
   const [hall, setHall] = useState({
     "capacity": null,
     "description": null,
     "pricePerHour": null,
-    "aminities": []
+    "aminitiesIds": []
   })
+
+  useEffect(() => {
+    getAminities().then((aminities) => {
+      setAminities(aminities);
+    });
+  }, []);
 
   return (
     <Dialog open={open}>
@@ -41,12 +43,12 @@ export default function HallDialog({ open, setOpen, workspaceId }) {
           inputProps={{
             id: 'hall-aminities-select',
           }}
-          value={hall.aminities}
-          onChange={(e) => {console.log(e.target.value); setHall({...hall, aminities: e.target.value})}}
+          value={hall.aminitiesIds}
+          onChange={(e) => {console.log(e.target.value); setHall({...hall, aminitiesIds: e.target.value})}}
           input = {<OutlinedInput label="Select Amenities" sx={{backgroundColor: 'white'}}/>}
           >
-            {Object.keys(Amenities).map((amenity, index) => (
-              <MenuItem key={index} value={amenity}>{Amenities[amenity]}</MenuItem>
+            {aminities.map((amenity, index) => (
+              <MenuItem key={index} value={amenity.id}>{amenity.name}</MenuItem>
             ))}
         </Select>
 
