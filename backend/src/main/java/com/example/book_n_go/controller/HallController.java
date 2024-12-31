@@ -31,7 +31,7 @@ import com.example.book_n_go.repository.AminityRepo;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 import com.example.book_n_go.service.AuthService;
-import com.example.book_n_go.service.HallsListFilterService;
+import com.example.book_n_go.service.HallsService;
 
 @RestController
 @RequestMapping("/workspace/{workspaceId}")
@@ -73,23 +73,13 @@ public class HallController {
     @PostMapping("/halls")
     public ResponseEntity<Hall> createHall(@RequestBody HallRequest hallRequest, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
+        if(workspace == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         // if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
         //     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         // }
-        Hall hall = new Hall();
-        hall.setName(hallRequest.getName());
-        hall.setCapacity(hallRequest.getCapacity());
-        hall.setDescription(hallRequest.getDescription());
-        hall.setPricePerHour(hallRequest.getPricePerHour());
-        hall.setRating(0);
-
-        Set<Aminity> aminities = new HashSet<>();
-        for(Long aminityId: hallRequest.getAminitiesIds()) {
-            aminities.add(aminityRepo.findById(aminityId).get());
-        }
-        hall.setAminities(aminities);
-        hall.setWorkspace(workspace);
-        Hall _hall = hallRepo.save(hall);
+        Hall _hall = hallsService.createHall(hallRequest, workspaceId);
         return new ResponseEntity<>(_hall, HttpStatus.CREATED);
     }
 
@@ -123,12 +113,12 @@ public class HallController {
     }
 
     @Autowired
-    private HallsListFilterService hallsListFilterService;
+    private HallsService hallsService;
     @PostMapping("/filterHalls")
     public ResponseEntity<List<Hall>> filterHalls(@RequestBody HallsFilterRequest request) {
         try {
             // System.out.println("Request: " + request);
-            List<Hall> halls = hallsListFilterService.applyCriterias(request);
+            List<Hall> halls = hallsService.applyCriterias(request);
             // List<Hall> halls = hallRepo.findAll();
             return new ResponseEntity<>(halls, HttpStatus.OK);
         } catch (Exception e) {
