@@ -6,6 +6,7 @@
     "@daypilot/daypilot-lite-react": "^3.31.0",
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
+    "@google/generative-ai": "^0.21.0",
     "@material-tailwind/react": "^2.1.10",
     "@mui/icons-material": "^6.1.9",
     "@mui/material": "^6.1.9",

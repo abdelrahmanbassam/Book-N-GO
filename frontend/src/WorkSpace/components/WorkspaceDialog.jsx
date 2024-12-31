@@ -12,9 +12,10 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { format } from "date-fns";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers"; // For clock view
 
-const EditWorkspaceDialog = ({
+const WorkspaceDialog = ({
     open,
     onClose,
+    title,
     workspaceData,
     workdays,
     onSave,
@@ -109,6 +110,12 @@ const EditWorkspaceDialog = ({
             (wd) => wd.startTime !== wd.endTime
         );
         onSave(updatedWorkspace, updatedWorkdays);
+        // clear the form
+        setWorkspaceName("");
+        setWorkspaceDescription("");
+        setWorkspaceLocation({});
+        setWorkspaceWorkdays([]);
+        setValidationErrors({});
     };
 
     const handleLocationChange = (e) => {
@@ -182,7 +189,7 @@ const EditWorkspaceDialog = ({
                     paddingBottom: "0.5rem",
                 }}
             >
-                Edit Workspace
+                {title}
             </DialogTitle>
             <DialogContent
                 className="bg-primary"
@@ -432,4 +439,4 @@ const EditWorkspaceDialog = ({
     );
 };
 
-export default EditWorkspaceDialog;
+export default WorkspaceDialog;

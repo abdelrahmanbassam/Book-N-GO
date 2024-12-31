@@ -38,7 +38,7 @@ export const SelectRole = () => {
             if (role === "ADMIN") {
                 window.location.href = "http://localhost:8080/admin";
             } else if (role === "PROVIDER") {
-                navigate("/hallOwner");
+                navigate("/myWorkspaces");
             } else if (role === "CLIENT") {
                 navigate("/hallsList");
             }

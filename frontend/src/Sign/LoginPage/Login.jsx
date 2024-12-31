@@ -38,7 +38,7 @@ export const Login = () => {
             if (user.role === "ADMIN") {
                 navigate("/admin");
             } else if (user.role === "PROVIDER") {
-                navigate("/hallOwner");
+                navigate("/myWorkspaces");
             } else if (user.role === "CLIENT") {
                 navigate("/hallsList");
             }
