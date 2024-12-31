@@ -44,7 +44,7 @@ public class FeedbackService {
         }
     }
 
-    public Optional<Feedback> editFeedback(Long hallId, Long feedbackId, FeedbackRequest feedbackRequest) {
+    public Optional<Hall> editFeedback(Long hallId, Long feedbackId, FeedbackRequest feedbackRequest) {
         Optional<Feedback> feedbackOptional = feedbackRepo.findById(feedbackId);
 
         if (feedbackOptional.isPresent()) {
@@ -56,24 +56,25 @@ public class FeedbackService {
             feedback.setContent(feedbackRequest.getComment());
 
             feedbackRepo.save(feedback);
-            return Optional.of(feedback);
+            return Optional.of(feedback.getHall());
         } else {
             return Optional.empty();
         }
     }
 
-    public boolean deleteFeedback(Long hallId, Long feedbackId) {
+    public Optional<Hall> deleteFeedback(Long hallId, Long feedbackId) {
         Optional<Feedback> feedbackOptional = feedbackRepo.findById(feedbackId);
 
         if (feedbackOptional.isPresent()) {
             Feedback feedback = feedbackOptional.get();
             if (feedback.getHall().getId() != hallId) {
-                return false;
+                return Optional.empty();
             }
+            Hall hall = feedback.getHall();
             feedbackRepo.delete(feedback);
-            return true;
+            return Optional.of(hall);
         } else {
-            return false;
+            return Optional.empty();
         }
     }
 }

@@ -1,18 +1,13 @@
 package com.example.book_n_go.controller;
-
 import com.example.book_n_go.dto.FeedbackRequest;
-import com.example.book_n_go.model.Feedback;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.service.FeedbackService;
-
-import org.apache.poi.sl.draw.geom.GuideIf.Op;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -24,27 +19,38 @@ public class FeedbackController {
     private FeedbackService feedbackService;
    
     @PostMapping("/add")
-    public ResponseEntity<Hall> addFeedback(@PathVariable Long hallId,  @RequestParam Long userId, @RequestBody FeedbackRequest feedbackRequest) {
+    public ResponseEntity<?> addFeedback(@PathVariable Long hallId, @RequestParam Long userId, @RequestBody FeedbackRequest feedbackRequest) {
         Optional<Hall> hallOptional = feedbackService.addFeedbackAndReturnHall(hallId, userId, feedbackRequest);
-        return hallOptional.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.badRequest().build());
+
+        if (hallOptional.isPresent()) {
+            return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User already has feedback on this hall", HttpStatus.NO_CONTENT);
+        }
     }
 
-    @PutMapping("/edit/{feedbackId}")
-    public ResponseEntity<Feedback> editFeedback(@PathVariable Long hallId, @PathVariable Long feedbackId, @RequestBody FeedbackRequest feedbackRequest) {
-        Optional<Feedback> feedbackOptional = feedbackService.editFeedback(hallId, feedbackId, feedbackRequest);
-        return feedbackOptional.map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    @PostMapping("/edit/{feedbackId}")
+    public ResponseEntity<?> editFeedback(@PathVariable Long hallId, @PathVariable Long feedbackId, @RequestBody FeedbackRequest feedbackRequest) {
+        Optional<Hall> hallOptional = feedbackService.editFeedback(hallId, feedbackId, feedbackRequest);
+        if (hallOptional.isPresent()) {
+            return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("Feedback not found", HttpStatus.NO_CONTENT);
+        }
     }
 
     @DeleteMapping("/delete/{feedbackId}")
-    public ResponseEntity<Void> deleteFeedback(@PathVariable Long hallId, @PathVariable Long feedbackId) {
-        boolean deleted = feedbackService.deleteFeedback(hallId, feedbackId);
+    public ResponseEntity<?> deleteFeedback(@PathVariable Long hallId, @PathVariable Long feedbackId) {
+        Optional<Hall> hallOptional = feedbackService.deleteFeedback(hallId, feedbackId);
 
-        if (deleted) {
-            return ResponseEntity.ok().build();
+        if (hallOptional.isPresent()) {
+            return new ResponseEntity<>(hallOptional.get(), HttpStatus.OK);
         } else {
-            return ResponseEntity.notFound().build();
+            return new ResponseEntity<>("Feedback not found", HttpStatus.NO_CONTENT);
         }
+    }
+    @GetMapping("/greeting")
+    public ResponseEntity<String> greeting() {
+        return new ResponseEntity<>("Hello, welcome to the Feedback API!", HttpStatus.OK);
     }
 }
