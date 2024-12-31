@@ -3,7 +3,7 @@ import { Header } from "../components/Header";
 import { HallCard } from "./components/HallCard";
 import Rating from "@mui/material/Rating";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
-import EditWorkspaceDialog from "./components/EditWorkspaceDialog";
+import WorkspaceDialog from "./components/WorkspaceDialog";
 import HallImage from "../assets/Alexandria-Library.png";
 import HallDialog from "./components/HallDialog";
 import { de, is } from "date-fns/locale";
@@ -354,7 +354,7 @@ export const WorkSpace = () => {
             />
             {/* Edit Workspace Dialog */}
             {workspaceData && (
-                <EditWorkspaceDialog
+                <WorkspaceDialog
                     open={openEditDialog}
                     onClose={handleCloseDialog}
                     onSave={handleSubmitEdit} // Passing 'handleSubmitEdit' as 'onSave'

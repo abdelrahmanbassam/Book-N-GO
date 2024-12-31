@@ -12,7 +12,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { format } from "date-fns";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers"; // For clock view
 
-const EditWorkspaceDialog = ({
+const WorkspaceDialog = ({
     open,
     onClose,
     workspaceData,
@@ -432,4 +432,4 @@ const EditWorkspaceDialog = ({
     );
 };
 
-export default EditWorkspaceDialog;
+export default WorkspaceDialog;

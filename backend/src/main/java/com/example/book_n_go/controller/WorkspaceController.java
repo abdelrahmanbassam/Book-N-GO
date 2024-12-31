@@ -43,6 +43,16 @@ public class WorkspaceController {
         }
     }
 
+    @GetMapping("/workspaces/provider")
+    public ResponseEntity<List<Workspace>> getProviderWorkspaces() {
+        User provider = AuthService.getRequestUser();
+        List<Workspace> workspaces = workspaceRepo.findByProviderId(provider.getId());
+        if (workspaces.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return new ResponseEntity<>(workspaces, HttpStatus.OK);
+    }
+
     @GetMapping("/workspaces/{id}")
     public ResponseEntity<Workspace> getWorkspaceById(@PathVariable("id") long id) {
         Optional<Workspace> workspaceData = workspaceRepo.findById(id);
