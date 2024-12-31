@@ -37,6 +37,7 @@ export const Login = () => {
       const userData = await user.json();
 
       console.log('User data:', userData);
+      localStorage.setItem('role', JSON.stringify(userData.role)); // Store user data in local storage for future use
 
       if (userData.role === 'ADMIN') {
         navigate('/admin');

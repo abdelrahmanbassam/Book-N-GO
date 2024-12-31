@@ -10,32 +10,19 @@ export const Reservations = () => {
         REJECTED: 'REJECTED'
     });
     const [selectedFilter, setSelectedFilter] = useState('all');
-    const [reservations, setReservations] = useState([
-        {
-            id: 1,
-            hall: 'hall 21',
-            clientName: 'John Doe',
-            status: 'pending',
-            date: '2022-10-10',
-            startTime: '10:00 AM',
-            endTime: '11:00 AM',
-            notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec rhoncus mi.'
-        },
-        {
-            id: 2,
-            hall: 'hall 22',
-            clientName: 'Jane Doe',
-            status: 'pending',
-            date: '2022-10-11',
-            startTime: '11:00 AM',
-            endTime: '12:00 PM',
-            notes: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam nec rhoncus mi.'
-        }
-    ]);
+    const [isProvider, setIsProvider] = useState(true);
+    const [reservations, setReservations] = useState([]);
     //fetching reservations
     const fetchReservations = async () => {
+        const token = window.localStorage.getItem("token");
         try {
-            const response = await fetch('http://localhost:8080/reservations/all');
+            const response = await fetch('http://localhost:8080/reservations/all', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token,
+                        'Content-Type': 'application/json'
+
+                    }
+                });
             const data = await response.json();
             console.log(response)
             console.log('Reservations fetched:', data);
@@ -45,6 +32,11 @@ export const Reservations = () => {
         }
     };
     useEffect(() => {
+        const role = window.localStorage.getItem('role');
+        if (role === 'PROVIDER') setIsProvider(true);
+
+        else setIsProvider(false);
+
         fetchReservations();
     }, []);
 
@@ -76,9 +68,17 @@ export const Reservations = () => {
 
     // fetch get reservation by status
     const fetchGetReservationByStatus = async (status) => {
+        const token = window.localStorage.getItem("token");
         try {
-            const response = await fetch(`http://localhost:8080/reservations/status/${status}`);
+            const response = await fetch(`http://localhost:8080/reservations/status/${status}`,{
+                headers: {
+                    'Authorization': 'Bearer ' + token,
+                    'Content-Type': 'application/json'
+
+                }
+            });
             const data = await response.json();
+            console.log(response)
             console.log('Reservations fetched:', data);
             setReservations(data);
         } catch (error) {
@@ -120,7 +120,7 @@ export const Reservations = () => {
                             key={index}
                             reservation={reservation}
                             reservationId={reservation.id}
-                            isProvider={true}
+                            isProvider={isProvider}
                             onAccept={() =>  setReservationStatus(reservation.id, 'CONFIRMED')}
                             onReject={() => setReservationStatus(reservation.id, 'REJECTED')}
                             onCancel={() => setReservationStatus(reservation.id, 'CANCELED')}

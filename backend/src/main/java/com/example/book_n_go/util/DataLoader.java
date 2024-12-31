@@ -7,6 +7,8 @@ import com.example.book_n_go.model.*;
 import com.example.book_n_go.repository.UserRepo;
 import com.example.book_n_go.repository.*;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import com.example.book_n_go.repository.BookingRepo;
 import java.sql.Time;
@@ -45,10 +47,12 @@ public class DataLoader implements CommandLineRunner {
         @Override
         public void run(String... args) throws Exception {
                 // Add sample users
-                User user1 = new User(null, "provider1@example.com", "Provider One", "1234567890", "password1", Role.PROVIDER);
-                User user2 = new User(null, "provider2@example.com", "Provider Two", "0987654321", "password2", Role.PROVIDER);
-                User user3 = new User(null, "client1@example.com", "Client One", "1234567891", "password3", Role.CLIENT);
+                PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                User user1 = new User(null, "provider1@example.com", passwordEncoder.encode("Provider One"), "1234567890", "password1", Role.PROVIDER);
+                User user2 = new User(null, "provider2@example.com", passwordEncoder.encode("Provider Two"), "0987654321", "password2", Role.PROVIDER);
+                User user3 = new User(null, "client1@example.com", passwordEncoder.encode("Client One"), "1234567891", "password3", Role.CLIENT);
                 userRepo.saveAll(Arrays.asList(user1, user2, user3));
+                System.out.println(userRepo.findAll());
 
                 // Add sample locations
                 Location location1 = new Location(0, 123, "Main St", "New York");
@@ -70,6 +74,7 @@ public class DataLoader implements CommandLineRunner {
                 Aminity ceilingFans = new Aminity(0, "Ceiling Fans", new HashSet<>());
                 Aminity whiteBoard = new Aminity(0, "White Board", new HashSet<>());
                 aminityRepo.saveAll(Arrays.asList(projector, screen, ac, ceilingFans, whiteBoard));
+
 
                 // Add sample halls
                 Hall hall1 = new Hall(0, "Main Hall", 100, "Large hall with a beautiful view", 200.0, 4.0, workspace1, new HashSet<>(Arrays.asList(projector, screen)));
