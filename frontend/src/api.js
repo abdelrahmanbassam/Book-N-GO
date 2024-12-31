@@ -35,6 +35,11 @@ export const getHallData = async (workspaceId, id) => {
     return response.data;
 };
 
+export const getAminities = async () => {
+    const response = await client.get("/aminities");
+    return response.data;
+}
+
 // Workspace
 export const getProviderWorkspaces = async () => {
     const response = await client.get("/workspaces/provider");
