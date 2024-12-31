@@ -43,7 +43,7 @@ public class OAuth2Controller {
                 if (role == Role.CLIENT) {
                     redirectUrl += "/hallsList";
                 } else if (role == Role.PROVIDER) {
-                    redirectUrl += "/hallOwner";
+                    redirectUrl += "/myWorkspaces";
                 } else if (role == Role.ADMIN) {
                     redirectUrl += "/admin";
                 }
