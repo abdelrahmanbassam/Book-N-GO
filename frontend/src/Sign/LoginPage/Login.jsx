@@ -8,53 +8,9 @@ import styles from "./Login.module.css";
 import { UserContext } from "../../UserContext";
 
 export const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
-  const [error, setError] = useState('');
-  const { user, setUser } = useContext(UserContext);
-  const navigate = useNavigate();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await login(formData.email, formData.password);
-
-
-      if (!data.token) {
-        setError(data.message || 'Email or password is incorrect');
-        return;
-      }
-
-      localStorage.setItem('token', data.token);
-
-      console.log('Login successful:', data);
-
-      const user = await info();
-      setUser(user);
-
-      console.log('User data:', user);
-      localStorage.setItem('role', JSON.stringify(user.role)); // Store user data in local storage for future use
-
-        if (user.role === 'ADMIN') {
-        navigate('/admin');
-      } else if (user.role === 'PROVIDER') {
-        navigate('/hallOwner');
-      } else if (user.role === 'CLIENT') {
-        navigate('/hallsList');
-      }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
-    }
-  };
-
-  const handleChange = (e) => {
-    setError(''); // Clear error when user starts typing
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
     });
     const [error, setError] = useState("");
     const { user, setUser } = useContext(UserContext);
