@@ -5,9 +5,8 @@
   z-index: 1000;
   bottom: 30px;
   left: 30px;
-  background-color: #010F18;
+  background-color: #C8E1E8;
   border-radius: 100px;
-  border: 1px solid #000000;
   box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.75);
   height: 70px;
   width: 70px;
@@ -23,7 +22,7 @@
 
 .drawer svg{
   font-size: 50px;
-  color: #FF9944;
+  color: #010F18;
 }
 
 .chat {

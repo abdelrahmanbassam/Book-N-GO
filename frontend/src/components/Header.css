@@ -1,0 +1,84 @@
+.header {
+    background-color: #010F18;
+    z-index: 1000;
+    width: 100%;
+    height: 10vh;
+    padding: 1.5rem;
+    padding-top: 2rem;
+    padding-right: 2.5rem;
+    
+    display: flex;
+    justify-content: space-around;
+    
+    align-items: left;
+}
+
+.header-md {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    gap: 0;
+}
+
+.logo-container {
+    justify-content: flex-start;
+    cursor: pointer;
+}
+
+
+.logo {
+    height: 35px;
+    object-fit: contain;
+}
+
+.profile-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+}
+
+.profile-pic {
+    width: 2.5rem;
+    aspect-ratio: 1 / 1;
+    border-radius: 9999px;
+    margin-left: 1rem;
+    cursor: pointer;
+}
+
+.navigationButtons {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    align-items: start;
+    padding-left: 5rem;
+}
+
+.logout-button {
+    background-color: #FF9944;
+    width: 150px;
+    color: white;
+    border: none;
+    font-style: bold;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin-left: 1rem;
+}
+
+.disabled{
+    background-color: #C8E1E8;
+    color: #010F18;
+}
+
+.button {
+    color: white;
+    font-size: 21px;
+    font-style: bold;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin-left: 1rem;
+}
+
+.button-container {
+    display: flex;
+    gap: 1rem;
+}
