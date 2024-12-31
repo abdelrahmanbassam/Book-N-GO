@@ -91,6 +91,8 @@ public class BookingService {
         List<Workday> workdays = workdayRepo.findByWorkspace(workSpace);
 
         List<Booking> bookings = bookingRepo.findByEndTimeBefore(checkDay.plus(Duration.ofDays(7)));
+        // filter bookings by status confirmed
+        bookings = bookings.stream().filter(booking -> booking.getStatus() == Status.CONFIRMED).collect(Collectors.toList());
 
         List<Period> bookingPeriods = bookings.stream()
                 .map(booking -> new Period(booking.getStartTime(), booking.getEndTime()))

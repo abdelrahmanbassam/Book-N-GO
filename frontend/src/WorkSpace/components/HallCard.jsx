@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import Rating from '@mui/material/Rating';
+import AlexandriaLibrary from "../../assets/Alexandria-Library.png";
 
 export const HallCard = (props) => {
     return (
@@ -8,7 +9,7 @@ export const HallCard = (props) => {
                 <div
                     className={"relative"}>
                     <img
-                        src={props.image || "/assets/WorkSpace.jpg"}
+                        src={props.image || AlexandriaLibrary}
                         alt="hall"
                         className="w-full object-fill aspect-video min-h-[220px]"
                     />
