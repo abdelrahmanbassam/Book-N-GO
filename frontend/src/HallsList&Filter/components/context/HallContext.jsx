@@ -75,7 +75,7 @@ export const HallProvider = ({ children }) => {
       sortBy: sortByRef.current,
       searchWord: searchWordRef.current,
     };
-    console.log('fetchData', JSON.stringify(body, null, 2));
+    // console.log('fetchData', JSON.stringify(body, null, 2));
     loadingRef.current = true;
     triggerUpdate({});
     
