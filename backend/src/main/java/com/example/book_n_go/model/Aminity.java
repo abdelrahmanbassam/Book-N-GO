@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "Aminities")
 @NoArgsConstructor
@@ -20,6 +22,7 @@ public class Aminity {
     private String name;
 
     @ManyToMany(mappedBy = "aminities", fetch = FetchType.EAGER)
+    @JsonBackReference
     @ToString.Exclude
     private Set<Hall> halls;
 }

@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "Halls")
 @NoArgsConstructor
@@ -38,5 +40,6 @@ public class Hall {
             inverseJoinColumns = @JoinColumn(name = "aminity_id")
     )
     @ToString.Exclude
+    @JsonManagedReference
     private Set<Aminity> aminities;
 }
