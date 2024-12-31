@@ -14,6 +14,7 @@ import { SelectRole } from "./Sign/SelectRolePage/SelectRole";
 import { HallsList } from "./HallsList&Filter/HallsListPage/HallsList";
 import { MyWorkspaces } from "./WorkSpace/MyWorkspaces";
 import { UserContext } from "./UserContext";
+import { Reservations } from "./Reservations/Reservations";
 import { useEffect, useState } from "react";
 import { info } from "./api";
 
@@ -55,6 +56,7 @@ function App() {
                     {/* {user && user.role === "manager" && ( */}
                     <Route path="/myWorkspaces" element={<MyWorkspaces />} />
                     {/* )} */}
+                    {<Route path="/reservations" element={<Reservations />} />}
                 </Routes>
             </UserContext.Provider>
         </Router>
