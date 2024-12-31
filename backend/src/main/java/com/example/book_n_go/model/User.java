@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.example.book_n_go.enums.Permission;
 import com.example.book_n_go.enums.Role;
 
 import jakarta.persistence.Column;
@@ -76,5 +77,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean hasPermission(Permission permission){
+      return this.getRole().getAuthorities().stream().anyMatch(access -> access.getAuthority().equals(Permission.PROVIDER_WRITE.getPermission()));
     }
 }
