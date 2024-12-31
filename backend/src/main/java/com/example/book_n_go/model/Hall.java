@@ -30,7 +30,7 @@ public class Hall {
     private double rating;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    // @JoinColumn(nullable = false)
     private Workspace workspace;
 
     @ManyToMany(fetch = FetchType.EAGER)

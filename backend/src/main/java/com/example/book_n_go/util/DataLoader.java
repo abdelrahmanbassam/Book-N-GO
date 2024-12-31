@@ -9,10 +9,13 @@ import com.example.book_n_go.repository.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 import com.example.book_n_go.repository.BookingRepo;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -88,22 +91,22 @@ public class DataLoader implements CommandLineRunner {
                 Hall hall9 = new Hall(0, "Skyline Hall", 130, "Hall with a stunning skyline view", 280.0, 4.7, workspace2, new HashSet<>(Arrays.asList(screen, projector, ac)));
                 hallRepo.saveAll(Arrays.asList(hall1, hall2, hall3, hall4, hall5, hall6, hall7, hall8, hall9));
 
-                // Add sample workdays
-                Workday workday1 = new Workday(0, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace1);
-                Workday workday2 = new Workday(0, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"), Day.TUESDAY, workspace2);
-                Workday workday3 = new Workday(0, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.WEDNESDAY, workspace1);
-                Workday workday4 = new Workday(0, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"), Day.THURSDAY, workspace2);
-                Workday workday5 = new Workday(0, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.FRIDAY, workspace1);
-                Workday workday6 = new Workday(0, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"), Day.SATURDAY, workspace2);
-                Workday workday7 = new Workday(0, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.SUNDAY, workspace1);
-                workdayRepo.saveAll(Arrays.asList(workday1, workday2, workday3, workday4, workday5, workday6, workday7));
 
+                Workday workday1 = new Workday(0, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace1);
+                Workday workday2 = new Workday(0, LocalDateTime.of(2021, 9, 7, 10, 0), LocalDateTime.of(2021, 9, 7, 18, 0), Day.TUESDAY, workspace2);
+                Workday workday3 = new Workday(0, LocalDateTime.of(2021, 9, 8, 9, 0), LocalDateTime.of(2021, 9, 8, 17, 0), Day.WEDNESDAY, workspace1);
+                Workday workday4 = new Workday(0, LocalDateTime.of(2021, 9, 9, 10, 0), LocalDateTime.of(2021, 9, 9, 18, 0), Day.THURSDAY, workspace2);
+                Workday workday5 = new Workday(0, LocalDateTime.of(2021, 9, 10, 9, 0), LocalDateTime.of(2021, 9, 10, 17, 0), Day.FRIDAY, workspace1);
+                Workday workday6 = new Workday(0, LocalDateTime.of(2021, 9, 11, 10, 0), LocalDateTime.of(2021, 9, 11, 18, 0), Day.SATURDAY, workspace2);
+                Workday workday7 = new Workday(0, LocalDateTime.of(2021, 9, 12, 9, 0), LocalDateTime.of(2021, 9, 12, 17, 0), Day.SUNDAY, workspace1);
+                workdayRepo.saveAll(Arrays.asList(workday1, workday2, workday3, workday4, workday5, workday6, workday7));
+          
+          
                 // Add sample bookings
                 Booking booking1 = new Booking(null, hall1, user3, LocalDateTime.now().plusDays(3), LocalDateTime.now().plusDays(3).plusHours(2), Status.CONFIRMED, 200.0);
                 Booking booking2 = new Booking(null, hall2, user3, LocalDateTime.now().plusDays(5), LocalDateTime.now().plusDays(5).plusHours(3), Status.PENDING, 250.0);
                 Booking booking3 = new Booking(null, hall3, user3, LocalDateTime.now().plusDays(7), LocalDateTime.now().plusDays(7).plusHours(4), Status.REJECTED, 150.0);
                 bookingRepo.saveAll(Arrays.asList(booking1, booking2, booking3));
-
 
 
 
