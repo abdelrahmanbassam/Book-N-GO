@@ -10,6 +10,8 @@ import { Login } from './Sign/LoginPage/Login';
 import { SignUp } from './Sign/SignUpPage/SignUp';
 
 import { WorkSpace } from "./WorkSpace/WorkSpace";
+import {Reservations} from "./Reservations/Reservations";
+
 import { SelectRole } from './Sign/SelectRolePage/SelectRole';
 import { HallsList } from './HallsList&Filter/HallsListPage/HallsList';
 
@@ -42,6 +44,7 @@ function App() {
                         element={<WorkSpace />}
                     />
                 }
+                {<Route path='/reservations' element={<Reservations/>}/>}
                 {/* {<Route path='/hall' element={<HallDetails/>}/>} */}
                 {<Route path="/login" element={<Login />} />}
                 {<Route path="/signup" element={<SignUp />} />}

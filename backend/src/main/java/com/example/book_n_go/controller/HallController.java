@@ -40,6 +40,7 @@ public class HallController {
     @GetMapping("/halls")
     public ResponseEntity<List<Hall>> getHalls(@PathVariable("workspaceId") long workspaceId) {
         try {
+            System.out.println("Workspace ID: " + workspaceId);
             List<Hall> halls = new ArrayList<Hall>();
             Workspace workspace = workspaceRepo.findById(workspaceId).get();
             hallRepo.findByWorkspace(workspace).forEach(halls::add);
@@ -103,12 +104,14 @@ public class HallController {
     @PostMapping("/filterHalls")
     public ResponseEntity<List<Hall>> filterHalls(@RequestBody HallsFilterRequest request) {
         try {
-            System.out.println("Request: " + request);
+            // System.out.println("Request: " + request);
             List<Hall> halls = hallsListFilterService.applyCriterias(request);
-            
+            // List<Hall> halls = hallRepo.findAll();
             return new ResponseEntity<>(halls, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 }
