@@ -51,3 +51,7 @@ export const availability = async (id, startDateTime) => {
   });
   return response.data;
 }
+export const createBooking = async (hallId, startTime, endTime) => {
+  const response = await client.post(`/bookings/create`, { hallId, startTime, endTime });
+  return response.data;
+}
