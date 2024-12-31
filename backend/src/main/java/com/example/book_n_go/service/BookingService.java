@@ -227,7 +227,7 @@ public class BookingService {
 
         Booking booking = bookingRepo.findById(bookingId).get();
 
-        if (booking.getStatus() == Status.REJECTED || booking.getStatus() == Status.CONFIRMED) {
+        if (booking.getStatus() == Status.REJECTED || booking.getStatus() == Status.CONFIRMED || booking.getStatus() == Status.CANCELED) {
             throw new IllegalArgumentException("Booking is already " + booking.getStatus());
         }
 

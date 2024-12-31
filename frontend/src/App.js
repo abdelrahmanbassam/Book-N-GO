@@ -4,53 +4,73 @@ import {
     BrowserRouter as Router,
     Routes,
 } from "react-router-dom";
-import './App.css';
-import { HallDetails } from './HallDetails/HallDetails';
-import { Login } from './Sign/LoginPage/Login';
-import { SignUp } from './Sign/SignUpPage/SignUp';
+
+import "./App.css";
+import { HallDetails } from "./HallDetails/HallDetails";
+import { Login } from "./Sign/LoginPage/Login";
+import { SignUp } from "./Sign/SignUpPage/SignUp";
 
 import { WorkSpace } from "./WorkSpace/WorkSpace";
-
-import { HallsList } from './HallsList&Filter/HallsListPage/HallsList';
-import { SelectRole } from './Sign/SelectRolePage/SelectRole';
-import { PageContext } from './PageContext';
-import { useRef } from "react";
-import Copilot from "./components/Copilot";
-
+import { SelectRole } from "./Sign/SelectRolePage/SelectRole";
+import { HallsList } from "./HallsList&Filter/HallsListPage/HallsList";
+import { MyWorkspaces } from "./WorkSpace/MyWorkspaces";
+import { UserContext } from "./UserContext";
+import { Reservations } from "./Reservations/Reservations";
+import { useEffect, useState } from "react";
+import { info } from "./api";
 
 function App() {
-  const divRef = useRef(null); // Create a reference to the div
+    const [user, setUser] = useState(null);
 
-  return (
-    <Router>
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        if (token) {
+            info()
+                .then((user) => setUser(user))
+                .catch(() => localStorage.removeItem("token"));
+        }
+    }, []);
+
+    return (
+        <Router>
       <div className="App" ref={divRef}>
         <PageContext.Provider value={{ divRef }}>
-          <Routes>
-                <Route path="/" element={<Navigate to="/login" />} />
-                {/* <Route path='/' element={<HomePage/>}/> */}
-                {<Route path="/workspace" element={<WorkSpace />} />}
-                {
+        
+        
+            <UserContext.Provider value={{ user, setUser }}>
+                <Routes>
+                    <Route path="/" element={<Navigate to="/login" />} />
+                    {/* <Route path='/' element={<HomePage/>}/> */}
+                    {<Route path="/workspace" element={<WorkSpace />} />}
+                    {
+                        <Route
+                            path="/workspace/:workspaceId"
+                            element={<WorkSpace />}
+                        />
+                    }
+                    {/* {<Route path='/hall' element={<HallDetails/>}/>} */}
+                    {<Route path="/login" element={<Login />} />}
+                    {<Route path="/signup" element={<SignUp />} />}
                     <Route
-                        path="/workspace/:workspaceId"
-                        element={<WorkSpace />}
+                        path="/workspace/:workspaceId/hall/:id"
+                        element={<HallDetails />}
                     />
-                }
-                {/* {<Route path='/hall' element={<HallDetails/>}/>} */}
-                {<Route path="/login" element={<Login />} />}
-                {<Route path="/signup" element={<SignUp />} />}
-                <Route
-                    path="/workspace/:workspaceId/hall/:id"
-                    element={<HallDetails />}
-                />
-                {<Route path="/select-role" element={<SelectRole />} />}
-                {/* <Route path='/login' element={<LoginPage/>}/> */}
-                <Route path="/hallsList" element={<HallsList />} />
-          </Routes>
+
+                    {<Route path="/select-role" element={<SelectRole />} />}
+                    {/* <Route path='/login' element={<LoginPage/>}/> */}
+                    <Route path="/hallsList" element={<HallsList />} />
+                    {/* {user && user.role === "manager" && ( */}
+                    <Route path="/myWorkspaces" element={<MyWorkspaces />} />
+                    {/* )} */}
+                    {<Route path="/reservations" element={<Reservations />} />}
+                </Routes>
           <Copilot/>
+            </UserContext.Provider>
+                     
         </PageContext.Provider>
       </div>
-    </Router>
-  );
+        </Router>
+    );
 }
 
 export default App;

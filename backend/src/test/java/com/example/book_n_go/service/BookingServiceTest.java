@@ -109,8 +109,8 @@ public class BookingServiceTest {
         bookingUpdateStatusRequest.setStatus(Status.CONFIRMED);
 
         workday = new Workday();
-        workday.setStartTime(java.sql.Time.valueOf(LocalDateTime.now().with(LocalTime.MIN).toLocalTime()));
-        workday.setEndTime(java.sql.Time.valueOf(LocalDateTime.now().with(LocalTime.MAX).toLocalTime()));
+        workday.setStartTime(LocalDateTime.of(2024, 9, 6, 9, 0));
+        workday.setEndTime(LocalDateTime.of(2024, 9, 6, 17, 0));
 
 
         period = new Period(booking.getStartTime(), booking.getEndTime());
