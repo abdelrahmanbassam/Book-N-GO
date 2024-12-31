@@ -1,16 +1,19 @@
 package com.example.book_n_go.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.security.access.method.P;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +34,8 @@ import com.example.book_n_go.model.Workspace;
 import com.example.book_n_go.repository.AminityRepo;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
+
+import com.example.book_n_go.service.HallsListFilterService;
 import com.example.book_n_go.service.AuthService;
 import com.example.book_n_go.service.HallsService;
 
@@ -124,13 +129,25 @@ public class HallController {
 
     @Autowired
     private HallsService hallsService;
+    @Autowired
+    private HallsListFilterService hallsListFilterService;
+
     @PostMapping("/filterHalls")
-    public ResponseEntity<List<Hall>> filterHalls(@RequestBody HallsFilterRequest request) {
+    public ResponseEntity<Map<String, Object>> filterHalls(@RequestBody HallsFilterRequest request) {
         try {
-            // System.out.println("Request: " + request);
-            List<Hall> halls = hallsService.applyCriterias(request);
-            // List<Hall> halls = hallRepo.findAll();
-            return new ResponseEntity<>(halls, HttpStatus.OK);
+            Page<Hall> pageHalls = hallsListFilterService.applyCriterias(request);
+            List<Hall> halls = pageHalls.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("halls", halls);
+            Map<String, Object> pagination = new HashMap<>();
+            pagination.put("currentPage", pageHalls.getNumber() + 1);
+            pagination.put("totalPages", pageHalls.getTotalPages());
+            pagination.put("pageSize", pageHalls.getSize());
+            pagination.put("totalItems", pageHalls.getTotalElements());
+            response.put("pagination", pagination);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

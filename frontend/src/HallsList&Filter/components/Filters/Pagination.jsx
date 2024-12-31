@@ -1,8 +1,11 @@
+
 import React from 'react';
 import { useHalls } from '../context/HallContext';
 
 const Pagination = () => {
   const { totalPages, currentPage, updatePage, fetchData } = useHalls();
+
+  // console.log('ggg', currentPage);  
 
   const handlePageChange = (page) => {
     updatePage(page);
@@ -10,6 +13,9 @@ const Pagination = () => {
   };
 
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  console.log('totalPages', totalPages);
+  
 
   return (
     <div className="flex gap-2 text-white mt-8">
