@@ -35,7 +35,7 @@ export const Login = () => {
             console.log("User data:", user);
 
             if (user.role === "ADMIN") {
-                navigate("/admin");
+                window.location.href = "http://localhost:8080/admin";
             } else if (user.role === "PROVIDER") {
                 navigate("/myWorkspaces");
             } else if (user.role === "CLIENT") {
@@ -97,7 +97,7 @@ export const Login = () => {
 
                         <div className={styles.formButtons}>
                             <button type="submit" className={styles.button}>
-                            LOG IN
+                                LOG IN
                             </button>
                             <button
                                 className={`${styles.button} ${styles.googleSignInButton}`}
