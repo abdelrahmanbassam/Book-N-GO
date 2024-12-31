@@ -59,9 +59,14 @@ export const HallProvider = ({ children }) => {
     triggerUpdate({});
   };
 
+  // const updatePage = (page) => {
+  //   filtersRef.current.page = page;
+  //   triggerUpdate({});
+  // };
   const updatePage = (page) => {
-    filtersRef.current.page = page;
-    triggerUpdate({});
+    currentPageRef.current = page; 
+    filtersRef.current.page = page; 
+    triggerUpdate({}); 
   };
 
   const fetchData = async () => {
@@ -75,10 +80,10 @@ export const HallProvider = ({ children }) => {
     triggerUpdate({});
     
     try {
-      const response = await fetchHalls(body);
-      hallsRef.current = response;
-      totalPagesRef.current = 2; // Simulated value
-      currentPageRef.current = 1; // Simulated value
+      const response = await fetchHalls(body);      
+      hallsRef.current = response.halls;
+      totalPagesRef.current = response.pagination.totalPages;
+      currentPageRef.current = response.pagination.currentPage;
     } catch (error) {
       console.error('Error fetching halls:', error);
     } finally {

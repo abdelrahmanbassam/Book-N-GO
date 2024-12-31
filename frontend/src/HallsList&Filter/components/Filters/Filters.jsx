@@ -2,25 +2,25 @@
 import React, { useState, useEffect } from 'react';
 
 import AmenitiesFilter from './AmenitiesFilter';
-import SizeFilter from './SizeFilter';
 import RatingFilter from './RatingFilter';
-import Pagination from './Pagination';
 import { useHalls } from '../context/HallContext';
 import styles from './Filters.module.css';
 
 const Filters = () => {
-  const { filters, updateFilters, fetchData,resetFilter } = useHalls();
+  const { filters, updateFilters, fetchData, resetFilter ,updatePage} = useHalls();
 
   const handleApplyFilters = () => {
+    updatePage(1);
     fetchData();
   };
   const handleRestFilters = () => {
+    updatePage(1);
     resetFilter();
     fetchData();
   };
   return (
     <div className={styles.container}>
-      <AmenitiesFilter 
+      <AmenitiesFilter
         selected={filters.aminities}
         onChange={(aminities) => updateFilters({ aminities })}
       />
@@ -29,7 +29,7 @@ const Filters = () => {
         max={filters.maxSize}
         onChange={(size) => updateFilters(size)}
       /> */}
-      <RatingFilter 
+      <RatingFilter
         rating={filters.rating}
         onChange={(rating) => updateFilters({ rating })}
       />
@@ -37,15 +37,15 @@ const Filters = () => {
         onClick={handleApplyFilters}
         className={styles.applyButton}
       >
-        Apply 
+        Apply
       </button>
       <button
         onClick={handleRestFilters}
         className={styles.applyButton}
       >
-        Reset 
+        Reset
       </button>
-      {/* <Pagination /> */}
+
     </div>
   );
 };

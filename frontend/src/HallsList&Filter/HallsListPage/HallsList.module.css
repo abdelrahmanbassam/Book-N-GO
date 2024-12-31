@@ -14,3 +14,10 @@
 .main {
   flex: 1;
 }
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
