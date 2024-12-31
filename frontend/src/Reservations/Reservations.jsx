@@ -9,8 +9,9 @@ export const Reservations = () => {
         CONFIRMED: 'CONFIRMED',
         REJECTED: 'REJECTED'
     });
+    const role = JSON.parse(localStorage.getItem('role'));
     const [selectedFilter, setSelectedFilter] = useState('all');
-    const [isProvider, setIsProvider] = useState(true);
+    const [isProvider, setIsProvider] = useState(role === 'PROVIDER');
     const [reservations, setReservations] = useState([]);
     //fetching reservations
     const fetchReservations = async () => {
@@ -24,7 +25,6 @@ export const Reservations = () => {
                     }
                 });
             const data = await response.json();
-            console.log(response)
             console.log('Reservations fetched:', data);
             setReservations(data);
         } catch (error) {
@@ -32,11 +32,6 @@ export const Reservations = () => {
         }
     };
     useEffect(() => {
-        const role = window.localStorage.getItem('role');
-        if (role === 'PROVIDER') setIsProvider(true);
-
-        else setIsProvider(false);
-
         fetchReservations();
     }, []);
 

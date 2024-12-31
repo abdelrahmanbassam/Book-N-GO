@@ -43,7 +43,6 @@ export const ReservationCard =(props) =>{
                     <p className="text-sm">{props.reservation.hallDescription}</p>
                 </div>
             )}
-
             {props.isProvider && props.reservation.status === 'PENDING' && (
                 <div className="flex space-x-3 mt-4">
                     <button

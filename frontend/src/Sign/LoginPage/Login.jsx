@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FormInput } from '../components/FormInput';
 import { HeaderButtons } from '../components/HeaderButtons';
 import { Logo } from '../components/Logo';
-import { login } from '../../api';
+import { info, login } from '../../api';
 import styles from './Login.module.css';
+import { UserContext } from '../../UserContext';
+
 
 export const Login = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,7 @@ export const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -29,21 +32,17 @@ export const Login = () => {
 
       console.log('Login successful:', data);
 
-      const user = await fetch('http://localhost:8080/auth/get-user-info', {
-        headers: {
-          'Authorization': 'Bearer ' + data.token
-        }
-      });
-      const userData = await user.json();
+      const user = await info();
+      setUser(user);
 
-      console.log('User data:', userData);
-      localStorage.setItem('role', JSON.stringify(userData.role)); // Store user data in local storage for future use
+      console.log('User data:', user);
+      localStorage.setItem('role', JSON.stringify(user.role)); // Store user data in local storage for future use
 
-      if (userData.role === 'ADMIN') {
+        if (user.role === 'ADMIN') {
         navigate('/admin');
-      } else if (userData.role === 'PROVIDER') {
+      } else if (user.role === 'PROVIDER') {
         navigate('/hallOwner');
-      } else if (userData.role === 'CLIENT') {
+      } else if (user.role === 'CLIENT') {
         navigate('/hallsList');
       }
     } catch (err) {
