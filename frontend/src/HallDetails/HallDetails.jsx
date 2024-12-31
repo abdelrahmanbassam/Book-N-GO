@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import { getHallData } from "../api";
 import WeekCalender from "./components/WeekCalender";
-import BookingDialog from "./components/BookingDialog"; // Ensure this path is correct
+import BookingDialog from "./components/BookingDialog";
 
 export const HallDetails = () => {
   const { id, workspaceId } = useParams();
@@ -38,7 +38,6 @@ export const HallDetails = () => {
   };
 
   const handleReserve = (startTime, endTime) => {
-    // Handle reservation logic here
     console.log(`Reserved from ${startTime} to ${endTime}`);
     setIsDialogOpen(false);
   };
