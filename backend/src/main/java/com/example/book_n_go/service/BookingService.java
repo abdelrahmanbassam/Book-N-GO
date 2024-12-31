@@ -88,7 +88,6 @@ public class BookingService {
         }
 
         Workspace workSpace = hallRepo.findById(hallId).get().getWorkspace();
-        List<Workday> workdays = workdayRepo.findByWorkspace(workSpace);
 
         List<Booking> bookings = bookingRepo.findByEndTimeBefore(checkDay.plus(Duration.ofDays(7)));
 
@@ -96,7 +95,7 @@ public class BookingService {
                 .map(booking -> new Period(booking.getStartTime(), booking.getEndTime()))
                 .collect(Collectors.toList());
 
-        List<Period> availabilities = new ArrayList<Period>();
+        List<Period> availabilities = new ArrayList<>();
         // get weekday of checkday
         String weekDay = checkDay.getDayOfWeek().name();
         // get workday of the weekday
