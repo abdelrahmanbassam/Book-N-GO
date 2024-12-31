@@ -125,6 +125,21 @@ public class BookingControllerTest {
 
         verify(bookingService).getBookingsByHallId(1L);
     }
+    
+        @Test
+        @WithMockUser
+        public void testCreateBooking() throws Exception {
+            when(bookingService.createBooking(any(BookingCreateRequest.class))).thenReturn(booking);
+    
+            mockMvc.perform(post("/bookings/create")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(bookingCreateRequest))
+                    .with(SecurityMockMvcRequestPostProcessors.csrf()))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("$.id").value(1L));
+    
+            verify(bookingService).createBooking(any(BookingCreateRequest.class));
+        }
 
     @Test
     @WithMockUser
@@ -139,21 +154,6 @@ public class BookingControllerTest {
                 .andExpect(status().isOk());
 
         verify(bookingService).getHallSchedules(1L, startTime);
-    }
-
-    @Test
-    @WithMockUser
-    public void testCreateBooking() throws Exception {
-        when(bookingService.createBooking(any(BookingCreateRequest.class))).thenReturn(booking);
-
-        mockMvc.perform(post("/bookings/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(bookingCreateRequest))
-                .with(SecurityMockMvcRequestPostProcessors.csrf()))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L));
-
-        verify(bookingService).createBooking(any(BookingCreateRequest.class));
     }
 
     @Test
