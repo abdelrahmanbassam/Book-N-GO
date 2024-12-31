@@ -17,8 +17,6 @@ import java.util.List;
 public interface HallRepo extends JpaRepository<Hall, Long>,JpaSpecificationExecutor<Hall> {
     List<Hall> findByWorkspace(Workspace workspace);
     List<Hall> findByWorkspaceId(Long workspaceId);
-    
-    @Query("SELECT h FROM Hall h WHERE h.workspace.id = :workspaceId")
-    List<Hall> findHallsByWorkspaceId(Long workspaceId);
+
 
 }
