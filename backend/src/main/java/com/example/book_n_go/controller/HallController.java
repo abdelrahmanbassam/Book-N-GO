@@ -129,6 +129,9 @@ public class HallController {
 
     @Autowired
     private HallsService hallsService;
+    @Autowired
+    private HallsListFilterService hallsListFilterService;
+
     @PostMapping("/filterHalls")
     public ResponseEntity<Map<String, Object>> filterHalls(@RequestBody HallsFilterRequest request) {
         try {
