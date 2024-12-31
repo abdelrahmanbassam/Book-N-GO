@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,7 +65,7 @@ class WorkdayControllerTest {
 
 	@Test
 	void testGetWorkdays_ReturnsListOfWorkdays() {
-		Workday workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace);
+		Workday workday = new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace);
 		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
 		when(workdayRepo.findByWorkspace(workspace)).thenReturn(Collections.singletonList(workday));
 
@@ -96,7 +97,7 @@ class WorkdayControllerTest {
 
 	@Test
 	void testGetWorkdayById_ReturnsWorkday() {
-		Workday workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace);
+		Workday workday = new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace);
 		when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
 
 		ResponseEntity<Workday> response = workdayController.getWorkdayById(1L);
@@ -117,8 +118,8 @@ class WorkdayControllerTest {
 	@Test
 	void testCreateWorkday_ReturnsCreatedWorkday() {
 		Workday workday = new Workday();
-		workday.setStartTime(Time.valueOf("09:00:00"));
-		workday.setEndTime(Time.valueOf("17:00:00"));
+		workday.setStartTime(LocalDateTime.of(2021, 9, 6, 9, 0));
+		workday.setEndTime(LocalDateTime.of(2021, 9, 6, 17, 0));
 		workday.setWeekDay(Day.TUESDAY);
 
 		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
@@ -146,15 +147,15 @@ class WorkdayControllerTest {
 
 	@Test
 	void testUpdateWorkday_ReturnsUpdatedWorkday() {
-		Workday workday = new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace);
+		Workday workday = new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace);
 		when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
 		when(workdayRepo.save(any(Workday.class))).thenAnswer(i -> i.getArgument(0));
 
-		workday.setStartTime(Time.valueOf("10:00:00"));
+		workday.setStartTime(LocalDateTime.of(2021, 9, 6, 10, 0));
 		ResponseEntity<Workday> response = workdayController.updateWorkday(1L, workday);
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
-		assertEquals(Time.valueOf("10:00:00"), response.getBody().getStartTime());
+		assertEquals(LocalDateTime.of(2021, 9, 6, 10, 0), response.getBody().getStartTime());
 	}
 
 	@Test
@@ -188,12 +189,12 @@ class WorkdayControllerTest {
 	@Test
 	void testUpdateWorkdays_UpdatesExistingWorkdays() {
 		List<Workday> existingWorkdays = Arrays.asList(
-				new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, workspace),
-				new Workday(2L, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"), Day.TUESDAY, workspace));
+				new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace),
+				new Workday(2L, LocalDateTime.of(2021, 9, 7, 10, 0), LocalDateTime.of(2021, 9, 7, 18, 0), Day.TUESDAY, workspace));
 
 		List<Workday> updatedWorkdays = Arrays.asList(
-				new Workday(1L, Time.valueOf("08:00:00"), Time.valueOf("16:00:00"), Day.MONDAY, workspace),
-				new Workday(2L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.TUESDAY, workspace));
+				new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace),
+				new Workday(2L, LocalDateTime.of(2021, 9, 7, 10, 0), LocalDateTime.of(2021, 9, 7, 18, 0), Day.TUESDAY, workspace));
 
 		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
 		when(workdayRepo.findByWorkspace(workspace)).thenReturn(existingWorkdays);
@@ -209,8 +210,8 @@ class WorkdayControllerTest {
 	@Test
 	void testUpdateWorkdays_InvalidWorkspaceId_ReturnsInternalServerError() {
 		List<Workday> updatedWorkdays = Arrays.asList(
-				new Workday(1L, Time.valueOf("09:00:00"), Time.valueOf("17:00:00"), Day.MONDAY, null),
-				new Workday(2L, Time.valueOf("10:00:00"), Time.valueOf("18:00:00"), Day.TUESDAY, null));
+				new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, null),
+				new Workday(2L, LocalDateTime.of(2021, 9, 7, 10, 0), LocalDateTime.of(2021, 9, 7, 18, 0), Day.TUESDAY, null));
 
 		when(workspaceRepo.findById(1L)).thenReturn(Optional.empty());
 

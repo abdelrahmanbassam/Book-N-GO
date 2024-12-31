@@ -21,11 +21,11 @@ public class Booking {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    // @JoinColumn(nullable = false)
     private Hall hall;
 
     @ManyToOne
-    @JoinColumn(nullable = false)
+    // @JoinColumn(nullable = false)
     private User user;
 
     private LocalDateTime startTime;
