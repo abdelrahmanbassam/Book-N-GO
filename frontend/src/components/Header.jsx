@@ -1,65 +1,108 @@
-import { useState, useEffect } from 'react';
-import { SearchBar } from './SearchBar';
 import PropTypes from 'prop-types';
+import { useContext } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Logo from '../assets/Logo.png';
 import ProfilePic from '../assets/profilePic.png';
+import { UserContext } from "../UserContext";
+import './Header.css';
 
 export const Header = (props) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchCategory, setSearchCategory] = useState('all');
-    const [isSwitchOn, setIsSwitchOn] = useState(false);
+    const { user, setUser } = useContext(UserContext);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const isLoginPage = location.pathname === '/login';
+    const isSignUpPage = location.pathname === '/signup';
 
-    const handleSearch = () => {
-        console.log(`Searching for ${searchTerm} in category ${searchCategory}`);
-    };
-
-    const toggleSwitch = () => {
-        setIsSwitchOn(!isSwitchOn);
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setUser(null);
+        navigate('/');
     };
 
     return (
         <>
-            <header
-                className={"bg-primary h-[10vh] py-6 md:px-10 px-4 flex justify-between items-center gap-4 md:gap-0"}
-            >
-                {/*logo*/}
-                <div className={"h-full w-fit md:basis-1/6 "}>
-                    <img src={Logo} alt={"logo"} className={"h-full"} />
-                </div>
-                {/*search bar*/}
-                {/* <div className={"flex md:basis-1/2 basis-5/12 items-center"}>
-                    {props.searchBar ? <SearchBar /> : null}
-                </div> */}
-                {/*profile*/}
-                <div className={"flex lg:basis-1/6 justify-end md:gap-4 items-center"}>
-                    {/*switch button*/}
-                    <label className="md:inline-flex hidden relative  items-center cursor-pointer">
-                        <input type="checkbox" checked={isSwitchOn} onChange={toggleSwitch} className="sr-only peer" />
-                        <div
-                            className="w-11 h-6 border-2 border-secondary1 rounded-full peer-checked:after:translate-x-full
-                                after:absolute after:top-0.5 after:left-[2px] after:bg-[#FF9944] after:border-[#FF9944]
-                                after:border after:rounded-full after:h-5 after:w-5 after:transition-all"
-                        ></div>
-                    </label>
-                    {/*profile picture*/}
+            <header className="header md:header-md">
+                <div className="logo-container md:logo-container-md">
                     <img
-                        src={ProfilePic}
-                        alt={"user"}
-                        className={"w-10 aspect-square rounded-full md:ml-4 cursor-pointer"}
+                        src={Logo}
+                        alt="logo"
+                        className="logo"
                         onClick={() => {
-                            // navigate to profile page
+                            // navigate('/');
                         }}
                     />
                 </div>
+                {user  != null && user.role === 'CLIENT' && (
+                    <div className="navigationButtons">
+                        <button className="button"
+                            onClick={() => {
+                                navigate('/hallsList');
+                            }}
+                        >Search</button>
+                        <button className="button"
+                            onClick={() => {
+                                navigate('/reservations');
+                            }}
+                        >Bookings</button>
+                        {/* <button className="button"
+                            onClick={() => {
+                                // navigate
+                            }}
+                        >Work Spaces</button> */}
+                    </div>
+                )}
+                {user != null && user.role === 'PROVIDER' && (
+                    <div className="navigationButtons">
+                        <button className="button"
+                            onClick={() => {
+                                navigate('/myWorkspaces');
+                            }}
+                        >My Workspaces</button>
+                    </div>
+                )}
+                {user === null && (
+                    <div>
+                        <button
+                            className={`logout-button ${isLoginPage ? 'disabled' : ''}`}
+                            onClick={() => navigate('/login')}
+                            disabled={isLoginPage}
+                        >
+                            Log In
+                        </button>
+                        <button
+                            className={`logout-button ${isSignUpPage ? 'disabled' : ''}`}
+                            onClick={() => navigate('/signup')}
+                            disabled={isSignUpPage}
+                        >
+                            Sign Up
+                        </button>
+                    </div>
+                )}
+                {user != null && (
+                    <div className="profile-container md:profile-container-md">
+                        <img
+                            src={ProfilePic}
+                            alt="user"
+                            className="profile-pic"
+                            onClick={() => {
+                                // navigate to profile page
+                            }}
+                        />
+                        <button onClick={handleLogout} className="logout-button">
+                            Log Out
+                        </button>
+                    </div>
+                )}
+
             </header>
         </>
     );
 };
 
 Header.propTypes = {
-  searchBar: PropTypes.bool,
+    searchBar: PropTypes.bool,
 };
 
 Header.defaultProps = {
-  searchBar: true,
+    searchBar: true,
 };

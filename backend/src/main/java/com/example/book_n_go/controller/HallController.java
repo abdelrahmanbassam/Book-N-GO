@@ -1,14 +1,19 @@
 package com.example.book_n_go.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.security.access.method.P;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,13 +25,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.book_n_go.dto.HallRequest;
 import com.example.book_n_go.dto.HallsFilterRequest;
+import com.example.book_n_go.enums.Permission;
+import com.example.book_n_go.model.Aminity;
 import com.example.book_n_go.model.Hall;
 import com.example.book_n_go.model.Workspace;
+import com.example.book_n_go.repository.AminityRepo;
 import com.example.book_n_go.repository.HallRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
-import com.example.book_n_go.service.AuthService;
+
 import com.example.book_n_go.service.HallsListFilterService;
+import com.example.book_n_go.service.AuthService;
+import com.example.book_n_go.service.HallsService;
 
 @RestController
 @RequestMapping("/workspace/{workspaceId}")
@@ -36,6 +47,8 @@ public class HallController {
     private HallRepo hallRepo;
     @Autowired
     private WorkspaceRepo workspaceRepo;
+    @Autowired
+    private AminityRepo aminityRepo;
 
     @GetMapping("/halls")
     public ResponseEntity<List<Hall>> getHalls(@PathVariable("workspaceId") long workspaceId) {
@@ -64,25 +77,37 @@ public class HallController {
     }
 
     @PostMapping("/halls")
-    public ResponseEntity<Hall> createHall(@RequestBody Hall hall, @PathVariable("workspaceId") long workspaceId) {
+    public ResponseEntity<Hall> createHall(@RequestBody HallRequest hallRequest, @PathVariable("workspaceId") long workspaceId) {
         Workspace workspace = workspaceRepo.findById(workspaceId).get();
+        if (!workspace.getProvider().getId().equals(AuthService.getRequestUser().getId()) || !AuthService.userHasPermission(Permission.PROVIDER_WRITE)) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        if(workspace == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         // if (workspace.getProvider().getId() != AuthService.getRequestUser().getId()) {
         //     return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         // }
-        hall.setWorkspace(workspace);
-        Hall _hall = hallRepo.save(hall);
+        Hall _hall = hallsService.createHall(hallRequest, workspaceId);
         return new ResponseEntity<>(_hall, HttpStatus.CREATED);
     }
 
     @PutMapping("/halls/{id}")
-    public ResponseEntity<Hall> updateHall(@PathVariable("id") long id, @RequestBody Hall hall) {
+    public ResponseEntity<Hall> updateHall(@PathVariable("id") long id, @RequestBody HallRequest hall) {
         Optional<Hall> hallData = hallRepo.findById(id);
+        if (!AuthService.userHasPermission(Permission.PROVIDER_UPDATE) || !AuthService.getRequestUser().getId().equals(hallData.get().getWorkspace().getProvider().getId())) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         if (hallData.isPresent()) {
             Hall _hall = hallData.get();
-            _hall.setWorkspace(hall.getWorkspace());
             _hall.setCapacity(hall.getCapacity());
             _hall.setDescription(hall.getDescription());
             _hall.setPricePerHour(hall.getPricePerHour());
+            Set<Aminity> aminities = new HashSet<>();
+            for(Long aminityId: hall.getAminitiesIds()) {
+                aminities.add(aminityRepo.findById(aminityId).get());
+            }
+            _hall.setAminities(aminities);
             return new ResponseEntity<>(hallRepo.save(_hall), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -92,6 +117,9 @@ public class HallController {
     @DeleteMapping("/halls/{id}")
     public ResponseEntity<HttpStatus> deleteHall(@PathVariable("id") long id) {
         try {
+            if(!AuthService.userHasPermission(Permission.PROVIDER_DELETE) || !AuthService.getRequestUser().getId().equals(hallRepo.findById(id).get().getWorkspace().getProvider().getId())) {
+              return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             hallRepo.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -100,14 +128,26 @@ public class HallController {
     }
 
     @Autowired
+    private HallsService hallsService;
+    @Autowired
     private HallsListFilterService hallsListFilterService;
+
     @PostMapping("/filterHalls")
-    public ResponseEntity<List<Hall>> filterHalls(@RequestBody HallsFilterRequest request) {
+    public ResponseEntity<Map<String, Object>> filterHalls(@RequestBody HallsFilterRequest request) {
         try {
-            // System.out.println("Request: " + request);
-            List<Hall> halls = hallsListFilterService.applyCriterias(request);
-            // List<Hall> halls = hallRepo.findAll();
-            return new ResponseEntity<>(halls, HttpStatus.OK);
+            Page<Hall> pageHalls = hallsListFilterService.applyCriterias(request);
+            List<Hall> halls = pageHalls.getContent();
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("halls", halls);
+            Map<String, Object> pagination = new HashMap<>();
+            pagination.put("currentPage", pageHalls.getNumber() + 1);
+            pagination.put("totalPages", pageHalls.getTotalPages());
+            pagination.put("pageSize", pageHalls.getSize());
+            pagination.put("totalItems", pageHalls.getTotalElements());
+            response.put("pagination", pagination);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

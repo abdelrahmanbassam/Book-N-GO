@@ -1,9 +1,9 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+import { UserContext } from "../UserContext";
+import { info } from "../api";
 import { Header } from "../components/Header";
 import { ReservationCard } from "./components/ReservationCard";
 import { StatusFilterMenu } from "./components/StatusFilterMenu";
-import { UserContext } from "../UserContext";
-import { info } from "../api";
 
 export const Reservations = () => {
     const Status = Object.freeze({
@@ -125,44 +125,47 @@ export const Reservations = () => {
     }
 
     return (
-        <div className="min-h-[100vh] bg-primary">
-            <Header searchBar={true} />
-            <div className="flex flex-col md:mx-10 mx-4 py-4">
-                <h1 className="text-3xl text-white my-8">Reservations</h1>
-                <StatusFilterMenu
-                    availableFilters={[
-                        "all",
-                        "pending",
-                        "confirmed",
-                        "rejected",
-                        "canceled",
-                    ]}
-                    onFilterChange={(filter) => onFilterChange(filter)}
-                    selectedFilter={selectedFilter}
-                />
-                <div className="flex flex-col w-full ">
-                    {reservations.map((reservation, index) => (
-                        <ReservationCard
-                            key={index}
-                            reservation={reservation}
-                            reservationId={reservation.id}
-                            isProvider={isProvider}
-                            onAccept={() =>
-                                setReservationStatus(
-                                    reservation.id,
-                                    "CONFIRMED"
-                                )
-                            }
-                            onReject={() =>
-                                setReservationStatus(reservation.id, "REJECTED")
-                            }
-                            onCancel={() =>
-                                setReservationStatus(reservation.id, "CANCELED")
-                            }
-                        />
-                    ))}
+        <>
+            <Header />
+            <div className="min-h-[100vh] bg-primary">
+
+                <div className="flex flex-col md:mx-10 mx-4 py-4">
+                    <h1 className="text-3xl text-white my-8">Reservations</h1>
+                    <StatusFilterMenu
+                        availableFilters={[
+                            "all",
+                            "pending",
+                            "confirmed",
+                            "rejected",
+                            "canceled",
+                        ]}
+                        onFilterChange={(filter) => onFilterChange(filter)}
+                        selectedFilter={selectedFilter}
+                    />
+                    <div className="flex flex-col w-full ">
+                        {reservations.map((reservation, index) => (
+                            <ReservationCard
+                                key={index}
+                                reservation={reservation}
+                                reservationId={reservation.id}
+                                isProvider={isProvider}
+                                onAccept={() =>
+                                    setReservationStatus(
+                                        reservation.id,
+                                        "CONFIRMED"
+                                    )
+                                }
+                                onReject={() =>
+                                    setReservationStatus(reservation.id, "REJECTED")
+                                }
+                                onCancel={() =>
+                                    setReservationStatus(reservation.id, "CANCELED")
+                                }
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };

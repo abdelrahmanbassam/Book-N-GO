@@ -1,9 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { FormInput } from "../components/FormInput";
 import styles from "./SelectRole.module.css";
 
 export const SelectRole = () => {
     const [role, setRole] = useState("");
+    const [phone, setPhone] = useState("");
+    const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
@@ -12,8 +15,8 @@ export const SelectRole = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!role) {
-            setError("Please select a role");
+        if (!role || !phone || !password) {
+            setError("Please fill in all fields");
             return;
         }
 
@@ -26,7 +29,7 @@ export const SelectRole = () => {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${token}`,
                     },
-                    body: JSON.stringify({ role }),
+                    body: JSON.stringify({ role, phone, password }),
                 }
             );
 
@@ -49,40 +52,64 @@ export const SelectRole = () => {
     };
 
     return (
-        <div className={styles.container}>
-            <h1 className={styles.title}>Select Your Role</h1>
-            {error && (
-                <div className={styles.errorContainer}>
-                    <p className={styles.errorText}>{error}</p>
-                </div>
-            )}
-            <form onSubmit={handleSubmit}>
-                <div className={styles.radioGroup}>
-                    <label className={styles.radioLabel}>
-                        <input
-                            type="radio"
-                            name="role"
-                            value="CLIENT"
-                            checked={role === "CLIENT"}
-                            onChange={(e) => setRole(e.target.value)}
+        <div>
+            <div className={styles.container}>
+                <div className={styles.decorativeShape} />
+
+                <div className={styles.formContainer}>
+                    <h1 className={styles.title}>Select Your Role</h1>
+                    {error && (
+                        <div className={styles.errorContainer}>
+                            <p className={styles.errorText}>{error}</p>
+                        </div>
+                    )}
+                    <form onSubmit={handleSubmit}>
+                        <div className={styles.radioGroup}>
+                            <label className={styles.radioLabel}>
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="CLIENT"
+                                    checked={role === "CLIENT"}
+                                    onChange={(e) => setRole(e.target.value)}
+                                />
+                                CLIENT
+                            </label>
+                            <label className={styles.radioLabel}>
+                                <input
+                                    type="radio"
+                                    name="role"
+                                    value="PROVIDER"
+                                    checked={role === "PROVIDER"}
+                                    onChange={(e) => setRole(e.target.value)}
+                                />
+                                PROVIDER
+                            </label>
+                        </div>
+                        <FormInput
+                            type="tel"
+                            name="phone"
+                            placeholder="Phone Number"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            required
                         />
-                        CLIENT
-                    </label>
-                    <label className={styles.radioLabel}>
-                        <input
-                            type="radio"
-                            name="role"
-                            value="PROVIDER"
-                            checked={role === "PROVIDER"}
-                            onChange={(e) => setRole(e.target.value)}
+                        <FormInput
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
-                        PROVIDER
-                    </label>
+                        <div className={styles.formButtons}>
+                            <button type="submit" className={styles.button}>
+                                Submit
+                            </button>
+                        </div>
+                    </form>
                 </div>
-                <button type="submit" className={styles.button}>
-                    Submit
-                </button>
-            </form>
+            </div>
         </div>
     );
 };

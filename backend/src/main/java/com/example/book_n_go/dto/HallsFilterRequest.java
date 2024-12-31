@@ -15,4 +15,5 @@ public class HallsFilterRequest {
     private Integer page;
     private String sortBy;
     private String searchWord;
+    private Integer pageSize;
 }

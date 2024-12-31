@@ -1,14 +1,11 @@
-import React from "react";
 import { Building2 } from "lucide-react";
-import WorkspaceCard from "./components/WorkspaceCard";
-import CreateWorkspaceCard from "./components/CreateWorkspaceCard";
-import { Header } from "../components/Header";
-import { getProviderWorkspaces } from "../api";
-import { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createWorkspace, getProviderWorkspaces, updateWorkspaceWorkdays } from "../api";
+import { Header } from "../components/Header";
+import CreateWorkspaceCard from "./components/CreateWorkspaceCard";
+import WorkspaceCard from "./components/WorkspaceCard";
 import WorkspaceDialog from "./components/WorkspaceDialog";
-import { createWorkspace, updateWorkspaceWorkdays } from "../api";
-import { set } from "date-fns";
 
 export const MyWorkspaces = () => {
     const [workspaces, setWorkspaces] = useState([]);
@@ -47,8 +44,10 @@ export const MyWorkspaces = () => {
         setShowDialog(false);
     };
     return (
+        <>
+        <Header/>
         <div className="min-h-screen bg-primary text-white">
-            <Header searchBar={true} />
+            
             <div className="container mx-auto px-4 py-8">
                 <div className="flex items-center gap-3 mb-8">
                     <Building2 className="w-8 h-8" />
@@ -97,5 +96,6 @@ export const MyWorkspaces = () => {
                 workdays={[]}
             />
         </div>
+        </>
     );
 };

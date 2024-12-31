@@ -6,7 +6,10 @@ import com.example.book_n_go.repository.HallRepo;
 
 import jakarta.persistence.criteria.Join;
 
+import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -19,13 +22,13 @@ public class HallsListFilterService {
     @Autowired
     private HallRepo hallRepo;
 
-    public List<Hall> applyCriterias(HallsFilterRequest request) {
+    public Page<Hall> applyCriterias(HallsFilterRequest request) {
         Specification<Hall> spec = buildSpecification(request);
 
-        Sort sort = "none".equals(request.getSortBy()) ?  Sort.by(Sort.Direction.DESC, "id") : Sort.by(Sort.Direction.DESC, request.getSortBy());
+        Sort sort = "none".equals(request.getSortBy()) ? Sort.by(Sort.Direction.DESC, "id") : Sort.by(Sort.Direction.DESC, request.getSortBy());
+        PageRequest pageable = PageRequest.of(request.getPage() - 1, request.getPageSize(), sort);
 
-        return hallRepo.findAll(spec, sort);
-        // return hallRepo.findAll(spec);
+        return hallRepo.findAll(spec, pageable);
     }
 
     private Specification<Hall> buildSpecification(HallsFilterRequest request) {
