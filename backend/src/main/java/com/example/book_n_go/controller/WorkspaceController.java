@@ -87,9 +87,6 @@ public class WorkspaceController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
       }
       User provider = AuthService.getRequestUser();
-      if (provider.getRole() == Role.CLIENT) {
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-      }
       workspace.setProvider(provider);
       Location location = locationRepo.save(workspace.getLocation());
       workspace.setLocation(location);
@@ -111,9 +108,6 @@ public class WorkspaceController {
     Optional<Workspace> workspaceData = workspaceRepo.findById(id);
     if (!workspaceData.isPresent()) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-    if (!workspaceData.get().getProvider().getId().equals(AuthService.getRequestUser().getId())) {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
     Workspace _workspace = workspaceData.get();
     _workspace.setName(workspace.getName());

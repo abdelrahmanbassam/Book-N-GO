@@ -38,9 +38,6 @@ public class WorkspaceControllerTest {
     @Mock
     private LocationRepo locationRepo;
 
-    @Mock
-    private AuthService authService;
-
     private Workspace workspace;
     private Location location;
     private User provider;
@@ -95,7 +92,7 @@ public class WorkspaceControllerTest {
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         List<Workspace> workspaces = Arrays.asList(workspace);
         when(workspaceRepo.findByProviderId(provider.getId())).thenReturn(workspaces);
 
@@ -114,7 +111,7 @@ public class WorkspaceControllerTest {
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         when(workspaceRepo.findByProviderId(provider.getId())).thenReturn(Arrays.asList());
 
         ResponseEntity<List<Workspace>> response = workspaceController.getProviderWorkspaces();
@@ -152,7 +149,7 @@ public class WorkspaceControllerTest {
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
         ResponseEntity<Boolean> response = workspaceController.isProvider(1L);
 
@@ -170,7 +167,7 @@ public class WorkspaceControllerTest {
         SecurityContextHolder.setContext(securityContext);
         User user = new User(2L, "mock@gmail.com", "password", "Jane Doe", "987654321", Role.CLIENT);
         when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
-        when(authService.getRequestUser()).thenReturn(user);
+        when(AuthService.getRequestUser()).thenReturn(user);
         ResponseEntity<Boolean> response = workspaceController.isProvider(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -197,7 +194,7 @@ public class WorkspaceControllerTest {
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         when(locationRepo.save(workspace.getLocation())).thenReturn(location);
         when(workspaceRepo.save(workspace)).thenReturn(workspace);
 
@@ -220,7 +217,7 @@ public class WorkspaceControllerTest {
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         when(locationRepo.save(workspace.getLocation())).thenThrow(new RuntimeException("Error"));
 
         ResponseEntity<Workspace> response = workspaceController.createWorkspace(workspace);
@@ -238,7 +235,7 @@ public class WorkspaceControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         User user = new User(2L, "mock@gmail.com", "password", "Jane Doe", "987654321", Role.CLIENT);
-        when(authService.getRequestUser()).thenReturn(user);
+        when(AuthService.getRequestUser()).thenReturn(user);
         ResponseEntity<Workspace> response = workspaceController.createWorkspace(workspace);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
@@ -266,6 +263,13 @@ public class WorkspaceControllerTest {
     // Test for updateWorkspace (not found)
     @Test
     void testUpdateWorkspace_NotFound() {
+        // Mock the Authentication and SecurityContext
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(provider);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         Workspace updatedWorkspace = new Workspace(1L, location,
                 provider, "Updated Workspace", 5.0, "Updated description");
 
@@ -287,9 +291,8 @@ public class WorkspaceControllerTest {
         SecurityContextHolder.setContext(securityContext);
         Workspace updatedWorkspace = new Workspace(1L, location,
                 provider, "Updated Workspace", 5.0, "Updated description");
-        when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
         User user = new User(2L, "mock@gmail.com", "password", "Jane Doe", "987654321", Role.CLIENT);
-        when(authService.getRequestUser()).thenReturn(user);
+        when(AuthService.getRequestUser()).thenReturn(user);
         ResponseEntity<Workspace> response = workspaceController.updateWorkspace(1L, updatedWorkspace);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
@@ -330,7 +333,7 @@ public class WorkspaceControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         // Mock AuthService
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
         ResponseEntity<HttpStatus> response = workspaceController.deleteWorkspace(1L);
 
@@ -347,7 +350,7 @@ public class WorkspaceControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         // Mock AuthService
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
         doThrow(new RuntimeException("Error")).when(workspaceRepo).deleteById(1L);
 
@@ -366,10 +369,10 @@ public class WorkspaceControllerTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         // Mock AuthService
-        when(authService.getRequestUser()).thenReturn(provider);
+        when(AuthService.getRequestUser()).thenReturn(provider);
         when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
         User user = new User(2L, "mock@gmail.com", "password", "Jane Doe", "987654321", Role.CLIENT);
-        when(authService.getRequestUser()).thenReturn(user);
+        when(AuthService.getRequestUser()).thenReturn(user);
         ResponseEntity<HttpStatus> response = workspaceController.deleteWorkspace(1L);
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
