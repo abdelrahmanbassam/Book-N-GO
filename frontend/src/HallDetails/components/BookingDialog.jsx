@@ -30,7 +30,7 @@ function BookingDialog({ hallId, onClose, onReserve }) {
       <div className={style["dialog-overlay"]} onClick={onClose}></div>
       <div className={style["reserve-dialog"]}>
         <div className={style["dialog-content"]}>
-          <h2>Reserve Spot {hallId}</h2>
+          <h2>Reserve Hall {hallId}</h2>
           <div className={style["form-group"]}>
             <label>Start Time:</label>
             <input
