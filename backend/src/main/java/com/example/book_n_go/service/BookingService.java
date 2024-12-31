@@ -14,6 +14,7 @@ import com.example.book_n_go.dto.BookingCreateRequest;
 import com.example.book_n_go.dto.BookingUpdateDurationRequest;
 import com.example.book_n_go.dto.BookingUpdateStatusRequest;
 import com.example.book_n_go.enums.Day;
+import com.example.book_n_go.enums.Permission;
 import com.example.book_n_go.enums.Status;
 import com.example.book_n_go.model.Booking;
 import com.example.book_n_go.model.HallSchedule;
@@ -90,6 +91,8 @@ public class BookingService {
         List<Workday> workdays = workdayRepo.findByWorkspace(workSpace);
 
         List<Booking> bookings = bookingRepo.findByEndTimeBefore(checkDay.plus(Duration.ofDays(7)));
+        // filter bookings by status confirmed
+        bookings = bookings.stream().filter(booking -> booking.getStatus() == Status.CONFIRMED).collect(Collectors.toList());
 
         List<Period> bookingPeriods = bookings.stream()
                 .map(booking -> new Period(booking.getStartTime(), booking.getEndTime()))
@@ -132,13 +135,18 @@ public class BookingService {
             throw new IllegalArgumentException("Cannot delete booking within 48 hours of the start time");
         }
 
+        if(!((authService.userHasPermission(Permission.PROVIDER_DELETE) && authService.getRequestUser().getId().equals(bookingRepo.findById(bookingId).get().getHall().getWorkspace().getProvider().getId()))
+              || (authService.userHasPermission(Permission.CLIENT_DELETE) && authService.getRequestUser().getId().equals(bookingRepo.findById(bookingId).get().getUser().getId())))) {
+            throw new IllegalArgumentException("Unauthorized");
+        }
+
         bookingRepo.deleteById(bookingId);
     }
 
     public Booking createBooking (BookingCreateRequest bookingCreateRequest) {
 
         long hallId = bookingCreateRequest.getHallId();
-        long userId = authService.getRequestUser().getId();
+        long userId = AuthService.getRequestUser().getId();
 
         if (!isHallExists(bookingCreateRequest.getHallId())) {
             throw new IllegalArgumentException("Hall with id " + bookingCreateRequest.getHallId() + " does not exist");
@@ -165,14 +173,14 @@ public class BookingService {
             throw new IllegalArgumentException("Hall is not available at the requested time");
         }
 
-        Booking booking = new Booking();
-        booking.setHall(hallRepo.findById(hallId).get());
-        booking.setUser(userRepo.findById(userId).get());
-        booking.setStartTime(startTime);
-        booking.setEndTime(endTime);
-        double totalCost = booking.getHall().getPricePerHour() * Duration.between(booking.getStartTime(), booking.getEndTime()).toHours();
-        booking.setTotalCost(totalCost);
-        booking.setStatus(Status.PENDING);
+        Booking booking = Booking.builder()
+                .hall(hallRepo.findById(hallId).get())
+                .user(userRepo.findById(userId).get())
+                .startTime(startTime)
+                .endTime(endTime)
+                .status(Status.PENDING)
+                .totalCost(hallRepo.findById(hallId).get().getPricePerHour() * Duration.between(startTime, endTime).toHours())
+                .build();
 
         return bookingRepo.save(booking);
     }
@@ -203,6 +211,13 @@ public class BookingService {
         }
         
         Booking booking = bookingRepo.findById(bookingId).get();
+
+        // Authorization
+        if(!((authService.userHasPermission(Permission.PROVIDER_UPDATE) && authService.getRequestUser().getId().equals(booking.getHall().getWorkspace().getProvider().getId()))
+            || (authService.userHasPermission(Permission.CLIENT_UPDATE) && authService.getRequestUser().getId().equals(booking.getUser().getId())))) {
+            throw new IllegalArgumentException("Unauthorized");
+        }
+
         booking.setStartTime(startTime);
         booking.setEndTime(endTime);
         double totalCost = booking.getHall().getPricePerHour() * Duration.between(booking.getStartTime(), booking.getEndTime()).toHours();
@@ -229,6 +244,12 @@ public class BookingService {
 
         if (booking.getStatus() == Status.REJECTED || booking.getStatus() == Status.CONFIRMED || booking.getStatus() == Status.CANCELED) {
             throw new IllegalArgumentException("Booking is already " + booking.getStatus());
+        }
+
+        // Authorization
+        if(!((authService.userHasPermission(Permission.PROVIDER_UPDATE) && authService.getRequestUser().getId().equals(booking.getHall().getWorkspace().getProvider().getId()))
+            || (authService.userHasPermission(Permission.CLIENT_UPDATE) && authService.getRequestUser().getId().equals(booking.getUser().getId())))) {
+            throw new IllegalArgumentException("Unauthorized");
         }
 
         booking.setStatus(status);

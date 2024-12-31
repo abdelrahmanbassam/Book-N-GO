@@ -3,6 +3,7 @@
   display: flex;
   padding: 50px 0;
   /* clip-path: polygon(0% 0%, 100% 0, 100% 80%, 85% 100%, 0% 100%); */
+  text-align: start;
 }
 
 .hall-details__preview {

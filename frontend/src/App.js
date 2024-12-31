@@ -38,8 +38,6 @@ function App() {
     <Router>
       <div className="App" ref={divRef}>
         <PageContext.Provider value={{ divRef }}>
-
-
           <UserContext.Provider value={{ user, setUser }}>
             <Routes>
               <Route path="/" element={<Navigate to="/login" />} />
