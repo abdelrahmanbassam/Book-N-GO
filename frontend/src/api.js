@@ -68,8 +68,12 @@ export const schedules = async (id, startDateTime) => {
     return response.data;
 };
 export const availability = async (id, startDateTime) => {
-    const response = await client.get(`/bookings/hall/${id}/availability`, {
-        params: { startTime: startDateTime },
-    });
-    return response.data;
-};
+  const response = await client.get(`/bookings/hall/${id}/availability`, {
+    params: { startTime: startDateTime }
+  });
+  return response.data;
+}
+export const createBooking = async (hallId, startTime, endTime) => {
+  const response = await client.post(`/bookings/create`, { hallId, startTime, endTime });
+  return response.data;
+}
