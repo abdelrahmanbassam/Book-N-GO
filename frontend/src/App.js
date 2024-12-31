@@ -4,6 +4,7 @@ import {
     BrowserRouter as Router,
     Routes,
 } from "react-router-dom";
+
 import "./App.css";
 import { HallDetails } from "./HallDetails/HallDetails";
 import { Login } from "./Sign/LoginPage/Login";
@@ -32,6 +33,10 @@ function App() {
 
     return (
         <Router>
+      <div className="App" ref={divRef}>
+        <PageContext.Provider value={{ divRef }}>
+        
+        
             <UserContext.Provider value={{ user, setUser }}>
                 <Routes>
                     <Route path="/" element={<Navigate to="/login" />} />
@@ -50,6 +55,7 @@ function App() {
                         path="/workspace/:workspaceId/hall/:id"
                         element={<HallDetails />}
                     />
+
                     {<Route path="/select-role" element={<SelectRole />} />}
                     {/* <Route path='/login' element={<LoginPage/>}/> */}
                     <Route path="/hallsList" element={<HallsList />} />
@@ -58,7 +64,11 @@ function App() {
                     {/* )} */}
                     {<Route path="/reservations" element={<Reservations />} />}
                 </Routes>
+          <Copilot/>
             </UserContext.Provider>
+                     
+        </PageContext.Provider>
+      </div>
         </Router>
     );
 }
