@@ -108,4 +108,42 @@ public class HallsListFilterServiceTest {
     private CriteriaBuilder mockCriteriaBuilder() {
         return mock(CriteriaBuilder.class);
     }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testApplyCriterias_WithNoFilters() {
+        filterRequest.setRating(null);
+        filterRequest.setSearchWord(null);
+        filterRequest.setAminities(null);
+
+        Page<Hall> expectedPage = new PageImpl<>(Collections.emptyList(), PageRequest.of(0, 5), 0);
+
+        when(hallRepo.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(expectedPage);
+
+        Page<Hall> result = hallsListFilterService.applyCriterias(filterRequest);
+
+        assertEquals(0, result.getTotalElements());
+        assertEquals(0, result.getTotalPages());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testApplyCriterias_WithMatchingHalls() {
+        Hall hall = new Hall();
+        hall.setId(1L);
+        hall.setName("Luxury Hall");
+        hall.setRating(4.5);
+
+        Page<Hall> expectedPage = new PageImpl<>(List.of(hall), PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "name")), 1);
+
+        when(hallRepo.findAll(any(Specification.class), any(PageRequest.class))).thenReturn(expectedPage);
+
+        Page<Hall> result = hallsListFilterService.applyCriterias(filterRequest);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getTotalPages());
+        assertEquals("Luxury Hall", result.getContent().get(0).getName());
+    }
+
+    
 }
