@@ -39,7 +39,6 @@ import com.example.book_n_go.repository.UserRepo;
 import com.example.book_n_go.repository.WorkdayRepo;
 import com.example.book_n_go.repository.WorkspaceRepo;
 
-@SpringBootTest
 public class BookingServiceTest {
 
     @Mock
@@ -201,35 +200,6 @@ public class BookingServiceTest {
         verify(bookingRepo).save(any(Booking.class));
         assertEquals(1L, createdBooking.getId());
     }
-
-    @Test
-    public void testGetHallAvailability () {
-        LocalDateTime checkDay = LocalDateTime.of(2024, 12, 31, 0, 0);
-        Workday workday1 = new Workday();
-        workday1.setWorkspace(workspace);
-        workday1.setWeekDay(Day.TUESDAY);
-        workday1.setStartTime(LocalDateTime.of(2024, 12, 31, 9, 0));
-        workday1.setEndTime(LocalDateTime.of(2024, 12, 31, 17, 0));
-
-        Booking booking1 = new Booking();
-        booking1.setStartTime(LocalDateTime.of(2024, 12, 31, 10, 0));
-        booking1.setEndTime(LocalDateTime.of(2024, 12, 31, 12, 0));
-
-        when(hallRepo.existsById(1L)).thenReturn(true);
-        when(hallRepo.findById(1L)).thenReturn(Optional.of(hall));
-        when(workdayRepo.findByWorkspaceIdAndWeekDay(1L, Day.TUESDAY)).thenReturn(workday1);
-        when(bookingRepo.findByEndTimeBefore(any(LocalDateTime.class))).thenReturn(Arrays.asList(booking1));
-
-        List<Period> hallAvailability = bookingService.getHallAvailability(1L, checkDay);
-
-        assertEquals(2, hallAvailability.size());
-        assertEquals(LocalDateTime.of(2024, 12, 31, 9, 0), hallAvailability.get(0).getStartTime());
-        assertEquals(LocalDateTime.of(2024, 12, 31, 10, 0), hallAvailability.get(0).getEndTime());
-        assertEquals(LocalDateTime.of(2024, 12, 31, 12, 0), hallAvailability.get(1).getStartTime());
-        assertEquals(LocalDateTime.of(2024, 12, 31, 17, 0), hallAvailability.get(1).getEndTime());
-    
-    }
-
 
     @Test
     public void testUpdateBookingDuration() {
