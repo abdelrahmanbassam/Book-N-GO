@@ -43,8 +43,8 @@ function App() {
         <PageContext.Provider value={{ divRef }}>
           <UserContext.Provider value={{ user, setUser }}>
             <Routes>
-              <Route path="/" element={<Navigate to="/login" />} />
-              {/* <Route path='/' element={<HomePage/>}/> */}
+              {/* <Route path="/" element={<Navigate to="/login" />} /> */}
+              <Route path='/' element={<HallsList/>}/>
               {<Route path="/workspace" element={<WorkSpace />} />}
               {
                 <Route

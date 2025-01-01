@@ -28,7 +28,7 @@ export const Header = (props) => {
                         alt="logo"
                         className="logo"
                         onClick={() => {
-                            // navigate('/');
+                            navigate('/');
                         }}
                     />
                 </div>
