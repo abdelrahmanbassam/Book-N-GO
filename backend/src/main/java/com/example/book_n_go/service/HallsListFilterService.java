@@ -8,13 +8,12 @@ import jakarta.persistence.criteria.Join;
 
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+
 
 @Service
 public class HallsListFilterService {
@@ -31,7 +30,7 @@ public class HallsListFilterService {
         return hallRepo.findAll(spec, pageable);
     }
 
-    private Specification<Hall> buildSpecification(HallsFilterRequest request) {
+    Specification<Hall> buildSpecification(HallsFilterRequest request) {
         return (root, query, criteriaBuilder) -> {
             Specification<Hall> spec = Specification.where(null);
 
