@@ -41,6 +41,7 @@ class WorkdayControllerTest {
 
 	private Workspace workspace;
 	private User provider;
+	private User client;
 
 	@BeforeEach
 	void setUp() {
@@ -48,7 +49,7 @@ class WorkdayControllerTest {
 
 		// Mock workspace and provider
 		provider = new User(1L, "user@example.com", "password", "John Doe", "123456789", Role.PROVIDER);
-
+		client = new User(2L, "client@example.com", "password", "Jane Doe", "987654321", Role.CLIENT);
 		workspace = new Workspace();
 		workspace.setId(1L);
 		workspace.setProvider(provider);
@@ -163,6 +164,25 @@ class WorkdayControllerTest {
 	}
 
 	@Test
+	void testUpdateWorkday_Unauthorized() {
+		Workday workday = new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace);
+		when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
+		when(AuthService.getRequestUser()).thenReturn(client);
+
+		ResponseEntity<Workday> response = workdayController.updateWorkday(1L, workday);
+
+		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+	}
+
+	@Test
+	void testUpdateWorkday_NotFound() {
+		when(workdayRepo.findById(1L)).thenReturn(Optional.empty());
+		Workday neWworkday = new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace);
+		ResponseEntity<Workday> response = workdayController.updateWorkday(1L, neWworkday);
+		assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+	}
+
+	@Test
 	void testDeleteWorkday_InternalServerError() {
 		doThrow(RuntimeException.class).when(workdayRepo).deleteById(1L);
 
@@ -206,5 +226,64 @@ class WorkdayControllerTest {
 		verify(workdayRepo, never()).save(any(Workday.class));
 		verify(workdayRepo, never()).delete(any(Workday.class));
 	}
+	@Test
+	void testDeleteWorkday_Unauthorized() {
+		Workday workday = new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace);
+		when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
+		when(AuthService.getRequestUser()).thenReturn(client);
 
+		ResponseEntity<HttpStatus> response = workdayController.deleteWorkday(1L);
+
+		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+	}
+	@Test
+	void testDeleteWorkday_Success() {
+		Workday workday = new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace);
+		when(workdayRepo.findById(1L)).thenReturn(Optional.of(workday));
+		when(AuthService.getRequestUser()).thenReturn(provider);
+		doNothing().when(workdayRepo).deleteById(1L);
+
+		ResponseEntity<HttpStatus> response = workdayController.deleteWorkday(1L);
+
+		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+	}
+
+	@Test
+	void testUpdateWorkdaysByWorkspaceId_Unauthorized() {
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+		when(AuthService.getRequestUser()).thenReturn(client);
+
+		ResponseEntity<List<Workday>> response = workdayController.updateWorkdaysByWorkspaceId(1L, Collections.emptyList());
+
+		assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+	}
+
+	@Test
+	void testUpdateWorkdaysByWorkspaceId_InternalServerError() {
+		when(workspaceRepo.findById(1L)).thenThrow(RuntimeException.class);
+
+		ResponseEntity<List<Workday>> response = workdayController.updateWorkdaysByWorkspaceId(1L, Collections.emptyList());
+
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+	}
+
+	@Test
+	void testUpdateWorkdaysByWorkspaceId_ReturnsUpdatedWorkdays() {
+		List<Workday> existingWorkdays = Arrays.asList(
+				new Workday(1L, LocalDateTime.of(2021, 9, 6, 9, 0), LocalDateTime.of(2021, 9, 6, 17, 0), Day.MONDAY, workspace)
+		);
+		List<Workday> updatedWorkdays = Arrays.asList(
+				new Workday(1L, LocalDateTime.of(2021, 9, 6, 10, 0), LocalDateTime.of(2021, 9, 6, 18, 0), Day.MONDAY, workspace)
+		);
+		when(workspaceRepo.findById(1L)).thenReturn(Optional.of(workspace));
+		when(workdayRepo.findByWorkspace(workspace)).thenReturn(existingWorkdays);
+		when(AuthService.getRequestUser()).thenReturn(provider);
+		when(workdayRepo.save(any(Workday.class))).thenAnswer(i -> i.getArgument(0));
+
+		ResponseEntity<List<Workday>> response = workdayController.updateWorkdaysByWorkspaceId(1L, updatedWorkdays);
+
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+		assertEquals(1, response.getBody().size());
+		assertEquals(LocalDateTime.of(2021, 9, 6, 10, 0), response.getBody().get(0).getStartTime());
+	}
 }

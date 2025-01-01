@@ -100,7 +100,7 @@ public class WorkdayController {
             List<Workday> _workdays = workdayRepo.findByWorkspace(workspace);
 
             if (!AuthService.getRequestUser().getId().equals(workspace.getProvider().getId())) {
-              return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
 
             for (Workday workday : _workdays) {
