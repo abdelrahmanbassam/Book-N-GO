@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -45,6 +46,12 @@ public class JwtAuthenticationFilterTest {
         MockitoAnnotations.openMocks(this);
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
+        SecurityContextHolder.clearContext(); // Clear the context before each test
+    }
+
+    @AfterEach
+    public void tearDown() {
+        SecurityContextHolder.clearContext(); // Clear the context after each test
     }
 
     @Test

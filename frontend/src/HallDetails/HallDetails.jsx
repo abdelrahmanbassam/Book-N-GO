@@ -58,15 +58,14 @@ export const HallDetails = () => {
           },
         }
       );
+      console.log('Feedback response:', response);
       if (response.status === 200) {
         alert('Feedback submitted successfully');
-        console.log('Feedback response:', response.data); // Log the Hall JSON response
-      } else {
-        alert('Failed to submit feedback');
-      }
+        console.log('Feedback response:', response.data);
+      }
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      alert('Error submitting feedback');
+      alert('Feedback already submitted');
     }
     setIsFeedbackDialogOpen(false);
   };

@@ -68,4 +68,18 @@ public class OAuth2ControllerTest {
                 .andExpect(redirectedUrl("http://localhost:3000/hallsList?token=dummyToken"));
     }
 
+    @Test
+    public void testOauth2Success_UserNotFound_CatchBlock() throws Exception {
+        when(authentication.getPrincipal()).thenReturn(oAuth2User);
+        when(oAuth2User.getAttribute("email")).thenReturn("newuser@example.com");
+        when(oAuth2User.getAttribute("name")).thenReturn("New User");
+        when(userRepo.findByEmail("newuser@example.com")).thenReturn(java.util.Optional.empty());
+        when(jwtService.generateToken(any(User.class))).thenReturn("dummyToken");
+        mockMvc.perform(get("/auth/oauth2-success")
+                .principal(authentication))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost:3000/select-role?token=dummyToken"));
+        verify(userRepo, times(1)).save(any(User.class));
+    }
+
 }

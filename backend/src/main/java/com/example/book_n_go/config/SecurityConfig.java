@@ -38,6 +38,7 @@ public class SecurityConfig {
                                 ).permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
+                        // .loginPage("http://localhost:3000/login")
                         .defaultSuccessUrl("/auth/oauth2-success"))
                 .formLogin(form -> form.disable())
                 .sessionManagement(session -> session

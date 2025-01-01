@@ -101,14 +101,14 @@ public class WorkspaceController {
   public ResponseEntity<Workspace> updateWorkspace(@PathVariable("id") long id, @RequestBody Workspace workspace) {
 
     Optional<Workspace> workspaceData = workspaceRepo.findById(id);
-    if (!AuthService.userHasPermission(Permission.PROVIDER_UPDATE)
-        || !AuthService.getRequestUser().getId().equals(workspaceData.get().getProvider().getId())) {
-      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-    }
-
     if (!workspaceData.isPresent()) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+    if (!AuthService.getRequestUser().getId().equals(workspaceData.get().getProvider().getId())) {
+      return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
+
     Workspace _workspace = workspaceData.get();
     _workspace.setName(workspace.getName());
     _workspace.setDescription(workspace.getDescription());

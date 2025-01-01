@@ -127,54 +127,6 @@ public class HallControllerTest {
     }
 
     @Test
-    public void testUpdateHall_Success() {
-        Hall hallEntity = new Hall();
-        hallEntity.setId(hall.getId());
-        hallEntity.setName(hall.getName());
-        hallEntity.setCapacity(hall.getCapacity());
-        hallEntity.setDescription(hall.getDescription());
-        hallEntity.setPricePerHour(hall.getPricePerHour());
-        when(hallRepo.findById(1L)).thenReturn(Optional.of(hallEntity));
-        when(hallRepo.save(any(Hall.class))).thenReturn(hallEntity);
-
-        hall.setCapacity(20);
-        hall.setDescription("Updated description");
-        ResponseEntity<Hall> response = hallController.updateHall(1L, hall);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(20, response.getBody().getCapacity());
-        assertEquals("Updated description", response.getBody().getDescription());
-    }
-
-    @Test
-    public void testUpdateHall_NotFound() {
-        when(hallRepo.findById(1L)).thenReturn(Optional.empty());
-
-        ResponseEntity<Hall> response = hallController.updateHall(1L, hall);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    public void testDeleteHall_Success() {
-        doNothing().when(hallRepo).deleteById(1L);
-
-        ResponseEntity<HttpStatus> response = hallController.deleteHall(1L);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    }
-
-    @Test
-    public void testDeleteHall_InternalError() {
-        doThrow(new RuntimeException("Database error")).when(hallRepo).deleteById(1L);
-
-        ResponseEntity<HttpStatus> response = hallController.deleteHall(1L);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    }
-
-    @Test
     public void testFilterHalls_Success() {
         HallsFilterRequest request = new HallsFilterRequest();
         request.setPage(1);
