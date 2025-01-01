@@ -21,16 +21,12 @@ export const HallDetails = () => {
   const [comment, setComment] = useState('');
   const { user, setUser } = useContext(UserContext);
   const [feedback, setFeedback] = useState([]);
-  
+
   const [data, setData] = useState({
     "name": "Alexandria bibliotheca Great Hall",
     "description": "The Great Hall of the Library of Alexandria in Alexandria, Egypt, was the largest and most famous part of the Library of Alexandria, which was part of the research institution called the Musaeum. The Musaeum was a part of the Royal Library of Alexandria, an institution that was part of the Museum of Alexandria. The Museum was a place of learning in ancient Alexandria, and many great thinkers worked there.",
     "rating": 3,
-    "comments": [
-      "This hall is great!",
-      "I love this hall!",
-      "This hall is amazing!"
-    ]
+    "feedbacks": []
   });
 
   useEffect(() => {
@@ -125,6 +121,23 @@ export const HallDetails = () => {
               <button onClick={() => setStartDate(new Date(startDate.setDate(startDate.getDate() + 3)))}>Next</button>
             </div>
             <WeekCalender hallId={id} startDate={startDate} />
+          </div>
+          <div className={styles["hall-details__info__feedback"]}>
+            <h2>Feedback:</h2>
+            <ul>
+              {data['feedbacks'].map((feedback, index) => (
+                // add feedback.rating as stars
+                <div className={styles["hall-details__info__feedback__item"]}>
+                <div className={styles["hall-details__info__feedback__user"]}>
+                {feedback.user.name.split(' ').map(word => word.charAt(0).toUpperCase()).join('')}
+                </div>
+                <div>
+                  <Rating name="read-only" value={feedback.rating} readOnly />
+                  <li key={index} className={styles["hall-details__info__feedback__comment"]}>{feedback.content}</li>
+                </div>
+                </div>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
