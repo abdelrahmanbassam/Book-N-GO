@@ -1,13 +1,22 @@
 package com.example.book_n_go.controller;
-import com.example.book_n_go.dto.FeedbackRequest;
-import com.example.book_n_go.model.Hall;
-import com.example.book_n_go.service.FeedbackService;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import com.example.book_n_go.dto.FeedbackRequest;
+import com.example.book_n_go.model.Hall;
+import com.example.book_n_go.service.FeedbackService;
 
 
 @RestController
@@ -19,7 +28,7 @@ public class FeedbackController {
     private FeedbackService feedbackService;
    
     @PostMapping("/add")
-    public ResponseEntity<?> addFeedback(@PathVariable Long hallId, @RequestParam Long userId, @RequestBody FeedbackRequest feedbackRequest) {
+    public ResponseEntity<?> addFeedback(@PathVariable("hallId") Long hallId, @RequestParam("userId") Long userId, @RequestBody FeedbackRequest feedbackRequest) {
         Optional<Hall> hallOptional = feedbackService.addFeedbackAndReturnHall(hallId, userId, feedbackRequest);
 
         if (!hallOptional.isPresent()) {

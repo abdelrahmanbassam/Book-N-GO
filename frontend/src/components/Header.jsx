@@ -58,6 +58,11 @@ export const Header = (props) => {
                                 navigate('/myWorkspaces');
                             }}
                         >My Workspaces</button>
+                        <button className="button"
+                            onClick={() => {
+                                navigate('/reservations');
+                            }}
+                        >Bookings</button>
                     </div>
                 )}
                 {user === null && (

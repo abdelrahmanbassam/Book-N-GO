@@ -77,6 +77,28 @@
   padding: 10px;
 }
 
+.hall-details__info__feedback__user {
+  font-weight: bold;
+  font-size: 20px;
+  background-color: #FF9944;
+  padding: 10px;
+  border-radius: 500px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  margin-right: 20px;
+}
+
+.hall-details__info__feedback {
+  color: white;
+}
+
+.hall-details__info__feedback__item {
+  display: flex;
+  /* justify-content: space-between; */
+  margin-top: 20px;
+}
+
 @media (max-width: 768px) {
   .hall-details__container {
     flex-direction: column;
