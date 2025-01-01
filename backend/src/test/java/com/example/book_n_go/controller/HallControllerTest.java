@@ -92,6 +92,15 @@ public class HallControllerTest {
     }
 
     @Test
+    public void testGetHalls_InternalError() {
+        when(workspaceRepo.findById(1L)).thenThrow(new RuntimeException("Database error"));
+
+        ResponseEntity<List<Hall>> response = hallController.getHalls(1L);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
     public void testGetHallById_Success() {
         Hall hallEntity = new Hall();
         hallEntity.setId(hall.getId());

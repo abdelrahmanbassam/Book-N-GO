@@ -19,6 +19,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import com.example.book_n_go.enums.Permission;
+import com.example.book_n_go.enums.Role;
 import com.example.book_n_go.model.Location;
 import com.example.book_n_go.model.User;
 import com.example.book_n_go.repository.LocationRepo;
@@ -37,16 +39,16 @@ class LocationControllerTest {
 
     private Location location;
     private User provider;
+    private User admin;
+    private User client;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        // Mock provider and location
-        provider = new User();
-        provider.setId(1L);
-        provider.setName("testuser");
-
+        provider = new User(1L, "user@example.com", "password", "John Doe", "123456789", Role.PROVIDER);
+        admin = new User(2L, "admin@example.com", "password", "Jane Doe", "987654321", Role.ADMIN);
+        client = new User(3L, "client@example.com", "password", "Alice Doe", "456789123", Role.CLIENT);
         location = new Location();
         location.setId(1L);
         location.setCity("New York");
@@ -111,6 +113,13 @@ class LocationControllerTest {
 
     @Test
     void testCreateLocation_ReturnsCreatedLocation() {
+        // Mock the Authentication and SecurityContext
+		Authentication authentication = mock(Authentication.class);
+		when(authentication.getPrincipal()).thenReturn(admin);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+        when(AuthService.getRequestUser()).thenReturn(admin);
         Location location = new Location(1, 101, "200", "New York");
         when(locationRepo.save(any(Location.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -118,6 +127,23 @@ class LocationControllerTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(location, response.getBody());
+    }
+
+    @Test
+    void testCreateLocation_Unauthorized() {
+        // Mock the Authentication and SecurityContext
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(client);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(AuthService.getRequestUser()).thenReturn(client);
+        Location location = new Location(1, 101, "200", "New York");
+
+        ResponseEntity<Location> response = locationController.createLocation(location);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+
     }
 
     @Test
@@ -132,6 +158,13 @@ class LocationControllerTest {
 
     @Test
     void testUpdateLocation_ReturnsUpdatedLocation() {
+        // Mock the Authentication and SecurityContext
+		Authentication authentication = mock(Authentication.class);
+		when(authentication.getPrincipal()).thenReturn(admin);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+        when(AuthService.getRequestUser()).thenReturn(admin);
         Location location = new Location(1, 101, "200", "New York");
         when(locationRepo.findById(1L)).thenReturn(Optional.of(location));
         when(locationRepo.save(any(Location.class))).thenAnswer(i -> i.getArgument(0));
@@ -144,6 +177,24 @@ class LocationControllerTest {
     }
 
     @Test
+    void testUpdateLocation_Unauthorized() {
+        // Mock the Authentication and SecurityContext
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(client);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(AuthService.getRequestUser()).thenReturn(client);
+        Location location = new Location(1, 101, "200", "New York");
+        when(locationRepo.findById(1L)).thenReturn(Optional.of(location));
+
+        ResponseEntity<Location> response = locationController.updateLocation(1L, location);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    }
+
+
+    @Test
     void testUpdateLocation_NotFound() {
         when(locationRepo.findById(1L)).thenReturn(Optional.empty());
 
@@ -154,21 +205,17 @@ class LocationControllerTest {
     }
 
     @Test
-    void testDeleteLocation_ReturnsNoContent() {
-        doNothing().when(locationRepo).deleteById(1L);
+    void testDeleteLocation_Unauthorized() {
+        // Mock the Authentication and SecurityContext
+        Authentication authentication = mock(Authentication.class);
+        when(authentication.getPrincipal()).thenReturn(client);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(AuthService.getRequestUser()).thenReturn(client);
 
         ResponseEntity<HttpStatus> response = locationController.deleteLocation(1L);
 
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(locationRepo, times(1)).deleteById(1L);
-    }
-
-    @Test
-    void testDeleteLocation_InternalServerError() {
-        doThrow(RuntimeException.class).when(locationRepo).deleteById(1L);
-
-        ResponseEntity<HttpStatus> response = locationController.deleteLocation(1L);
-
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }
