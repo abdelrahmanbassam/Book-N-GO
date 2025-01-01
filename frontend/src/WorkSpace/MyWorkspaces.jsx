@@ -6,6 +6,8 @@ import { Header } from "../components/Header";
 import CreateWorkspaceCard from "./components/CreateWorkspaceCard";
 import WorkspaceCard from "./components/WorkspaceCard";
 import WorkspaceDialog from "./components/WorkspaceDialog";
+import AlexandriaLibrary from "../assets/Alexandria-Library.png"
+
 
 export const MyWorkspaces = () => {
     const [workspaces, setWorkspaces] = useState([]);
@@ -70,7 +72,7 @@ export const MyWorkspaces = () => {
                                 location={workspace.location}
                                 imageUrl={
                                     workspace.imageUrl ||
-                                    "/assets/WorkSpace.jpg"
+                                    AlexandriaLibrary
                                 }
                                 onClick={() =>
                                     navigate(`/workspace/${workspace.id}`)
