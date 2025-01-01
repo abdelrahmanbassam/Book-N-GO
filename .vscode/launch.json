@@ -1,0 +1,31 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "BookNGoApplication",
+            "request": "launch",
+            "mainClass": "com.example.book_n_go.BookNGoApplication",
+            "projectName": "backend"
+        },
+        {
+            "type": "java",
+            "name": "BookNGoApplication",
+            "request": "launch",
+            "mainClass": "com.example.book_n_go.BookNGoApplication",
+            "projectName": "book_n_go-backend"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Cargo test",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib"
+                ]
+            },
+            "args": []
+        }
+    ]
+}

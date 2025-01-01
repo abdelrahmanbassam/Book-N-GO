@@ -1,0 +1,12 @@
+.logoImage {
+  position: absolute;
+  /* top: 2rem; */
+  top: 4vh;
+  /* left: 2rem; */
+  left: 2vw;
+  /* display: flex; */
+  /* align-items: center; */
+  /* width: 30vh; */
+  width: 14.5vw; 
+  height: auto; 
+}

@@ -1,0 +1,23 @@
+.container {
+  min-height: 100vh;
+  background-color: #001219;
+}
+
+.content {
+  display: flex;
+}
+
+.sidebar {
+  width: 16rem;
+}
+
+.main {
+  flex: 1;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}

@@ -1,0 +1,117 @@
+.hall-details__container {
+  background-color: #010F18;
+  display: flex;
+  padding: 50px 0;
+  /* clip-path: polygon(0% 0%, 100% 0, 100% 80%, 85% 100%, 0% 100%); */
+  text-align: start;
+}
+
+.hall-details__preview {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 20px 60px;
+  width: 50%;
+  border-right: #fff 1px solid;
+}
+
+.hall-details__preview img {
+  width: 100%;
+}
+
+.hall-details__preview h1 {
+  color: #fff;
+  font-size: 50px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.hall-details__preview button {
+  background-color: #FF9944;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 32px;
+  font-weight: bold;
+  width: 250px;
+  height: 50px;
+  text-align: center;
+}
+
+.hall-details__info {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 60px;
+  width: 50%;
+  color: white;
+}
+
+.hall-details__info h2 {
+  font-size: 40px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.hall-details__info__rating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hall-details__info__schedule__pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.hall-details__info__schedule__pagination button {
+  background-color: #FF9944;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  height: 50px;
+  padding: 10px;
+}
+
+.hall-details__info__feedback__user {
+  font-weight: bold;
+  font-size: 20px;
+  background-color: #FF9944;
+  padding: 10px;
+  border-radius: 500px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  margin-right: 20px;
+}
+
+.hall-details__info__feedback {
+  color: white;
+}
+
+.hall-details__info__feedback__item {
+  display: flex;
+  /* justify-content: space-between; */
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .hall-details__container {
+    flex-direction: column;
+    height: auto;
+    clip-path: none;
+  }
+
+  .hall-details__preview {
+    width: 100%;
+    border-right: none;
+  }
+
+  .hall-details__info {
+    width: 100%;
+  }
+}
