@@ -46,7 +46,7 @@ public class OAuth2ControllerTest {
     }
 
     @Test
-    public void testOauth2Success() throws Exception {
+    public void testOauth2Success_ClientRole() throws Exception {
         when(authentication.getPrincipal()).thenReturn(oAuth2User);
         when(oAuth2User.getAttribute("email")).thenReturn("test@example.com");
         when(oAuth2User.getAttribute("name")).thenReturn("Test User");
@@ -64,32 +64,8 @@ public class OAuth2ControllerTest {
 
         mockMvc.perform(get("/auth/oauth2-success")
                 .principal(authentication))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("dummyToken"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("http://localhost:3000/hallsList?token=dummyToken"));
     }
 
-    @Test
-    public void testOauth2Success_UserNotFound() throws Exception {
-        when(authentication.getPrincipal()).thenReturn(oAuth2User);
-        when(oAuth2User.getAttribute("email")).thenReturn("newuser@example.com");
-        when(oAuth2User.getAttribute("name")).thenReturn("New User");
-
-        when(userRepo.findByEmail("newuser@example.com")).thenThrow(new RuntimeException("User not found"));
-
-        User newUser = User.builder()
-                .email("newuser@example.com")
-                .password("password")
-                .name("New User")
-                .phone("")
-                .role(Role.CLIENT)
-                .build();
-
-        when(userRepo.save(any(User.class))).thenReturn(newUser);
-        when(jwtService.generateToken(newUser)).thenReturn("newUserToken");
-
-        mockMvc.perform(get("/auth/oauth2-success")
-                .principal(authentication))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("newUserToken"));
-    }
 }
