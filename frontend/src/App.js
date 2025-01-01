@@ -84,6 +84,11 @@ function App() {
                                     element={<Reservations />}
                                 />
                             }
+                            {/* any other route to login */}
+                            <Route
+                                path="*"
+                                element={<Navigate to="/login" />}
+                            />
                         </Routes>
                         <Copilot />
                     </UserContext.Provider>
