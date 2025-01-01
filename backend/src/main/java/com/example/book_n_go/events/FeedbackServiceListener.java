@@ -36,7 +36,7 @@ public class FeedbackServiceListener {
         hallRepo.save(hall);
     }
 
-    private void updateWorkspaceRating(Workspace workspace) {
+    public void updateWorkspaceRating(Workspace workspace) {
         List<Hall> halls = hallRepo.findByWorkspace(workspace);
         if (halls == null || halls.isEmpty()) {
             workspace.setRating(0.0);

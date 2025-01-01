@@ -10,4 +10,9 @@ class BookNGoApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void main() {
+		BookNGoApplication.main(new String[] {});
+	}
+
 }
