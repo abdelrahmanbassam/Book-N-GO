@@ -35,7 +35,7 @@
     
     ### **Overall system design**
     
-    ![assests/image.png](image.png)
+    ![image.png](assests/image.png)
     
     ![image.png](image%201.png)
     
