@@ -35,11 +35,11 @@
     
     ### **Overall system design**
     
-    ![image.png](image.png)
+    ![image.png](assests/image.png)
     
-    ![image.png](image%201.png)
+    ![image.png](assests/image%201.png)
     
-    ![image.png](image%202.png)
+    ![image.png](assests/image%202.png)
     
 
 ### Frontend
@@ -47,31 +47,31 @@
 - Developed using modern frameworks (React or similar)
 - Responsive UI for user interactions
 
-![image.png](image%203.png)
+![image.png](assests/image%203.png)
 
-![image.png](image%204.png)
+![image.png](assests/image%204.png)
 
-![image.png](image%205.png)
+![image.png](assests/image%205.png)
 
-![image.png](image%206.png)
+![image.png](assests/image%206.png)
 
-![image.png](image%207.png)
+![image.png](assests/image%207.png)
 
-![image.png](image%208.png)
+![image.png](assests/image%208.png)
 
-![image.png](image%209.png)
+![image.png](assests/image%209.png)
 
 ### Database
 
 - Relational database with schemas for users, halls, bookings, schedules, etc.
 
-![image.png](image%2010.png)
+![image.png](assests/image%2010.png)
 
 ## Design and Architecture
 
 ### UML
 
-![image.png](image%2011.png)
+![image.png](assests/image%2011.png)
 
 ## 🧪 Testing
 
